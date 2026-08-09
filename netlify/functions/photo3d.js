@@ -16,15 +16,15 @@ exports.handler = async (event) => {
     const { imageBase64, imageType } = JSON.parse(event.body);
     const dataUrl = `data:${imageType || 'image/jpeg'};base64,${imageBase64}`;
 
-    // Step 1: Prediction create karo — TripoSR model (image to 3D)
-    const createRes = await fetch('https://api.replicate.com/v1/predictions', {
+    // Using Replicate models API with owner/model format
+    const createRes = await fetch('https://api.replicate.com/v1/models/lucataco/triposr/predictions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${REPLICATE_API_KEY}`,
         'Content-Type': 'application/json',
+        'Prefer': 'wait=60'
       },
       body: JSON.stringify({
-        version: '0e4670a341e1af5e04fc1b2ccb7f4a12af2e9c9de5b89bce03f3f544b440a4c4',
         input: {
           image: dataUrl,
           do_remove_background: true,
@@ -35,14 +35,29 @@ exports.handler = async (event) => {
 
     const prediction = await createRes.json();
 
-    if (!prediction.id) {
+    if (prediction.error) {
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: prediction.detail || 'Failed to create prediction' })
+        body: JSON.stringify({ error: prediction.error })
       };
     }
 
-    // Step 2: Poll karo result ke liye
+    if (prediction.status === 'succeeded' && prediction.output) {
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ success: true, output: prediction.output })
+      };
+    }
+
+    if (!prediction.id) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: 'No prediction ID: ' + JSON.stringify(prediction) })
+      };
+    }
+
+    // Poll karo
     for (let i = 0; i < 60; i++) {
       await new Promise(r => setTimeout(r, 5000));
 
@@ -68,7 +83,7 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Timeout: Processing too long, try again' })
+      body: JSON.stringify({ error: 'Timeout - please try again' })
     };
 
   } catch (err) {
