@@ -813,7 +813,7 @@ async function generate3D() {
   var btn = document.getElementById('gen3d-btn');
   if (btn) btn.disabled = true;
 
-  resultDiv.innerHTML = '<p style="color:gold;margin-bottom:10px">⏳ GAIOS™ AI 3D model bana raha hai... 2-3 minute lagenge...</p><div style="width:100%;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;"><div style="height:100%;background:#C9A84C;border-radius:3px;animation:prog 3s infinite;"></div></div><style>@keyframes prog{0%{width:5%}50%{width:80%}100%{width:95%}}</style>';
+  resultDiv.innerHTML = '<p style="color:gold;margin-bottom:10px">⏳ GAIOS™ AI 3D model shuru kar raha hai...</p><div style="width:100%;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;"><div style="height:100%;background:#C9A84C;border-radius:3px;animation:prog 4s infinite;"></div></div><style>@keyframes prog{0%{width:5%}50%{width:85%}100%{width:95%}}</style>';
 
   try {
     var reader = new FileReader();
@@ -822,6 +822,7 @@ async function generate3D() {
       var imageType = fileInput.files[0].type || 'image/jpeg';
 
       try {
+        // Step 1: Prediction start karo
         var res = await fetch('/.netlify/functions/photo3d', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -830,40 +831,75 @@ async function generate3D() {
 
         var data = await res.json();
 
-        if (data.success && data.output) {
-          var outputs = Array.isArray(data.output) ? data.output : [data.output];
-          var html = '<p style="color:lightgreen;font-size:16px;margin-bottom:12px">✅ 3D Model Ready! Printing ke liye taiyar!</p>';
-          var dlHtml = '';
+        if (!data.predictionId) {
+          resultDiv.innerHTML = '<p style="color:#FF6666;">❌ Error: ' + (data.error || 'Start failed') + '</p>';
+          if (btn) btn.disabled = false;
+          return;
+        }
 
-          outputs.forEach(function(url, i) {
-            if (url && typeof url === 'string') {
-              if (url.match(/\.(png|jpg|jpeg|webp|gif)/i)) {
-                html += '<img src="' + url + '" style="max-width:100%;max-height:350px;object-fit:contain;border:2px solid gold;border-radius:12px;margin-bottom:10px;" alt="3D View">';
-              } else {
-                html += '<div style="padding:20px;color:#C9A84C;font-size:14px;">✅ 3D File Ready!</div>';
-              }
-              dlHtml += '<a href="' + url + '" download="GAIOS_3D_' + (i+1) + '" target="_blank" style="display:inline-block;background:rgba(201,168,76,0.15);color:#C9A84C;border:1px solid #C9A84C;border-radius:8px;padding:8px 16px;margin:4px;text-decoration:none;font-size:12px;">📥 Download 3D File ' + (i+1) + '</a>';
-            }
+        // Step 2: Frontend se poll karo
+        var predId = data.predictionId;
+        var seconds = 0;
+        
+        for (var i = 0; i < 40; i++) {
+          await new Promise(function(r) { setTimeout(r, 5000); });
+          seconds += 5;
+          resultDiv.querySelector('p').textContent = '⏳ 3D model ban raha hai... ' + seconds + ' seconds...';
+
+          var pollRes = await fetch('/.netlify/functions/photo3d', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ predictionId: predId })
           });
 
-          html += dlHtml;
-          html += '<div style="background:linear-gradient(135deg,rgba(201,168,76,0.2),rgba(201,168,76,0.05));border:1px solid #C9A84C;border-radius:10px;padding:12px;margin-top:12px;text-align:center;"><div style="color:#C9A84C;font-size:13px;font-weight:700;">🖨️ BFOREVER™ PolyJet Print Ready</div><div style="color:#8899AA;font-size:11px;">Mimaki 3DUJ-553 | 10 Million+ Colours</div></div>';
+          var pollData = await pollRes.json();
 
-          resultDiv.innerHTML = html;
-        } else {
-          resultDiv.innerHTML = '<p style="color:#FF6666;">❌ Error: ' + (data.error || 'Try again') + '</p>';
+          if (pollData.status === 'succeeded' && pollData.output) {
+            show3DResult(resultDiv, pollData.output);
+            if (btn) btn.disabled = false;
+            return;
+          } else if (pollData.status === 'failed') {
+            resultDiv.innerHTML = '<p style="color:#FF6666;">❌ 3D generation failed. Try again.</p>';
+            if (btn) btn.disabled = false;
+            return;
+          }
         }
-      } catch(err) {
-        resultDiv.innerHTML = '<p style="color:#FF6666;">❌ Network error: ' + err.message + '</p>';
-      }
 
-      if (btn) btn.disabled = false;
+        resultDiv.innerHTML = '<p style="color:#FF6666;">❌ Timeout. Please try again.</p>';
+        if (btn) btn.disabled = false;
+
+      } catch(err) {
+        resultDiv.innerHTML = '<p style="color:#FF6666;">❌ Error: ' + err.message + '</p>';
+        if (btn) btn.disabled = false;
+      }
     };
     reader.readAsDataURL(fileInput.files[0]);
   } catch(e) {
     resultDiv.innerHTML = '<p style="color:#FF6666;">❌ Error: ' + e.message + '</p>';
     if (btn) btn.disabled = false;
   }
+}
+
+function show3DResult(resultDiv, output) {
+  var outputs = Array.isArray(output) ? output : [output];
+  var html = '<p style="color:lightgreen;font-size:16px;margin-bottom:12px">✅ 3D Model Ready! Printing ke liye taiyar!</p>';
+  var dlHtml = '';
+
+  outputs.forEach(function(url, i) {
+    if (url && typeof url === 'string') {
+      if (url.match(/\.(png|jpg|jpeg|webp|gif)/i)) {
+        html += '<img src="' + url + '" style="max-width:100%;max-height:350px;object-fit:contain;border:2px solid gold;border-radius:12px;margin-bottom:10px;" alt="3D View">';
+      } else {
+        html += '<div style="padding:16px;color:#C9A84C;font-size:14px;border:1px solid #C9A84C;border-radius:8px;margin-bottom:10px;">✅ 3D Model File Ready!</div>';
+      }
+      dlHtml += '<a href="' + url + '" target="_blank" style="display:inline-block;background:rgba(201,168,76,0.15);color:#C9A84C;border:1px solid #C9A84C;border-radius:8px;padding:8px 16px;margin:4px;text-decoration:none;font-size:12px;">📥 Download 3D File</a>';
+    }
+  });
+
+  html += dlHtml;
+  html += '<div style="background:linear-gradient(135deg,rgba(201,168,76,0.2),rgba(201,168,76,0.05));border:1px solid #C9A84C;border-radius:10px;padding:12px;margin-top:12px;text-align:center;"><div style="color:#C9A84C;font-size:13px;font-weight:700;">🖨️ BFOREVER™ PolyJet Print Ready</div><div style="color:#8899AA;font-size:11px;">Mimaki 3DUJ-553 | 10 Million+ Colours</div></div>';
+
+  resultDiv.innerHTML = html;
 }
 </script>
 </body>
