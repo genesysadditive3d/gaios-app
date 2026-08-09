@@ -908,5 +908,13 @@ function submitForm() {
   setTimeout(() => { document.getElementById('successMsg').style.display = 'none'; }, 5000);
 }
 </script>
+  <div id="tab-3d" class="tab-content" style="display:none;padding:20px;text-align:center">
+  <h2 style="color:gold">🎯 3D Generate</h2>
+  <p style="color:#ccc">Photo upload karo — GAIOS™ 3D model banayega</p>
+  <input type="file" id="photo3d-input" accept="image/*" style="margin:15px;padding:10px;background:#1a2a4a;color:white;border:1px solid gold;border-radius:8px">
+  <br>
+  <button onclick="generate3D()" style="background:gold;color:#001628;padding:12px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;font-weight:bold">🚀 3D Generate Karo</button>
+  <div id="photo3d-result" style="margin-top:20px"></div>
+</div>
 </body>
 </html>
