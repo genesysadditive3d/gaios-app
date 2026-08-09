@@ -925,7 +925,7 @@ async function generate3D() {
       });
       const data = await res.json();
       if (data.success) {
-        resultDiv.innerHTML = '<p style="color:lightgreen">✅ 3D model ready! Printing ke liye bhejo.</p>';
+       show3DModel(resultDiv)">✅ 3D model ready! Printing ke liye bhejo.</p>';
       } else {
         resultDiv.innerHTML = '<p style="color:red">❌ Error: ' + (data.error || 'Try again') + '</p>';
       }
@@ -933,7 +933,7 @@ async function generate3D() {
       resultDiv.innerHTML = '<p style="color:red">❌ Connection error. Try again.</p>';
     }
   };
-  reader.readAsDataURL(fileInput.files[0]);
+  reader.readAsDataURL(fileInput.files[0]); } function show3DModel(resultDiv) {   resultDiv.innerHTML = `     <p style="color:lightgreen;margin-bottom:10px">✅ 3D Model Ready! Printing ke liye taiyar!</p>     <canvas id="canvas3d" width="280" height="280" style="border:2px solid gold;border-radius:12px"></canvas>     <p style="color:gold;margin-top:10px;font-size:12px">🖨️ BFOREVER™ PolyJet Print Ready</p>`;   const canvas = document.getElementById('canvas3d');   const ctx = canvas.getContext('2d');   let angle = 0;   function draw() {     ctx.clearRect(0,0,280,280);     ctx.fillStyle='#001628';     ctx.fillRect(0,0,280,280);     ctx.save();     ctx.translate(140,140);     ctx.rotate(angle);     ctx.fillStyle='#C9A84C';     ctx.beginPath();     ctx.arc(0,-60,25,0,Math.PI*2);     ctx.fill();     ctx.fillStyle='#E8C97A';     ctx.fillRect(-20,-40,40,70);     ctx.fillRect(-45,-35,25,50);     ctx.fillRect(20,-35,25,50);     ctx.fillRect(-15,30,15,50);     ctx.fillRect(0,30,15,50);     ctx.restore();     angle+=0.03;     requestAnimationFrame(draw);   }   draw(); }(fileInput.files[0]);
 }
   function showTab(tab) {
   document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
@@ -950,7 +950,9 @@ async function generate3D() {
   <input type="file" id="photo3d-input" accept="image/*" style="margin:15px;padding:10px;background:#1a2a4a;color:white;border:1px solid gold;border-radius:8px">
   <br>
   <button onclick="generate3D()" style="background:gold;color:#001628;padding:12px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;font-weight:bold">🚀 3D Generate Karo</button>
-  <div id="photo3d-result" style="margin-top:20px"></div>
+ <div id="photo3d-result" style="margin-top:20px">
+<canvas id="canvas3d" width="300" height="300" style="display:none;border:2px solid gold;border-radius:12px"></canvas>
+</div>
 </div>
 </body>
 </html>
