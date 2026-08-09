@@ -16,48 +16,31 @@ exports.handler = async (event) => {
     const { imageBase64, imageType } = JSON.parse(event.body);
     const dataUrl = `data:${imageType || 'image/jpeg'};base64,${imageBase64}`;
 
-    // Using Replicate models API with owner/model format
-    const createRes = await fetch('https://api.replicate.com/v1/models/lucataco/triposr/predictions', {
+    const createRes = await fetch('https://api.replicate.com/v1/predictions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${REPLICATE_API_KEY}`,
         'Content-Type': 'application/json',
-        'Prefer': 'wait=60'
       },
       body: JSON.stringify({
+        version: '14bcf0ef5a1d638ef5cd78c30a72efb32344cdd9280efb5819fd15275cec85e3',
         input: {
           image: dataUrl,
-          do_remove_background: true,
-          foreground_ratio: 0.85
+          num_inference_steps: 50,
+          guidance_scale: 7
         }
       })
     });
 
     const prediction = await createRes.json();
 
-    if (prediction.error) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: prediction.error })
-      };
-    }
-
-    if (prediction.status === 'succeeded' && prediction.output) {
-      return {
-        statusCode: 200,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ success: true, output: prediction.output })
-      };
-    }
-
     if (!prediction.id) {
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: 'No prediction ID: ' + JSON.stringify(prediction) })
+        body: JSON.stringify({ error: prediction.detail || JSON.stringify(prediction) })
       };
     }
 
-    // Poll karo
     for (let i = 0; i < 60; i++) {
       await new Promise(r => setTimeout(r, 5000));
 
