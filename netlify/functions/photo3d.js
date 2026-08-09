@@ -16,7 +16,7 @@ exports.handler = async (event) => {
     const { imageBase64, imageType } = JSON.parse(event.body);
     const dataUrl = `data:${imageType || 'image/jpeg'};base64,${imageBase64}`;
 
-    // Step 1: Prediction create karo
+    // Step 1: Prediction create karo — TripoSR model (image to 3D)
     const createRes = await fetch('https://api.replicate.com/v1/predictions', {
       method: 'POST',
       headers: {
@@ -24,12 +24,11 @@ exports.handler = async (event) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        version: 'af85b52698bc6e51ba35a19571de3fc3ce73e9ad3c6a3cca7929386d94e5c6c4',
+        version: '0e4670a341e1af5e04fc1b2ccb7f4a12af2e9c9de5b89bce03f3f544b440a4c4',
         input: {
           image: dataUrl,
-          guidance_scale: 3,
-          num_inference_steps: 75,
-          frame_size: 256
+          do_remove_background: true,
+          foreground_ratio: 0.85
         }
       })
     });
@@ -44,7 +43,6 @@ exports.handler = async (event) => {
     }
 
     // Step 2: Poll karo result ke liye
-    let result = null;
     for (let i = 0; i < 60; i++) {
       await new Promise(r => setTimeout(r, 5000));
 
@@ -55,8 +53,11 @@ exports.handler = async (event) => {
       const pollData = await pollRes.json();
 
       if (pollData.status === 'succeeded') {
-        result = pollData.output;
-        break;
+        return {
+          statusCode: 200,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ success: true, output: pollData.output })
+        };
       } else if (pollData.status === 'failed') {
         return {
           statusCode: 500,
@@ -65,17 +66,9 @@ exports.handler = async (event) => {
       }
     }
 
-    if (!result) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: 'Timeout: Processing too long' })
-      };
-    }
-
     return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ success: true, output: result })
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Timeout: Processing too long, try again' })
     };
 
   } catch (err) {
