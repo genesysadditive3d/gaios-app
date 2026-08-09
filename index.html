@@ -766,6 +766,9 @@
   <div class="bottom-btn" id="nav-about" onclick="showTab('about')">
     <span class="icon">ℹ️</span>About
   </div>
+  <div class="bottom-btn" id="nav-3d" onclick="showTab('3d')">
+  <span class="icon">🎯</span>3D Gen
+</div>
 </div>
 
 <script>
@@ -777,7 +780,7 @@ function showTab(tab) {
   document.getElementById('tab-' + tab).classList.add('active');
   document.getElementById('nav-' + tab).classList.add('active');
   const tabs = document.querySelectorAll('.nav-tab');
-  const tabMap = ['console','bforever','verticals','contact','about'];
+  const tabMap = ['console','bforever','verticals','contact','about','3d'];
   tabs[tabMap.indexOf(tab)].classList.add('active');
 }
 
