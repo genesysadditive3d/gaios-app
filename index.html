@@ -925,7 +925,7 @@ async function generate3D() {
       });
       const data = await res.json();
       if (data.success) {
-       show3DModel(resultDiv)">✅ 3D model ready! Printing ke liye bhejo.</p>';
+      show3DModel(resultDiv);
       } else {
         resultDiv.innerHTML = '<p style="color:red">❌ Error: ' + (data.error || 'Try again') + '</p>';
       }
