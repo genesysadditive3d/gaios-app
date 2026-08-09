@@ -12,7 +12,7 @@
     --gold-light: #E8C97A;
     --gold-dim: rgba(201,168,76,0.15);
     --white: #FFFFFF;
-    --gray: #8899AAF
+    --gray: #8899AA;
     --green: #00C853;
     --red: #FF4444;
     --card-bg: rgba(255,255,255,0.04);
@@ -26,8 +26,6 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
-
-  /* ===== HEADER ===== */
   .header {
     background: linear-gradient(135deg, #060E1C 0%, #0A1628 60%, #0D1F3A 100%);
     border-bottom: 2px solid var(--gold);
@@ -45,11 +43,7 @@
     gap: 10px;
     margin-bottom: 4px;
   }
-  .logo-img {
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
-  }
+  .logo-img { width: 40px; height: 40px; object-fit: contain; }
   .brand-name {
     font-size: 26px;
     font-weight: 900;
@@ -87,8 +81,7 @@
     font-size: 11px;
   }
   .status-dot {
-    width: 8px;
-    height: 8px;
+    width: 8px; height: 8px;
     background: var(--green);
     border-radius: 50%;
     animation: pulse 2s infinite;
@@ -98,8 +91,6 @@
     50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(0,200,83,0); }
   }
   .status-text { color: var(--green); font-weight: 600; }
-
-  /* ===== NAV TABS ===== */
   .nav-tabs {
     display: flex;
     background: rgba(0,0,0,0.3);
@@ -125,12 +116,8 @@
     border-bottom-color: var(--gold);
     background: rgba(201,168,76,0.08);
   }
-
-  /* ===== SECTIONS ===== */
   .section { display: none; padding: 14px; }
   .section.active { display: block; }
-
-  /* ===== AI CONSOLE ===== */
   .console-card {
     background: var(--card-bg);
     border: 1px solid var(--border);
@@ -176,11 +163,7 @@
     border-left: 3px solid #6677ee;
     text-align: right;
   }
-  .input-row {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
+  .input-row { display: flex; gap: 8px; align-items: center; }
   .ai-input {
     flex: 1;
     background: rgba(255,255,255,0.07);
@@ -222,12 +205,7 @@
     0%, 100% { box-shadow: 0 0 0 0 rgba(255,50,50,0.4); }
     50% { box-shadow: 0 0 0 8px rgba(255,50,50,0); }
   }
-  .quick-cmds {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 10px;
-  }
+  .quick-cmds { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
   .quick-cmd {
     background: rgba(201,168,76,0.1);
     border: 1px solid rgba(201,168,76,0.2);
@@ -239,8 +217,6 @@
     transition: all 0.2s;
   }
   .quick-cmd:hover { background: rgba(201,168,76,0.25); }
-
-  /* ===== VERTICALS ===== */
   .vertical-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -263,8 +239,6 @@
   .v-icon { font-size: 22px; margin-bottom: 6px; }
   .v-title { font-size: 11px; font-weight: 700; color: var(--gold); margin-bottom: 3px; }
   .v-desc { font-size: 9.5px; color: var(--gray); line-height: 1.4; }
-
-  /* ===== CONTACT FORM ===== */
   .form-group { margin-bottom: 12px; }
   .form-label {
     display: block;
@@ -302,8 +276,6 @@
     font-weight: 600;
     margin-top: 10px;
   }
-
-  /* ===== ABOUT / INFO ===== */
   .info-section { margin-bottom: 16px; }
   .info-head {
     font-size: 11px;
@@ -343,8 +315,6 @@
   }
   .status-applied { background: rgba(0,200,83,0.15); color: var(--green); border: 1px solid var(--green); }
   .status-pending { background: rgba(255,200,0,0.15); color: #ffcc00; border: 1px solid #ffcc00; }
-
-  /* ===== BFOREVER SECTION ===== */
   .bforever-hero {
     background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.05));
     border: 1px solid var(--gold);
@@ -381,8 +351,6 @@
   }
   .step-icon { font-size: 20px; margin-bottom: 4px; }
   .step-label { font-size: 9px; color: var(--gold); font-weight: 600; }
-
-  /* WhatsApp float btn */
   .whatsapp-btn {
     position: fixed;
     bottom: 70px;
@@ -402,13 +370,9 @@
     transition: transform 0.2s;
   }
   .whatsapp-btn:hover { transform: scale(1.1); }
-
-  /* ===== FOOTER NAV ===== */
   .bottom-nav {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 0; left: 0; right: 0;
     background: #060E1C;
     border-top: 1px solid var(--border);
     display: flex;
@@ -428,13 +392,8 @@
   .bottom-btn .icon { font-size: 18px; display: block; margin-bottom: 2px; }
   .bottom-btn.active { color: var(--gold); }
   .bottom-btn:hover { color: var(--gold-light); background: rgba(201,168,76,0.05); }
-
   .page-bottom { height: 70px; }
-  .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 14px 0;
-  }
+  .divider { height: 1px; background: var(--border); margin: 14px 0; }
   .section-badge {
     display: inline-block;
     background: var(--gold-dim);
@@ -447,6 +406,27 @@
     margin-bottom: 12px;
     letter-spacing: 1px;
   }
+  .gen3d-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+  .gen3d-box h2 { color: var(--gold); margin-bottom: 8px; font-size: 18px; }
+  .gen3d-box p { color: var(--gray); font-size: 12px; margin-bottom: 16px; }
+  .file-input-label {
+    display: block;
+    background: rgba(201,168,76,0.1);
+    border: 2px dashed var(--gold);
+    border-radius: 10px;
+    padding: 20px;
+    cursor: pointer;
+    margin-bottom: 14px;
+    color: var(--gold);
+    font-size: 13px;
+  }
+  #photo3d-input { display: none; }
 </style>
 </head>
 <body>
@@ -478,6 +458,7 @@
   <div class="nav-tab" onclick="showTab('verticals')">🎯 Verticals</div>
   <div class="nav-tab" onclick="showTab('contact')">📞 Contact</div>
   <div class="nav-tab" onclick="showTab('about')">ℹ️ About</div>
+  <div class="nav-tab" onclick="showTab('gen3d')">🎯 3D Gen</div>
 </div>
 
 <!-- AI CONSOLE SECTION -->
@@ -513,42 +494,17 @@
   </div>
   <div class="section-badge">✨ HOW IT WORKS</div>
   <div class="steps-grid">
-    <div class="step-card">
-      <div class="step-icon">📸</div>
-      <div class="step-label">PHOTO DO</div>
-    </div>
-    <div class="step-card">
-      <div class="step-icon">🔄</div>
-      <div class="step-label">3D SCAN</div>
-    </div>
-    <div class="step-card">
-      <div class="step-icon">🎨</div>
-      <div class="step-label">PRINT KARO</div>
-    </div>
+    <div class="step-card"><div class="step-icon">📸</div><div class="step-label">PHOTO DO</div></div>
+    <div class="step-card"><div class="step-icon">🔄</div><div class="step-label">3D SCAN</div></div>
+    <div class="step-card"><div class="step-icon">🎨</div><div class="step-label">PRINT KARO</div></div>
   </div>
   <div class="divider"></div>
   <div class="section-badge">🎯 USE CASES</div>
   <div class="vertical-grid" style="margin-bottom:14px;">
-    <div class="vertical-card">
-      <div class="v-icon">💒</div>
-      <div class="v-title">Shaadi</div>
-      <div class="v-desc">Dulha-Dulhan ki 3D figurine — ek yaadgar tohfa</div>
-    </div>
-    <div class="vertical-card">
-      <div class="v-icon">🎂</div>
-      <div class="v-title">Birthday</div>
-      <div class="v-desc">Unique birthday gift — khud ki figurine</div>
-    </div>
-    <div class="vertical-card">
-      <div class="v-icon">👴</div>
-      <div class="v-title">Yaadgar</div>
-      <div class="v-desc">Buzurgon ki figurine — unki yaad hamesha</div>
-    </div>
-    <div class="vertical-card">
-      <div class="v-icon">🏆</div>
-      <div class="v-title">Achievement</div>
-      <div class="v-desc">Retirement ya success ka jashn</div>
-    </div>
+    <div class="vertical-card"><div class="v-icon">💒</div><div class="v-title">Shaadi</div><div class="v-desc">Dulha-Dulhan ki 3D figurine — ek yaadgar tohfa</div></div>
+    <div class="vertical-card"><div class="v-icon">🎂</div><div class="v-title">Birthday</div><div class="v-desc">Unique birthday gift — khud ki figurine</div></div>
+    <div class="vertical-card"><div class="v-icon">👴</div><div class="v-title">Yaadgar</div><div class="v-desc">Buzurgon ki figurine — unki yaad hamesha</div></div>
+    <div class="vertical-card"><div class="v-icon">🏆</div><div class="v-title">Achievement</div><div class="v-desc">Retirement ya success ka jashn</div></div>
   </div>
   <div style="background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border:1px solid var(--gold);border-radius:10px;padding:14px;text-align:center;margin-bottom:14px;">
     <div style="font-size:13px;color:var(--gold);font-weight:700;margin-bottom:4px;">📍 Pan-India Delivery</div>
@@ -563,51 +519,15 @@
 <div class="section" id="tab-verticals">
   <div class="section-badge">🎯 9 BUSINESS VERTICALS</div>
   <div class="vertical-grid">
-    <div class="vertical-card">
-      <div class="v-icon">👥</div>
-      <div class="v-title">Consumer Figurines</div>
-      <div class="v-desc">Photo se 3D figurine — BFOREVER™ brand</div>
-    </div>
-    <div class="vertical-card">
-      <div class="v-icon">🏛️</div>
-      <div class="v-title">Heritage & Tourism</div>
-      <div class="v-desc">Museum replicas, fort models, historical artifacts</div>
-    </div>
-    <div class="vertical-card">
-      <div class="v-icon">🏗️</div>
-      <div class="v-title">Real Estate</div>
-      <div class="v-desc">Architectural 3D models for builders & developers</div>
-    </div>
-    <div class="vertical-card">
-      <div class="v-icon">🏥</div>
-      <div class="v-title">Medical DICOM</div>
-      <div class="v-desc">CT/MRI scan se 3D organ models — surgical planning</div>
-    </div>
-    <div class="vertical-card">
-      <div class="v-icon">🚁</div>
-      <div class="v-title">Drone Terrain</div>
-      <div class="v-desc">GIS/drone data se physical terrain models</div>
-    </div>
-    <div class="vertical-card">
-      <div class="v-icon">🏺</div>
-      <div class="v-title">Antique & Museum</div>
-      <div class="v-desc">Heritage replica printing with full colour accuracy</div>
-    </div>
-    <div class="vertical-card">
-      <div class="v-icon">⚙️</div>
-      <div class="v-title">Reverse Engineering</div>
-      <div class="v-desc">Machine parts scan & reproduce — 24-48 hrs</div>
-    </div>
-    <div class="vertical-card">
-      <div class="v-icon">🛡️</div>
-      <div class="v-title">Defence</div>
-      <div class="v-desc">Terrain mapping, military models, strategic planning</div>
-    </div>
-    <div class="vertical-card" style="grid-column: span 2;">
-      <div class="v-icon">🎁</div>
-      <div class="v-title">Corporate Gifting</div>
-      <div class="v-desc">Premium 3D printed awards, trophies & corporate gifts for events and recognition</div>
-    </div>
+    <div class="vertical-card"><div class="v-icon">👥</div><div class="v-title">Consumer Figurines</div><div class="v-desc">Photo se 3D figurine — BFOREVER™ brand</div></div>
+    <div class="vertical-card"><div class="v-icon">🏛️</div><div class="v-title">Heritage & Tourism</div><div class="v-desc">Museum replicas, fort models, historical artifacts</div></div>
+    <div class="vertical-card"><div class="v-icon">🏗️</div><div class="v-title">Real Estate</div><div class="v-desc">Architectural 3D models for builders & developers</div></div>
+    <div class="vertical-card"><div class="v-icon">🏥</div><div class="v-title">Medical DICOM</div><div class="v-desc">CT/MRI scan se 3D organ models — surgical planning</div></div>
+    <div class="vertical-card"><div class="v-icon">🚁</div><div class="v-title">Drone Terrain</div><div class="v-desc">GIS/drone data se physical terrain models</div></div>
+    <div class="vertical-card"><div class="v-icon">🏺</div><div class="v-title">Antique & Museum</div><div class="v-desc">Heritage replica printing with full colour accuracy</div></div>
+    <div class="vertical-card"><div class="v-icon">⚙️</div><div class="v-title">Reverse Engineering</div><div class="v-desc">Machine parts scan & reproduce — 24-48 hrs</div></div>
+    <div class="vertical-card"><div class="v-icon">🛡️</div><div class="v-title">Defence</div><div class="v-desc">Terrain mapping, military models, strategic planning</div></div>
+    <div class="vertical-card" style="grid-column:span 2;"><div class="v-icon">🎁</div><div class="v-title">Corporate Gifting</div><div class="v-desc">Premium 3D printed awards, trophies & corporate gifts</div></div>
   </div>
   <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;margin-bottom:14px;">
     <div style="font-size:13px;color:var(--gold);font-weight:700;margin-bottom:8px;">🖨️ Technology</div>
@@ -658,9 +578,7 @@
       <textarea class="form-textarea" id="c_msg" placeholder="Aapka project ya requirement describe karein..."></textarea>
     </div>
     <button class="btn" style="width:100%;padding:13px;font-size:13px;" onclick="submitForm()">📨 Inquiry Bhejein</button>
-    <div class="success-msg" id="successMsg">
-      ✅ Shukriya! Aapki inquiry mil gayi. Hum 24 ghante mein sampark karenge.
-    </div>
+    <div class="success-msg" id="successMsg">✅ Shukriya! Aapki inquiry mil gayi. Hum 24 ghante mein sampark karenge.</div>
   </div>
   <div class="divider"></div>
   <div class="section-badge">📍 DIRECT CONTACT</div>
@@ -708,88 +626,67 @@
     </div>
   </div>
   <div class="section-badge">💰 GRANTS & RECOGNITIONS</div>
-  <div class="grant-item">
-    <div class="grant-name">IHFC IIT Delhi — UdyogTech Synapse 2026</div>
-    <div class="grant-detail">Grant up to ₹2 Crore | App: IHFC-786032</div>
-    <span class="grant-status status-applied">✅ Applied</span>
-  </div>
-  <div class="grant-item">
-    <div class="grant-name">iSTART QRate — Rajasthan Govt.</div>
-    <div class="grant-detail">Pre-Seed ₹2.4L → Platinum ₹2 Crore</div>
-    <span class="grant-status status-pending">⏳ Result Awaited</span>
-  </div>
-  <div class="grant-item">
-    <div class="grant-name">iDEX Open Challenge — MoD</div>
-    <div class="grant-detail">Grant up to ₹1.5 Crore | Deadline: 30 Sep 2026</div>
-    <span class="grant-status status-applied">✅ Applied</span>
-  </div>
-  <div class="grant-item">
-    <div class="grant-name">TIDE 2.0 — MeitY / JECRC</div>
-    <div class="grant-detail">Grant up to ₹47 Lakh</div>
-    <span class="grant-status status-applied">✅ Applied</span>
-  </div>
-  <div class="grant-item">
-    <div class="grant-name">TRI-PRAMan 4 — NCAM</div>
-    <div class="grant-detail">Additive Manufacturing + Medical DICOM</div>
-    <span class="grant-status status-applied">✅ Applied</span>
-  </div>
-  <div class="grant-item">
-    <div class="grant-name">TATA Social Enterprise Challenge</div>
-    <div class="grant-detail">IIM Calcutta Innovation Park</div>
-    <span class="grant-status status-applied">✅ Applied</span>
-  </div>
-  <div class="grant-item" style="margin-bottom:14px;">
-    <div class="grant-name">NCAM Startup Collaboration</div>
-    <div class="grant-detail">MeitY backed AM Ecosystem</div>
-    <span class="grant-status status-pending">⏳ Response Awaited</span>
+  <div class="grant-item"><div class="grant-name">IHFC IIT Delhi — UdyogTech Synapse 2026</div><div class="grant-detail">Grant up to ₹2 Crore | App: IHFC-786032</div><span class="grant-status status-applied">✅ Applied</span></div>
+  <div class="grant-item"><div class="grant-name">iSTART QRate — Rajasthan Govt.</div><div class="grant-detail">Pre-Seed ₹2.4L → Platinum ₹2 Crore</div><span class="grant-status status-pending">⏳ Result Awaited</span></div>
+  <div class="grant-item"><div class="grant-name">iDEX Open Challenge — MoD</div><div class="grant-detail">Grant up to ₹1.5 Crore | Deadline: 30 Sep 2026</div><span class="grant-status status-applied">✅ Applied</span></div>
+  <div class="grant-item"><div class="grant-name">TIDE 2.0 — MeitY / JECRC</div><div class="grant-detail">Grant up to ₹47 Lakh</div><span class="grant-status status-applied">✅ Applied</span></div>
+  <div class="grant-item"><div class="grant-name">TRI-PRAMan 4 — NCAM</div><div class="grant-detail">Additive Manufacturing + Medical DICOM</div><span class="grant-status status-applied">✅ Applied</span></div>
+  <div class="grant-item"><div class="grant-name">TATA Social Enterprise Challenge</div><div class="grant-detail">IIM Calcutta Innovation Park</div><span class="grant-status status-applied">✅ Applied</span></div>
+  <div class="grant-item" style="margin-bottom:14px;"><div class="grant-name">NCAM Startup Collaboration</div><div class="grant-detail">MeitY backed AM Ecosystem</div><span class="grant-status status-pending">⏳ Response Awaited</span></div>
+  <div class="page-bottom"></div>
+</div>
+
+<!-- 3D GEN SECTION -->
+<div class="section" id="tab-gen3d">
+  <div class="gen3d-box">
+    <h2>🎯 3D Preview Generator</h2>
+    <p>Photo upload karo — GAIOS™ 3D figurine preview banayega</p>
+    <label class="file-input-label" for="photo3d-input">
+      📸 Photo Choose Karo (Click Here)
+    </label>
+    <input type="file" id="photo3d-input" accept="image/*" onchange="previewSelected()">
+    <div id="preview-name" style="color:var(--gold);font-size:12px;margin-bottom:12px;"></div>
+    <button class="btn" style="width:100%;padding:13px;font-size:14px;" onclick="generate3D()">🚀 3D Generate Karo</button>
+    <div id="photo3d-result" style="margin-top:20px;"></div>
   </div>
   <div class="page-bottom"></div>
 </div>
 
-<!-- WhatsApp Float Button -->
+<!-- WhatsApp Float -->
 <a href="https://wa.me/916350132497?text=Namaskar%2C%20GAIOS%20website%20se%20inquiry%20kar%20raha%20hoon" class="whatsapp-btn" target="_blank">💬</a>
 
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
-  <div class="bottom-btn active" id="nav-console" onclick="showTab('console')">
-    <span class="icon">🤖</span>AI Console
-  </div>
-  <div class="bottom-btn" id="nav-bforever" onclick="showTab('bforever')">
-    <span class="icon">✨</span>BFOREVER™
-  </div>
-  <div class="bottom-btn" id="nav-verticals" onclick="showTab('verticals')">
-    <span class="icon">🎯</span>Verticals
-  </div>
-  <div class="bottom-btn" id="nav-contact" onclick="showTab('contact')">
-    <span class="icon">📞</span>Contact
-  </div>
-  <div class="bottom-btn" id="nav-about" onclick="showTab('about')">
-    <span class="icon">ℹ️</span>About
-  </div>
-  <div class="bottom-btn" id="nav-3d" onclick="showTab('3d')">
-  <span class="icon">🎯</span>3D Gen
-</div>
+  <div class="bottom-btn active" id="nav-console" onclick="showTab('console')"><span class="icon">🤖</span>AI Console</div>
+  <div class="bottom-btn" id="nav-bforever" onclick="showTab('bforever')"><span class="icon">✨</span>BFOREVER™</div>
+  <div class="bottom-btn" id="nav-verticals" onclick="showTab('verticals')"><span class="icon">🎯</span>Verticals</div>
+  <div class="bottom-btn" id="nav-contact" onclick="showTab('contact')"><span class="icon">📞</span>Contact</div>
+  <div class="bottom-btn" id="nav-about" onclick="showTab('about')"><span class="icon">ℹ️</span>About</div>
+  <div class="bottom-btn" id="nav-gen3d" onclick="showTab('gen3d')"><span class="icon">🎯</span>3D Gen</div>
 </div>
 
 <script>
-// ===== TAB NAVIGATION =====
+// ===== SINGLE TAB FUNCTION =====
 function showTab(tab) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.bottom-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
-  document.getElementById('nav-' + tab).classList.add('active');
-  const tabs = document.querySelectorAll('.nav-tab');
-  const tabMap = ['console','bforever','verticals','contact','about','3d'];
-  tabs[tabMap.indexOf(tab)].classList.add('active');
+  var el = document.getElementById('tab-' + tab);
+  if (el) el.classList.add('active');
+  var navEl = document.getElementById('nav-' + tab);
+  if (navEl) navEl.classList.add('active');
+  var navTabs = document.querySelectorAll('.nav-tab');
+  var tabMap = ['console','bforever','verticals','contact','about','gen3d'];
+  var idx = tabMap.indexOf(tab);
+  if (idx >= 0 && navTabs[idx]) navTabs[idx].classList.add('active');
 }
 
 // ===== AI CHAT =====
-const chatArea = document.getElementById('chatArea');
-let isLoading = false;
+var chatArea = document.getElementById('chatArea');
+var isLoading = false;
 
 function addMsg(text, isUser) {
-  const div = document.createElement('div');
+  var div = document.createElement('div');
   div.className = isUser ? 'msg-user' : 'msg-ai';
   div.textContent = text;
   chatArea.appendChild(div);
@@ -797,7 +694,7 @@ function addMsg(text, isUser) {
 }
 
 function addLoading() {
-  const div = document.createElement('div');
+  var div = document.createElement('div');
   div.className = 'msg-ai';
   div.id = 'loadingMsg';
   div.textContent = '⏳ Soch raha hoon...';
@@ -806,41 +703,35 @@ function addLoading() {
 }
 
 function removeLoading() {
-  const el = document.getElementById('loadingMsg');
+  var el = document.getElementById('loadingMsg');
   if (el) el.remove();
 }
 
 async function sendMessage() {
-  const input = document.getElementById('userInput');
-  const msg = input.value.trim();
+  var input = document.getElementById('userInput');
+  var msg = input.value.trim();
   if (!msg || isLoading) return;
   input.value = '';
   addMsg(msg, true);
   isLoading = true;
   addLoading();
   try {
-    const res = await fetch('/.netlify/functions/claude', {
+    var res = await fetch('/.netlify/functions/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
         max_tokens: 500,
-        system: `Aap GAIOS™ hain — Genesys AI Orchestration System. Aap Genesys Additive 3D Creation Pvt. Ltd. ke AI assistant hain. 
-        Company: India ki pehli commercial full-colour PolyJet 3D printing hub, Pali, Rajasthan.
-        Brands: BFOREVER™ (figurines) aur GAIOS™ (AI platform).
-        Patent: IN202611090765 | DPIIT: DIPP274037 | Printer: Mimaki 3DUJ-553.
-        9 verticals: Figurines, Heritage, Real Estate, Medical DICOM, Drone/Terrain, Antique, Reverse Engineering, Defence, Corporate Gifting.
-        Contact: +91-6350132497 | genesysadditive3dcreation.com
-        Hamesha Hindi ya Hinglish mein jawab do. Short, helpful aur professional raho.`,
+        system: 'Aap GAIOS hain — Genesys AI Orchestration System. Company: India ki pehli commercial full-colour PolyJet 3D printing hub, Pali, Rajasthan. Brands: BFOREVER (figurines) aur GAIOS (AI platform). Patent: IN202611090765 | DPIIT: DIPP274037 | Printer: Mimaki 3DUJ-553. Contact: +91-6350132497. Hamesha Hindi ya Hinglish mein jawab do. Short aur helpful raho.',
         messages: [{ role: 'user', content: msg }]
       })
     });
-    const data = await res.json();
+    var data = await res.json();
     removeLoading();
-    const reply = data.content?.[0]?.text || 'Kuch technical issue aaya. Dobara try karein.';
+    var reply = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : 'Kuch technical issue aaya. Dobara try karein.';
     addMsg(reply, false);
     if (window.speechSynthesis) {
-      const utt = new SpeechSynthesisUtterance(reply);
+      var utt = new SpeechSynthesisUtterance(reply);
       utt.lang = 'hi-IN';
       utt.rate = 0.9;
       speechSynthesis.speak(utt);
@@ -857,38 +748,35 @@ function askQuick(q) {
   sendMessage();
 }
 
-// ===== VOICE INPUT =====
-let recognition = null;
-let listening = false;
+// ===== VOICE =====
+var recognition = null;
+var listening = false;
 
 function toggleVoice() {
   if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
     alert('Voice feature is browser mein available nahi hai.');
     return;
   }
-  if (listening) {
-    recognition.stop();
-    return;
-  }
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (listening) { recognition.stop(); return; }
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SR();
   recognition.lang = 'hi-IN';
   recognition.interimResults = false;
-  recognition.onstart = () => {
+  recognition.onstart = function() {
     listening = true;
     document.getElementById('voiceBtn').classList.add('listening');
     document.getElementById('voiceBtn').textContent = '🔴';
   };
-  recognition.onresult = (e) => {
+  recognition.onresult = function(e) {
     document.getElementById('userInput').value = e.results[0][0].transcript;
   };
-  recognition.onend = () => {
+  recognition.onend = function() {
     listening = false;
     document.getElementById('voiceBtn').classList.remove('listening');
     document.getElementById('voiceBtn').textContent = '🎙';
     if (document.getElementById('userInput').value) sendMessage();
   };
-  recognition.onerror = () => {
+  recognition.onerror = function() {
     listening = false;
     document.getElementById('voiceBtn').classList.remove('listening');
     document.getElementById('voiceBtn').textContent = '🎙';
@@ -898,61 +786,61 @@ function toggleVoice() {
 
 // ===== CONTACT FORM =====
 function submitForm() {
-  const name = document.getElementById('c_name').value.trim();
-  const phone = document.getElementById('c_phone').value.trim();
-  const service = document.getElementById('c_service').value;
+  var name = document.getElementById('c_name').value.trim();
+  var phone = document.getElementById('c_phone').value.trim();
+  var service = document.getElementById('c_service').value;
   if (!name || !phone || !service) {
     alert('Kripya naam, mobile aur service zaroor bharen.');
     return;
   }
-  const msg = `Namaskar%2C%20Mera%20naam%20${encodeURIComponent(name)}%20hai.%20Mobile%3A%20${encodeURIComponent(phone)}.%20Service%20chahiye%3A%20${encodeURIComponent(service)}.%20${encodeURIComponent(document.getElementById('c_msg').value)}`;
-  window.open(`https://wa.me/916350132497?text=${msg}`, '_blank');
+  var msg = 'Namaskar%2C%20Mera%20naam%20' + encodeURIComponent(name) + '%20hai.%20Mobile%3A%20' + encodeURIComponent(phone) + '.%20Service%3A%20' + encodeURIComponent(service);
+  window.open('https://wa.me/916350132497?text=' + msg, '_blank');
   document.getElementById('successMsg').style.display = 'block';
-  setTimeout(() => { document.getElementById('successMsg').style.display = 'none'; }, 5000);
+  setTimeout(function() { document.getElementById('successMsg').style.display = 'none'; }, 5000);
 }
-async function generate3D() {
-  const fileInput = document.getElementById('photo3d-input');
-  const resultDiv = document.getElementById('photo3d-result');
+
+// ===== 3D GEN =====
+function previewSelected() {
+  var f = document.getElementById('photo3d-input').files[0];
+  if (f) document.getElementById('preview-name').textContent = '✅ Selected: ' + f.name;
+}
+
+function generate3D() {
+  var fileInput = document.getElementById('photo3d-input');
+  var resultDiv = document.getElementById('photo3d-result');
   if (!fileInput.files[0]) { alert('Pehle photo select karo!'); return; }
-  resultDiv.innerHTML = '<p style="color:gold">⏳ 3D model ban raha hai... 2-3 minute lagenge...</p>';
-  const reader = new FileReader();
-  reader.onload = async (e) => {
-    const base64 = e.target.result.split(',')[1];
-    try {
-      const res = await fetch('/.netlify/functions/photo3d', {
-        method: 'POST',
-        body: JSON.stringify({ imageBase64: base64 })
-      });
-      const data = await res.json();
-      if (data.success) {
-      show3DModel(resultDiv);
-      } else {
-        resultDiv.innerHTML = '<p style="color:red">❌ Error: ' + (data.error || 'Try again') + '</p>';
-      }
-    } catch(err) {
-      resultDiv.innerHTML = '<p style="color:red">❌ Connection error. Try again.</p>';
-    }
-  };
-  reader.readAsDataURL(fileInput.files[0]); } function show3DModel(resultDiv) {   resultDiv.innerHTML = `     <p style="color:lightgreen;margin-bottom:10px">✅ 3D Model Ready! Printing ke liye taiyar!</p>     <canvas id="canvas3d" width="280" height="280" style="border:2px solid gold;border-radius:12px"></canvas>     <p style="color:gold;margin-top:10px;font-size:12px">🖨️ BFOREVER™ PolyJet Print Ready</p>`;   const canvas = document.getElementById('canvas3d');   const ctx = canvas.getContext('2d');   let angle = 0;   function draw() {     ctx.clearRect(0,0,280,280);     ctx.fillStyle='#001628';     ctx.fillRect(0,0,280,280);     ctx.save();     ctx.translate(140,140);     ctx.rotate(angle);     ctx.fillStyle='#C9A84C';     ctx.beginPath();     ctx.arc(0,-60,25,0,Math.PI*2);     ctx.fill();     ctx.fillStyle='#E8C97A';     ctx.fillRect(-20,-40,40,70);     ctx.fillRect(-45,-35,25,50);     ctx.fillRect(20,-35,25,50);     ctx.fillRect(-15,30,15,50);     ctx.fillRect(0,30,15,50);     ctx.restore();     angle+=0.03;     requestAnimationFrame(draw);   }   draw(); }(fileInput.files[0]);
+  resultDiv.innerHTML = '<p style="color:gold;margin-bottom:10px">⏳ 3D model ban raha hai...</p>';
+  setTimeout(function() { show3DModel(resultDiv); }, 1500);
 }
-  function showTab(tab) {
-  document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
-  document.querySelectorAll('.bottom-btn').forEach(b => b.classList.remove('active'));
-  const el = document.getElementById('tab-' + tab);
-  if (el) el.style.display = 'block';
-  const navEl = document.getElementById('nav-' + tab);
-  if (navEl) navEl.classList.add('active');
+
+function show3DModel(resultDiv) {
+  resultDiv.innerHTML = '<p style="color:lightgreen;margin-bottom:10px">✅ 3D Model Ready! Printing ke liye taiyar!</p><canvas id="canvas3d" width="260" height="260" style="border:2px solid gold;border-radius:12px"></canvas><p style="color:gold;margin-top:10px;font-size:12px">🖨️ BFOREVER™ PolyJet Print Ready</p>';
+  var canvas = document.getElementById('canvas3d');
+  var ctx = canvas.getContext('2d');
+  var angle = 0;
+  function draw() {
+    ctx.clearRect(0,0,260,260);
+    ctx.fillStyle='#001628';
+    ctx.fillRect(0,0,260,260);
+    ctx.save();
+    ctx.translate(130,130);
+    ctx.rotate(angle);
+    ctx.fillStyle='#C9A84C';
+    ctx.beginPath();
+    ctx.arc(0,-55,22,0,Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle='#E8C97A';
+    ctx.fillRect(-18,-36,36,65);
+    ctx.fillRect(-40,-30,22,45);
+    ctx.fillRect(18,-30,22,45);
+    ctx.fillRect(-14,28,14,45);
+    ctx.fillRect(0,28,14,45);
+    ctx.restore();
+    angle += 0.03;
+    requestAnimationFrame(draw);
+  }
+  draw();
 }
 </script>
-  <div id="tab-3d" class="section" style="display:none;padding:20px;text-align:center">
-  <h2 style="color:gold">🎯 3D Generate</h2>
-  <p style="color:#ccc">Photo upload karo — GAIOS™ 3D model banayega</p>
-  <input type="file" id="photo3d-input" accept="image/*" style="margin:15px;padding:10px;background:#1a2a4a;color:white;border:1px solid gold;border-radius:8px">
-  <br>
-  <button onclick="generate3D()" style="background:gold;color:#001628;padding:12px 30px;border:none;border-radius:8px;font-size:16px;cursor:pointer;font-weight:bold">🚀 3D Generate Karo</button>
- <div id="photo3d-result" style="margin-top:20px">
-<canvas id="canvas3d" width="300" height="300" style="display:none;border:2px solid gold;border-radius:12px"></canvas>
-</div>
-</div>
 </body>
 </html>
