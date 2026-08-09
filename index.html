@@ -12,7 +12,7 @@
     --gold-light: #E8C97A;
     --gold-dim: rgba(201,168,76,0.15);
     --white: #FFFFFF;
-    --gray: #8899AA;
+    --gray: #8899AAF
     --green: #00C853;
     --red: #FF4444;
     --card-bg: rgba(255,255,255,0.04);
@@ -934,6 +934,14 @@ async function generate3D() {
     }
   };
   reader.readAsDataURL(fileInput.files[0]);
+}
+  function showTab(tab) {
+  document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+  document.querySelectorAll('.bottom-btn').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('tab-' + tab);
+  if (el) el.style.display = 'block';
+  const navEl = document.getElementById('nav-' + tab);
+  if (navEl) navEl.classList.add('active');
 }
 </script>
   <div id="tab-3d" class="section" style="display:none;padding:20px;text-align:center">
