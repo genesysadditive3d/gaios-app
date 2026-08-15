@@ -428,6 +428,7 @@
   }
   #photo3d-input { display: none; }
 </style>
+ <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 </head>
 <body>
 
@@ -647,7 +648,11 @@
     <input type="file" id="photo3d-input" accept="image/*" onchange="previewSelected()">
     <div id="preview-name" style="color:var(--gold);font-size:12px;margin-bottom:12px;"></div>
     <button class="btn" id="gen3d-btn" style="width:100%;padding:13px;font-size:14px;" onclick="generate3D()">🚀 3D Generate Karo</button>
-    <div id="photo3d-result" style="margin-top:20px;"></div>
+    <div id="photo3d-status" style="margin-top:15px;color:var(--gold);font-size:13px;text-align:center;"></div>
+    <div id="photo3d-result" style="margin-top:20px;">
+      <model-viewer id="model-viewer-3d" style="width:100%;height:400px;background:#1a1a1a;border-radius:12px;display:none;" auto-rotate camera-controls shadow-intensity="1"></model-viewer>
+      <a id="download-3d-btn" style="display:none;margin-top:12px;display:block;text-align:center;padding:10px;background:var(--gold);color:#000;border-radius:8px;font-weight:bold;text-decoration:none;" download="gaios-model.glb">⬇️ 3D Model Download Karo</a>
+    </div>
   </div>
   <div class="page-bottom"></div>
 </div>
