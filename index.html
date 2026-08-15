@@ -805,7 +805,7 @@ function previewSelected() {
   if (f) document.getElementById('preview-name').textContent = '✅ Selected: ' + f.name;
 }
 
-async function generate3D() {
+ async function generate3D(){
   var fileInput = document.getElementById('photo3d-input');
   var resultDiv = document.getElementById('photo3d-result');
   if (!fileInput.files[0]) { alert('Pehle photo select karo!'); return; }
