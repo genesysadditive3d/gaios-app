@@ -9,43 +9,17 @@ exports.handler = async (event) => {
     };
   }
 
-  const path = event.path || '';
-
-  // POST /photo3d - start prediction
-  if (event.httpMethod === 'POST') {
+  if (event.httpMethod === 'GET') {
     try {
-      const body = JSON.parse(event.body);
-      const imageBase64 = body.image;
-      if (!imageBase64) {
-        return {
-          statusCode: 400,
-          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-          body: JSON.stringify({ error: 'No image provided' })
-        };
-      }
-
-      const response = await fetch('https://api.replicate.com/v1/models/tencent/hunyuan3d-2/predictions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Token ${REPLICATE_API_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          input: {
-            image: imageBase64,
-            texture: true,
-            steps: 50,
-            guidance_scale: 7.5,
-            seed: 42
-          }
-        })
+      const id = event.queryStringParameters && event.queryStringParameters.id;
+      const response = await fetch(`https://api.replicate.com/v1/predictions/${id}`, {
+        headers: { 'Authorization': `Token ${REPLICATE_API_KEY}` }
       });
-
       const prediction = await response.json();
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-        body: JSON.stringify({ id: prediction.id, status: prediction.status })
+        body: JSON.stringify({ status: prediction.status, output: prediction.output, error: prediction.error })
       };
     } catch (err) {
       return {
@@ -56,31 +30,32 @@ exports.handler = async (event) => {
     }
   }
 
-  // GET /photo3d?id=xxx - poll prediction
-  if (event.httpMethod === 'GET') {
+  if (event.httpMethod === 'POST') {
     try {
-      const id = event.queryStringParameters && event.queryStringParameters.id;
-      if (!id) {
+      const body = JSON.parse(event.body);
+      const imageBase64 = body.imageBase64;
+      const imageType = body.imageType || 'image/jpeg';
+      if (!imageBase64) {
         return {
           statusCode: 400,
           headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-          body: JSON.stringify({ error: 'No prediction id' })
+          body: JSON.stringify({ error: 'No image provided' })
         };
       }
-
-      const response = await fetch(`https://api.replicate.com/v1/predictions/${id}`, {
-        headers: { 'Authorization': `Token ${REPLICATE_API_KEY}` }
+      const dataUri = `data:${imageType};base64,${imageBase64}`;
+      const response = await fetch('https://api.replicate.com/v1/models/tencent/hunyuan3d-2/predictions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Token ${REPLICATE_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ input: { image: dataUri } })
       });
-
       const prediction = await response.json();
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-        body: JSON.stringify({
-          status: prediction.status,
-          output: prediction.output,
-          error: prediction.error
-        })
+        body: JSON.stringify({ id: prediction.id, status: prediction.status })
       };
     } catch (err) {
       return {
