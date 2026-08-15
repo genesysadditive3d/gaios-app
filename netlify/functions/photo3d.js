@@ -1,4 +1,4 @@
-js
+
 exports.handler = async (event) => {
   const REPLICATE_API_KEY = process.env.REPLICATE_API_KEY;
 
