@@ -43,7 +43,7 @@ exports.handler = async (event) => {
         };
       }
       const dataUri = `data:${imageType};base64,${imageBase64}`;
-      const response = await fetch('https://api.replicate.com/v1/models/tencent/hunyuan3d-2/predictions', {
+      const response = await fetch('https://api.replicate.com/v1/models/aaronjmars/triposg/predictions', {
         method: 'POST',
         headers: {
           'Authorization': `Token ${REPLICATE_API_KEY}`,
@@ -52,7 +52,7 @@ exports.handler = async (event) => {
         body: JSON.stringify({ input: { image: dataUri } })
       });
       const prediction = await response.json();
-      return {
+      return {f
         statusCode: 200,
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
         body: JSON.stringify({ id: prediction.id, status: prediction.status })
