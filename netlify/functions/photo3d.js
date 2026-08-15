@@ -10,55 +10,43 @@ exports.handler = async (event) => {
   }
 
   const path = event.path || '';
-  
-  // POST /photo3d — start prediction
+
+  // POST /photo3d - start prediction
   if (event.httpMethod === 'POST') {
     try {
-      const { imageBase64, imageType, predictionId } = JSON.parse(event.body);
-
-      // Agar predictionId hai to poll karo
-      if (predictionId) {
-        const pollRes = await fetch(`https://api.replicate.com/v1/predictions/${predictionId}`, {
-          headers: { 'Authorization': `Bearer ${REPLICATE_API_KEY}` }
-        });
-        const pollData = await pollRes.json();
+      const body = JSON.parse(event.body);
+      const imageBase64 = body.image;
+      if (!imageBase64) {
         return {
-          statusCode: 200,
+          statusCode: 400,
           headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-          body: JSON.stringify({ status: pollData.status, output: pollData.output, error: pollData.error })
+          body: JSON.stringify({ error: 'No image provided' })
         };
       }
 
-      // Naya prediction start karo
-      const dataUrl = `data:${imageType || 'image/jpeg'};base64,${imageBase64}`;
-      const createRes = await fetch('https://api.replicate.com/v1/predictions', {
+      const response = await fetch('https://api.replicate.com/v1/models/tencent/hunyuan3d-2/predictions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${REPLICATE_API_KEY}`,
-          'Content-Type': 'application/json',
+          'Authorization': `Token ${REPLICATE_API_KEY}`,
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          version: '14bcf0ef5a1d638ef5cd78c30a72efb32344cdd9280efb5819fd15275cec85e3',
           input: {
-            image: dataUrl,
-            num_inference_steps: 50,
-            guidance_scale: 7
+            image: imageBase64,
+            texture: true,
+            steps: 50,
+            guidance_scale: 7.5,
+            seed: 42
           }
         })
       });
 
-      const prediction = await createRes.json();
-      
+      const prediction = await response.json();
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-        body: JSON.stringify({ 
-          predictionId: prediction.id, 
-          status: prediction.status,
-          error: prediction.detail 
-        })
+        body: JSON.stringify({ id: prediction.id, status: prediction.status })
       };
-
     } catch (err) {
       return {
         statusCode: 500,
@@ -68,9 +56,38 @@ exports.handler = async (event) => {
     }
   }
 
-  return {
-    statusCode: 405,
-    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-    body: JSON.stringify({ error: 'Method not allowed' })
-  };
+  // GET /photo3d?id=xxx - poll prediction
+  if (event.httpMethod === 'GET') {
+    try {
+      const id = event.queryStringParameters && event.queryStringParameters.id;
+      if (!id) {
+        return {
+          statusCode: 400,
+          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+          body: JSON.stringify({ error: 'No prediction id' })
+        };
+      }
+
+      const response = await fetch(`https://api.replicate.com/v1/predictions/${id}`, {
+        headers: { 'Authorization': `Token ${REPLICATE_API_KEY}` }
+      });
+
+      const prediction = await response.json();
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({
+          status: prediction.status,
+          output: prediction.output,
+          error: prediction.error
+        })
+      };
+    } catch (err) {
+      return {
+        statusCode: 500,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({ error: err.message })
+      };
+    }
+  }
 };
