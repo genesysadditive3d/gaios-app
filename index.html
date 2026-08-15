@@ -887,25 +887,29 @@ async function generate3D() {
 
 function show3DResult(resultDiv, output) {
   var outputs = Array.isArray(output) ? output : [output];
-  var html = '<p style="color:lightgreen;font-size:16px;margin-bottom:12px">✅ 3D Model Ready! Printing ke liye taiyar!</p>';
-  var dlHtml = '';
+  var modelUrl = null;
+  var downloadUrl = null;
 
-  outputs.forEach(function(url, i) {
+  outputs.forEach(function(url) {
     if (url && typeof url === 'string') {
-      if (url.match(/\.(png|jpg|jpeg|webp|gif)/i)) {
-        html += '<img src="' + url + '" style="max-width:100%;max-height:350px;object-fit:contain;border:2px solid gold;border-radius:12px;margin-bottom:10px;" alt="3D View">';
-      } else {
-        html += '<div style="padding:16px;color:#C9A84C;font-size:14px;border:1px solid #C9A84C;border-radius:8px;margin-bottom:10px;">✅ 3D Model File Ready!</div>';
+      if (url.match(/\.(glb|obj|gltf)/i)) {
+        modelUrl = url;
+        downloadUrl = url;
       }
-      dlHtml += '<a href="' + url + '" target="_blank" style="display:inline-block;background:rgba(201,168,76,0.15);color:#C9A84C;border:1px solid #C9A84C;border-radius:8px;padding:8px 16px;margin:4px;text-decoration:none;font-size:12px;">📥 Download 3D File</a>';
     }
   });
 
-  html += dlHtml;
-  html += '<div style="background:linear-gradient(135deg,rgba(201,168,76,0.2),rgba(201,168,76,0.05));border:1px solid #C9A84C;border-radius:10px;padding:12px;margin-top:12px;text-align:center;"><div style="color:#C9A84C;font-size:13px;font-weight:700;">🖨️ BFOREVER™ PolyJet Print Ready</div><div style="color:#8899AA;font-size:11px;">Mimaki 3DUJ-553 | 10 Million+ Colours</div></div>';
+  var statusDiv = document.getElementById('photo3d-status');
+  var viewer = document.getElementById('model-viewer-3d');
+  var dlBtn = document.getElementById('download-3d-btn');
 
-  resultDiv.innerHTML = html;
-}
-</script>
-</body>
-</html>
+  if (modelUrl) {
+    statusDiv.innerHTML = '<p style="color:lightgreen;font-size:14px;">✅ 3D Model Ready! Rotate karke dekho!</p>';
+    viewer.setAttribute('src', modelUrl);
+    viewer.style.display = 'block';
+    dlBtn.href = downloadUrl;
+    dlBtn.style.display = 'block';
+  } else {
+    statusDiv.innerHTML = '<p style="color:#FF6666;">❌ Model URL nahi mila. Dobara try karo.</p>';
+  }
+} 
