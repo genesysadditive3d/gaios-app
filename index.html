@@ -831,14 +831,14 @@ async function generate3D() {
 
         var data = await res.json();
 
-        if (!data.predictionId) {
+        if (!data.predictionId && !data.id) {
           resultDiv.innerHTML = '<p style="color:#FF6666;">❌ Error: ' + (data.error || 'Start failed') + '</p>';
           if (btn) btn.disabled = false;
           return;
         }
 
         // Step 2: Frontend se poll karo
-        var predId = data.predictionId;
+        var predId = data.predictionId || data.id;
         var seconds = 0;
         
         for (var i = 0; i < 40; i++) {
