@@ -846,7 +846,7 @@ async function generate3D() {
           seconds += 5;
           resultDiv.querySelector('p').textContent = '⏳ 3D model ban raha hai... ' + seconds + ' seconds...';
 
-      var pollRes=await fetch('/.netlify/functions/photo3D?id='+predld);
+      var pollRes=await fetch('/.netlify/functions/photo3d?id='+predld);
 
           var pollData = await pollRes.json();
 
