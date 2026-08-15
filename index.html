@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>GAIOS™ v5.0 — Genesys AI Orchestration System</title>
 <link rel="icon" type="image/png" href="logo.png.jpeg">
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 <style>
   :root {
     --navy: #0A1628;
@@ -427,6 +428,14 @@
     font-size: 13px;
   }
   #photo3d-input { display: none; }
+  model-viewer {
+    width: 100%;
+    height: 350px;
+    background: #111;
+    border-radius: 12px;
+    border: 1px solid var(--gold);
+    margin-top: 12px;
+  }
 </style>
 </head>
 <body>
@@ -458,7 +467,7 @@
   <div class="nav-tab" onclick="showTab('verticals')">🎯 Verticals</div>
   <div class="nav-tab" onclick="showTab('contact')">📞 Contact</div>
   <div class="nav-tab" onclick="showTab('about')">ℹ️ About</div>
-  <div class="nav-tab" onclick="showTab('gen3d')">🎯 3D Gen</div>
+  <div class="nav-tab" onclick="showTab('gen3d')">🖨️ 3D Gen</div>
 </div>
 
 <!-- AI CONSOLE SECTION -->
@@ -626,28 +635,32 @@
     </div>
   </div>
   <div class="section-badge">💰 GRANTS & RECOGNITIONS</div>
+  <div class="grant-item"><div class="grant-name">TCOE TDIP — DoT Govt. of India</div><div class="grant-detail">Grant ₹1.25 Crore | App: TDIP2026-210422518</div><span class="grant-status status-applied">✅ Applied</span></div>
   <div class="grant-item"><div class="grant-name">IHFC IIT Delhi — UdyogTech Synapse 2026</div><div class="grant-detail">Grant up to ₹2 Crore | App: IHFC-786032</div><span class="grant-status status-applied">✅ Applied</span></div>
   <div class="grant-item"><div class="grant-name">iSTART QRate — Rajasthan Govt.</div><div class="grant-detail">Pre-Seed ₹2.4L → Platinum ₹2 Crore</div><span class="grant-status status-pending">⏳ Result Awaited</span></div>
   <div class="grant-item"><div class="grant-name">iDEX Open Challenge — MoD</div><div class="grant-detail">Grant up to ₹1.5 Crore | Deadline: 30 Sep 2026</div><span class="grant-status status-applied">✅ Applied</span></div>
   <div class="grant-item"><div class="grant-name">TIDE 2.0 — MeitY / JECRC</div><div class="grant-detail">Grant up to ₹47 Lakh</div><span class="grant-status status-applied">✅ Applied</span></div>
   <div class="grant-item"><div class="grant-name">TRI-PRAMan 4 — NCAM</div><div class="grant-detail">Additive Manufacturing + Medical DICOM</div><span class="grant-status status-applied">✅ Applied</span></div>
-  <div class="grant-item"><div class="grant-name">TATA Social Enterprise Challenge</div><div class="grant-detail">IIM Calcutta Innovation Park</div><span class="grant-status status-applied">✅ Applied</span></div>
-  <div class="grant-item" style="margin-bottom:14px;"><div class="grant-name">NCAM Startup Collaboration</div><div class="grant-detail">MeitY backed AM Ecosystem</div><span class="grant-status status-pending">⏳ Response Awaited</span></div>
+  <div class="grant-item" style="margin-bottom:14px;"><div class="grant-name">TATA Social Enterprise Challenge</div><div class="grant-detail">IIM Calcutta Innovation Park</div><span class="grant-status status-applied">✅ Applied</span></div>
   <div class="page-bottom"></div>
 </div>
 
 <!-- 3D GEN SECTION -->
 <div class="section" id="tab-gen3d">
   <div class="gen3d-box">
-    <h2>🎯 3D Preview Generator</h2>
-    <p>Photo upload karo — GAIOS™ 3D figurine preview banayega</p>
+    <h2>🖨️ 3D Preview Generator</h2>
+    <p>Photo upload karo — GAIOS™ AI se full-colour 3D model banayega</p>
     <label class="file-input-label" for="photo3d-input">
-      📸 Photo Choose Karo (Click Here)
+      📷 Photo Choose Karo (Click Here)
     </label>
     <input type="file" id="photo3d-input" accept="image/*" onchange="previewSelected()">
     <div id="preview-name" style="color:var(--gold);font-size:12px;margin-bottom:12px;"></div>
-    <button class="btn" id="gen3d-btn" style="width:100%;padding:13px;font-size:14px;" onclick="generate3D()">🚀 3D Generate Karo</button>
-    <div id="photo3d-result" style="margin-top:20px;"></div>
+    <button class="btn" id="gen3d-btn" style="width:100%;padding:13px;font-size:14px;" onclick="generate3D()">🚀 3D Model Generate Karo</button>
+    <div id="photo3d-status" style="margin-top:15px;color:var(--gold);font-size:13px;text-align:center;"></div>
+    <div id="photo3d-result" style="margin-top:10px;">
+      <model-viewer id="model-viewer-3d" style="display:none;" auto-rotate camera-controls shadow-intensity="1"></model-viewer>
+      <a id="download-3d-btn" style="display:none;margin-top:12px;display:none;text-align:center;padding:10px;background:var(--gold);color:#000;border-radius:8px;font-weight:bold;text-decoration:none;width:100%;display:none;" download="gaios-model.glb">⬇️ 3D Model Download Karo</a>
+    </div>
   </div>
   <div class="page-bottom"></div>
 </div>
@@ -662,22 +675,22 @@
   <div class="bottom-btn" id="nav-verticals" onclick="showTab('verticals')"><span class="icon">🎯</span>Verticals</div>
   <div class="bottom-btn" id="nav-contact" onclick="showTab('contact')"><span class="icon">📞</span>Contact</div>
   <div class="bottom-btn" id="nav-about" onclick="showTab('about')"><span class="icon">ℹ️</span>About</div>
-  <div class="bottom-btn" id="nav-gen3d" onclick="showTab('gen3d')"><span class="icon">🎯</span>3D Gen</div>
+  <div class="bottom-btn" id="nav-gen3d" onclick="showTab('gen3d')"><span class="icon">🖨️</span>3D Gen</div>
 </div>
 
 <script>
 // ===== SINGLE TAB FUNCTION =====
 function showTab(tab) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.bottom-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+  document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.bottom-btn').forEach(function(b) { b.classList.remove('active'); });
   var el = document.getElementById('tab-' + tab);
   if (el) el.classList.add('active');
   var navEl = document.getElementById('nav-' + tab);
   if (navEl) navEl.classList.add('active');
-  var navTabs = document.querySelectorAll('.nav-tab');
   var tabMap = ['console','bforever','verticals','contact','about','gen3d'];
   var idx = tabMap.indexOf(tab);
+  var navTabs = document.querySelectorAll('.nav-tab');
   if (idx >= 0 && navTabs[idx]) navTabs[idx].classList.add('active');
 }
 
@@ -799,21 +812,25 @@ function submitForm() {
   setTimeout(function() { document.getElementById('successMsg').style.display = 'none'; }, 5000);
 }
 
-// ===== 3D GEN — REAL REPLICATE API =====
+// ===== 3D GEN =====
 function previewSelected() {
   var f = document.getElementById('photo3d-input').files[0];
-  if (f) document.getElementById('preview-name').textContent = '✅ Selected: ' + f.name;
+  if (f) document.getElementById('preview-name').textContent = 'Selected: ' + f.name;
 }
 
- async function generate3D(){
+async function generate3D() {
   var fileInput = document.getElementById('photo3d-input');
-  var resultDiv = document.getElementById('photo3d-result');
+  var statusDiv = document.getElementById('photo3d-status');
+  var viewer = document.getElementById('model-viewer-3d');
+  var dlBtn = document.getElementById('download-3d-btn');
+
   if (!fileInput.files[0]) { alert('Pehle photo select karo!'); return; }
 
   var btn = document.getElementById('gen3d-btn');
   if (btn) btn.disabled = true;
-
-  resultDiv.innerHTML = '<p style="color:gold;margin-bottom:10px">⏳ GAIOS™ AI 3D model shuru kar raha hai...</p><div style="width:100%;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;"><div style="height:100%;background:#C9A84C;border-radius:3px;animation:prog 4s infinite;"></div></div><style>@keyframes prog{0%{width:5%}50%{width:85%}100%{width:95%}}</style>';
+  viewer.style.display = 'none';
+  dlBtn.style.display = 'none';
+  statusDiv.innerHTML = '⏳ GAIOS™ AI 3D model shuru kar raha hai...';
 
   try {
     var reader = new FileReader();
@@ -822,7 +839,6 @@ function previewSelected() {
       var imageType = fileInput.files[0].type || 'image/jpeg';
 
       try {
-        // Step 1: Prediction start karo
         var res = await fetch('/.netlify/functions/photo3d', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -831,71 +847,64 @@ function previewSelected() {
 
         var data = await res.json();
 
-        if (!data.predictionId && !data.id) {
-          resultDiv.innerHTML = '<p style="color:#FF6666;">❌ Error: ' + (data.error || 'Start failed') + '</p>';
+        if (!data.id) {
+          statusDiv.innerHTML = 'Error: ' + (data.error || 'Start failed');
           if (btn) btn.disabled = false;
           return;
         }
 
-        // Step 2: Frontend se poll karo
-        var predId = data.predictionId || data.id;
+        var predId = data.id;
         var seconds = 0;
-        
-        for (var i = 0; i < 40; i++) {
+
+        for (var i = 0; i < 60; i++) {
           await new Promise(function(r) { setTimeout(r, 5000); });
           seconds += 5;
-          resultDiv.querySelector('p').textContent = '⏳ 3D model ban raha hai... ' + seconds + ' seconds...';
+          statusDiv.innerHTML = '⏳ 3D model ban raha hai... ' + seconds + 's';
 
-      var pollRes=await fetch('/.netlify/functions/photo3d?id='+predld);
+          var pollRes = await fetch('/.netlify/functions/photo3d?id=' + predId, {
+            method: 'GET'
+          });
 
           var pollData = await pollRes.json();
 
           if (pollData.status === 'succeeded' && pollData.output) {
-            show3DResult(resultDiv, pollData.output);
+            var outputs = Array.isArray(pollData.output) ? pollData.output : [pollData.output];
+            var modelUrl = null;
+            outputs.forEach(function(url) {
+              if (url && url.match && url.match(/\.(glb|obj|gltf)/i)) modelUrl = url;
+            });
+
+            if (modelUrl) {
+              statusDiv.innerHTML = '✅ 3D Model Ready! Rotate karke dekho!';
+              viewer.setAttribute('src', modelUrl);
+              viewer.style.display = 'block';
+              dlBtn.href = modelUrl;
+              dlBtn.style.display = 'block';
+            } else {
+              statusDiv.innerHTML = '✅ Model ready! <a href="' + outputs[0] + '" target="_blank" style="color:var(--gold)">Download karo</a>';
+            }
             if (btn) btn.disabled = false;
             return;
           } else if (pollData.status === 'failed') {
-            resultDiv.innerHTML = '<p style="color:#FF6666;">❌ 3D generation failed. Try again.</p>';
+            statusDiv.innerHTML = 'Generation failed. Dobara try karo.';
             if (btn) btn.disabled = false;
             return;
           }
         }
 
-        resultDiv.innerHTML = '<p style="color:#FF6666;">❌ Timeout. Please try again.</p>';
+        statusDiv.innerHTML = 'Timeout. Please try again.';
         if (btn) btn.disabled = false;
 
       } catch(err) {
-        resultDiv.innerHTML = '<p style="color:#FF6666;">❌ Error: ' + err.message + '</p>';
+        statusDiv.innerHTML = 'Error: ' + err.message;
         if (btn) btn.disabled = false;
       }
     };
     reader.readAsDataURL(fileInput.files[0]);
   } catch(e) {
-    resultDiv.innerHTML = '<p style="color:#FF6666;">❌ Error: ' + e.message + '</p>';
+    statusDiv.innerHTML = 'Error: ' + e.message;
     if (btn) btn.disabled = false;
   }
-}
-
-function show3DResult(resultDiv, output) {
-  var outputs = Array.isArray(output) ? output : [output];
-  var html = '<p style="color:lightgreen;font-size:16px;margin-bottom:12px">✅ 3D Model Ready! Printing ke liye taiyar!</p>';
-  var dlHtml = '';
-
-  outputs.forEach(function(url, i) {
-    if (url && typeof url === 'string') {
-      if (url.match(/\.(png|jpg|jpeg|webp|gif)/i)) {
-        html += '<img src="' + url + '" style="max-width:100%;max-height:350px;object-fit:contain;border:2px solid gold;border-radius:12px;margin-bottom:10px;" alt="3D View">';
-      } else {
-        html += '<div style="padding:16px;color:#C9A84C;font-size:14px;border:1px solid #C9A84C;border-radius:8px;margin-bottom:10px;">✅ 3D Model File Ready!</div>';
-      }
-      dlHtml += '<a href="' + url + '" target="_blank" style="display:inline-block;background:rgba(201,168,76,0.15);color:#C9A84C;border:1px solid #C9A84C;border-radius:8px;padding:8px 16px;margin:4px;text-decoration:none;font-size:12px;">📥 Download 3D File</a>';
-    }
-  });
-
-  html += dlHtml;
-  html += '<div style="background:linear-gradient(135deg,rgba(201,168,76,0.2),rgba(201,168,76,0.05));border:1px solid #C9A84C;border-radius:10px;padding:12px;margin-top:12px;text-align:center;"><div style="color:#C9A84C;font-size:13px;font-weight:700;">🖨️ BFOREVER™ PolyJet Print Ready</div><div style="color:#8899AA;font-size:11px;">Mimaki 3DUJ-553 | 10 Million+ Colours</div></div>';
-
-  resultDiv.innerHTML = html;
 }
 </script>
 </body>
