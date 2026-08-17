@@ -1,4 +1,3 @@
-
 exports.handler = async (event) => {
   const REPLICATE_API_KEY = process.env.REPLICATE_API_KEY;
 
@@ -32,16 +31,15 @@ exports.handler = async (event) => {
         };
       }
 
-      const dataUri = `data:${imageType};base64,${imageBase64}`;
+      const dataUri = data:${imageType};base64,${imageBase64};
 
-      const createResponse = await fetch('https://api.replicate.com/v1/predictions', {
+      const createResponse = await fetch('https://api.replicate.com/v1/models/tencent/hunyuan-3d-3.1/predictions', {
         method: 'POST',
         headers: {
-          'Authorization': `Token ${REPLICATE_API_KEY}`,
+          'Authorization': Token ${REPLICATE_API_KEY},
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          version: '14bcf0ef5a1d638ef5cd78c30a72efb32344cdd9280efb5819fd15275cec85e3',
           input: { image: dataUri }
         })
       });
@@ -71,12 +69,12 @@ exports.handler = async (event) => {
         return {
           statusCode: 400,
           headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-          body: JSON.stringify({ error: 'No prediction ID' })
+          body: JSON.stringify({ error: 'No prediction ID provided' })
         };
       }
 
-      const pollResponse = await fetch(`https://api.replicate.com/v1/predictions/${predictionId}`, {
-        headers: { 'Authorization': `Token ${REPLICATE_API_KEY}` }
+      const pollResponse = await fetch(https://api.replicate.com/v1/predictions/${predictionId}, {
+        headers: { 'Authorization': Token ${REPLICATE_API_KEY} }
       });
 
       const result = await pollResponse.json();
@@ -84,7 +82,7 @@ exports.handler = async (event) => {
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-        body: JSON.stringify({ status: result.status, output: result.output, error: result.error })
+        body: JSON.stringify(result)
       };
 
     } catch (err) {
