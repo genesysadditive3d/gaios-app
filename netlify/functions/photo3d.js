@@ -31,12 +31,12 @@ exports.handler = async (event) => {
         };
       }
 
-      const dataUri = data:${imageType};base64,${imageBase64};
+      const dataUri = `data:${imageType};base64,${imageBase64}`;
 
       const createResponse = await fetch('https://api.replicate.com/v1/models/tencent/hunyuan-3d-3.1/predictions', {
         method: 'POST',
         headers: {
-          'Authorization': Token ${REPLICATE_API_KEY},
+          'Authorization': `Token ${REPLICATE_API_KEY}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -73,8 +73,8 @@ exports.handler = async (event) => {
         };
       }
 
-      const pollResponse = await fetch(https://api.replicate.com/v1/predictions/${predictionId}, {
-        headers: { 'Authorization': Token ${REPLICATE_API_KEY} }
+      const pollResponse = await fetch(`https://api.replicate.com/v1/predictions/${predictionId}`, {
+        headers: { 'Authorization': `Token ${REPLICATE_API_KEY}` }
       });
 
       const result = await pollResponse.json();
