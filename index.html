@@ -847,13 +847,13 @@ async function generate3D() {
 
         var data = await res.json();
 
-        if (!data.id) {
+        if (!data.predictionId) {
           statusDiv.innerHTML = 'Error: ' + (data.error || 'Start failed');
           if (btn) btn.disabled = false;
           return;
         }
 
-        var predId = data.id;
+        var predId = data.predictionId;
         var seconds = 0;
 
         for (var i = 0; i < 60; i++) {
