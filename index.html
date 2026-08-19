@@ -254,6 +254,27 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
 .ps{text-decoration:line-through;color:var(--gray);font-size:9.5px;}
 .pn{color:var(--green);font-weight:700;}
 
+/* ══ LOADING ANIMATION ══ */
+@keyframes scanAnim{0%{top:0;}100%{top:100%;}}
+@keyframes robotBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+@keyframes eyeBlink{0%,90%,100%{transform:scaleY(1);}95%{transform:scaleY(0.1);}}
+@keyframes antennaPulse{0%,100%{fill:#E8C97A;r:3;}50%{fill:#fff;r:4;}}
+@keyframes armWave{0%,100%{transform:rotate(0deg);transform-origin:top center;}25%{transform:rotate(15deg);transform-origin:top center;}75%{transform:rotate(-15deg);transform-origin:top center;}}
+@keyframes cubeRise{0%,100%{transform:scaleY(0.3);opacity:0.3;}50%{transform:scaleY(1);opacity:1;}}
+@keyframes mouthHappy{0%,100%{d:path('M 30 33 Q 40 40 50 33');}50%{d:path('M 30 35 Q 40 28 50 35');}}
+#robotSvg{animation:robotBob 1.5s ease-in-out infinite;}
+#eye1,#eye2{animation:eyeBlink 3s ease-in-out infinite;}
+#antennaDot{animation:antennaPulse 1s ease-in-out infinite;}
+#armL{animation:armWave 1.2s ease-in-out infinite;}
+#armR{animation:armWave 1.2s ease-in-out infinite reverse;}
+.build-cube{
+  width:10px;height:20px;
+  background:linear-gradient(180deg,#C9A84C,#6A4E20);
+  border-radius:2px;
+  animation:cubeRise 1s ease-in-out infinite;
+  transform-origin:bottom;
+}
+
 /* TOAST */
 .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:rgba(0,214,143,0.15);border:1px solid var(--green);color:var(--green);font-size:11.5px;font-weight:600;padding:9px 18px;border-radius:10px;z-index:500;display:none;animation:sd 0.3s ease;backdrop-filter:blur(10px);white-space:nowrap;max-width:90vw;text-align:center;}
 @keyframes sd{from{opacity:0;top:60px;}to{opacity:1;top:80px;}}
@@ -409,17 +430,93 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
   <button class="btn" id="gen3d-btn" style="width:100%;padding:13px;font-size:13px;margin-bottom:4px;" onclick="generate3D()">🚀 3D Model Generate Karo</button>
   <div style="font-size:9px;color:var(--gray);text-align:center;margin-bottom:8px;">Processing time: ~3-6 minutes | Auto photo compression</div>
 
-  <!-- Progress -->
+  <!-- WORLD CLASS LOADING ANIMATION -->
   <div class="progress-section" id="progressSection">
-    <div class="progress-text" id="progressText">⏳ GAIOS™ AI process kar raha hai...</div>
-    <div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:5%"></div></div>
-    <div class="time-est" id="timeEst">Estimated: 3-6 minutes</div>
-    <div class="steps-indicator" style="margin-top:12px;">
+
+    <!-- Animation Stage -->
+    <div id="animStage" style="background:linear-gradient(135deg,#040A14,#0A1628,#040A14);border:1px solid rgba(201,168,76,0.3);border-radius:16px;padding:20px 16px;margin-bottom:12px;text-align:center;position:relative;overflow:hidden;min-height:280px;">
+
+      <!-- Particle canvas background -->
+      <canvas id="particleCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.4;"></canvas>
+
+      <!-- Main character animation -->
+      <div id="animChar" style="position:relative;z-index:2;margin-bottom:10px;">
+        <!-- GAIOS Robot SVG -->
+        <svg id="robotSvg" width="80" height="100" viewBox="0 0 80 100" style="display:inline-block;filter:drop-shadow(0 0 12px rgba(201,168,76,0.6));">
+          <!-- Head -->
+          <rect x="22" y="10" width="36" height="30" rx="8" fill="#1A1A2E" stroke="#C9A84C" stroke-width="2"/>
+          <!-- Eyes -->
+          <circle id="eye1" cx="32" cy="25" r="5" fill="#C9A84C"/>
+          <circle id="eye2" cx="48" cy="25" r="5" fill="#C9A84C"/>
+          <circle cx="32" cy="25" r="2" fill="#040A14" id="pupil1"/>
+          <circle cx="48" cy="25" r="2" fill="#040A14" id="pupil2"/>
+          <!-- Antenna -->
+          <line x1="40" y1="10" x2="40" y2="2" stroke="#C9A84C" stroke-width="2"/>
+          <circle id="antennaDot" cx="40" cy="2" r="3" fill="#E8C97A"/>
+          <!-- Mouth -->
+          <path id="robotMouth" d="M 30 33 Q 40 40 50 33" stroke="#C9A84C" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <!-- Body -->
+          <rect x="18" y="44" width="44" height="35" rx="8" fill="#1A1A2E" stroke="#C9A84C" stroke-width="2"/>
+          <!-- Chest screen -->
+          <rect x="26" y="50" width="28" height="20" rx="4" fill="#0D1F3A" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
+          <!-- GAIOS text on screen -->
+          <text x="40" y="60" font-family="Arial" font-size="5" fill="#C9A84C" text-anchor="middle">GAIOS™</text>
+          <text x="40" y="66" font-family="Arial" font-size="4" fill="#00D68F" text-anchor="middle" id="screenText">PROCESSING</text>
+          <!-- Arms -->
+          <rect id="armL" x="6" y="46" width="10" height="24" rx="5" fill="#1A1A2E" stroke="#C9A84C" stroke-width="2"/>
+          <rect id="armR" x="64" y="46" width="10" height="24" rx="5" fill="#1A1A2E" stroke="#C9A84C" stroke-width="2"/>
+          <!-- Legs -->
+          <rect x="24" y="82" width="12" height="16" rx="4" fill="#1A1A2E" stroke="#C9A84C" stroke-width="2"/>
+          <rect x="44" y="82" width="12" height="16" rx="4" fill="#1A1A2E" stroke="#C9A84C" stroke-width="2"/>
+          <!-- Feet -->
+          <rect x="20" y="94" width="18" height="6" rx="3" fill="#C9A84C"/>
+          <rect x="42" y="94" width="18" height="6" rx="3" fill="#C9A84C"/>
+        </svg>
+      </div>
+
+      <!-- Speech bubble -->
+      <div id="speechBubble" style="position:relative;z-index:3;background:rgba(201,168,76,0.12);border:1.5px solid rgba(201,168,76,0.5);border-radius:12px;padding:10px 14px;margin:0 8px 12px;font-size:12px;font-weight:600;color:#E8C97A;min-height:44px;transition:all 0.5s ease;">
+        <span id="speechText">🤖 Ek second... main aapki photo ko 3D mein badal raha hoon!</span>
+      </div>
+
+      <!-- Scan line effect -->
+      <div id="scanLine" style="position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.8),transparent);animation:scanAnim 2s linear infinite;top:0;z-index:1;"></div>
+
+      <!-- 3D Model building visual -->
+      <div id="buildViz" style="display:flex;justify-content:center;gap:4px;margin-bottom:12px;position:relative;z-index:2;">
+        <div class="build-cube" style="animation-delay:0s"></div>
+        <div class="build-cube" style="animation-delay:0.1s"></div>
+        <div class="build-cube" style="animation-delay:0.2s"></div>
+        <div class="build-cube" style="animation-delay:0.3s"></div>
+        <div class="build-cube" style="animation-delay:0.4s"></div>
+        <div class="build-cube" style="animation-delay:0.5s"></div>
+        <div class="build-cube" style="animation-delay:0.6s"></div>
+        <div class="build-cube" style="animation-delay:0.7s"></div>
+        <div class="build-cube" style="animation-delay:0.8s"></div>
+        <div class="build-cube" style="animation-delay:0.9s"></div>
+        <div class="build-cube" style="animation-delay:1.0s"></div>
+        <div class="build-cube" style="animation-delay:1.1s"></div>
+      </div>
+
+      <!-- Progress bar inside animation -->
+      <div style="margin:0 8px;">
+        <div style="display:flex;justify-content:space-between;font-size:9.5px;color:rgba(201,168,76,0.7);margin-bottom:5px;">
+          <span id="progressText">⏳ Shuru ho raha hai...</span>
+          <span id="progressPct">0%</span>
+        </div>
+        <div class="progress-wrap" style="margin:0;"><div class="progress-bar" id="progressBar" style="width:5%"></div></div>
+        <div style="font-size:9px;color:var(--gray);text-align:center;margin-top:5px;" id="timeEst">Estimated: 3-6 minutes | Hunyuan 3D 3.1</div>
+      </div>
+    </div>
+
+    <!-- Step indicator outside -->
+    <div class="steps-indicator" style="margin-bottom:8px;">
       <div class="step-dot"><div class="step-circle active" id="sc1">1</div><span class="step-name">Upload</span></div>
       <div class="step-dot"><div class="step-circle" id="sc2">2</div><span class="step-name">AI Process</span></div>
       <div class="step-dot"><div class="step-circle" id="sc3">3</div><span class="step-name">3D Build</span></div>
       <div class="step-dot"><div class="step-circle" id="sc4">4</div><span class="step-name">Ready</span></div>
     </div>
+
   </div>
 
   <!-- Status -->
@@ -795,18 +892,142 @@ function updateBulkTotal(){
   document.getElementById('bulkTotal').textContent='₹'+total.toLocaleString('en-IN');
 }
 
+// ══ LOADING ANIMATION SYSTEM ══
+var funnyLines = [
+  "🤖 Ek second... main aapki photo ko 3D mein badal raha hoon!",
+  "😅 Yaar, itni sundar photo thi... ab 3D mein aur bhi sundar lagoge!",
+  "🔬 Har pixel ko personally check kar raha hoon... patience!",
+  "🎨 Rang bharenge, chehra banayenge... Mimaki printer ke liye taiyaar kar raha hoon!",
+  "🏗️ Ek ek layer build ho rahi hai... jaise Pali mein ghar banta hai!",
+  "🧠 GAIOS™ soch raha hai... aur woh bahut tez sochta hai!",
+  "☕ Thoda chai peeyein... model ban raha hai!",
+  "🌟 India ka pehla full-colour 3D hub — Pali, Rajasthan se namaste!",
+  "🎯 Accuracy: 99.9%... baaki 0.1% Gopal ji ke liye chhod diya!",
+  "🖨️ Mimaki 3DUJ-553 printer taiyaar ho rahi hai Pali mein!",
+  "🚀 Hunyuan AI ka jaadu dekho... Chinese technology, Indian innovation!",
+  "💫 DPIIT: DIPP274037 | Patent: IN202611090765 — guarantee hai quality ki!",
+  "🎪 3D model almost ready... thoda aur wait karo mere dost!",
+  "🤩 Jab model aayega, tum dekhte reh jaoge!",
+  "🏆 RIPS 2024 MoU signed, Government ka bharosa — quality assured!",
+];
+var lineIdx = 0;
+var speechInt = null;
+var particleAnim = null;
+
+function startSpeechBubbles() {
+  lineIdx = 0;
+  speechInt = setInterval(function(){
+    lineIdx = (lineIdx + 1) % funnyLines.length;
+    var sb = document.getElementById('speechBubble');
+    var st = document.getElementById('speechText');
+    if(sb && st) {
+      sb.style.opacity = '0';
+      sb.style.transform = 'translateY(-5px)';
+      setTimeout(function(){
+        st.textContent = funnyLines[lineIdx];
+        sb.style.opacity = '1';
+        sb.style.transform = 'translateY(0)';
+      }, 300);
+    }
+  }, 4000);
+}
+
+function stopSpeechBubbles() {
+  if(speechInt) clearInterval(speechInt);
+}
+
+// Particle system
+function initParticles() {
+  var canvas = document.getElementById('particleCanvas');
+  if(!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var particles = [];
+  var W = canvas.offsetWidth;
+  var H = canvas.offsetHeight;
+  canvas.width = W;
+  canvas.height = H;
+
+  for(var i = 0; i < 40; i++) {
+    particles.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 2 + 0.5,
+      dx: (Math.random() - 0.5) * 0.5,
+      dy: -Math.random() * 0.8 - 0.3,
+      alpha: Math.random(),
+      gold: Math.random() > 0.5
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(function(p) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.gold
+        ? 'rgba(201,168,76,' + p.alpha + ')'
+        : 'rgba(0,214,143,' + p.alpha * 0.5 + ')';
+      ctx.fill();
+      p.x += p.dx;
+      p.y += p.dy;
+      p.alpha += (Math.random() - 0.5) * 0.05;
+      p.alpha = Math.max(0.1, Math.min(0.8, p.alpha));
+      if(p.y < 0) { p.y = H; p.x = Math.random() * W; }
+      if(p.x < 0 || p.x > W) p.dx *= -1;
+    });
+    particleAnim = requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+function stopParticles() {
+  if(particleAnim) cancelAnimationFrame(particleAnim);
+  var canvas = document.getElementById('particleCanvas');
+  if(canvas) {
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+}
+
+// Update progress percentage display
+function updatePct(val) {
+  var el = document.getElementById('progressPct');
+  if(el) el.textContent = Math.round(val) + '%';
+}
+
 // ══ PROGRESS ══
 var progInt=null, progVal=5;
 function startProg(){
   progVal=5;
   document.getElementById('progressSection').style.display='block';
   document.getElementById('progressBar').style.width='5%';
+  updatePct(5);
+  startSpeechBubbles();
+  setTimeout(initParticles, 100);
   progInt=setInterval(function(){
-    if(progVal<80){progVal+=Math.random()*1.5;document.getElementById('progressBar').style.width=progVal+'%';}
+    if(progVal<82){
+      progVal+=Math.random()*1.8;
+      document.getElementById('progressBar').style.width=progVal+'%';
+      updatePct(progVal);
+    }
   },3000);
 }
-function doneProg(){clearInterval(progInt);document.getElementById('progressBar').style.width='100%';setTimeout(function(){document.getElementById('progressSection').style.display='none';},800);}
-function stopProg(){clearInterval(progInt);document.getElementById('progressSection').style.display='none';}
+function doneProg(){
+  clearInterval(progInt);
+  stopSpeechBubbles();
+  stopParticles();
+  document.getElementById('progressBar').style.width='100%';
+  updatePct(100);
+  var st = document.getElementById('speechText');
+  if(st) st.textContent = '🎉 Ho gaya! Aapka 3D model ready hai! Dekho dekho!';
+  setTimeout(function(){document.getElementById('progressSection').style.display='none';},1500);
+}
+function stopProg(){
+  clearInterval(progInt);
+  stopSpeechBubbles();
+  stopParticles();
+  document.getElementById('progressSection').style.display='none';
+}
 
 // ══ STEP INDICATOR ══
 function setStep(n){
