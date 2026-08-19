@@ -892,6 +892,154 @@ function updateBulkTotal(){
   document.getElementById('bulkTotal').textContent='₹'+total.toLocaleString('en-IN');
 }
 
+// ══ AUDIO SYSTEM ══
+var audioCtx = null;
+var bgMusicNode = null;
+var bgGainNode = null;
+var isMusicOn = false;
+
+function getAudioCtx() {
+  if(!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return audioCtx;
+}
+
+// Futuristic background music using Web Audio API
+function startBgMusic() {
+  try {
+    var ctx = getAudioCtx();
+    bgGainNode = ctx.createGain();
+    bgGainNode.gain.value = 0.08;
+    bgGainNode.connect(ctx.destination);
+
+    // Rhythm pattern - tech beat
+    var notes = [130, 196, 261, 196, 130, 165, 196, 261];
+    var noteIdx = 0;
+    var bpm = 120;
+    var beatTime = 60 / bpm;
+
+    function playNote(time, freq, dur) {
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(bgGainNode);
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.15, time);
+      gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
+      osc.start(time);
+      osc.stop(time + dur);
+
+      // Sub bass
+      var bass = ctx.createOscillator();
+      var bassGain = ctx.createGain();
+      bass.connect(bassGain);
+      bassGain.connect(bgGainNode);
+      bass.type = 'triangle';
+      bass.frequency.value = freq / 2;
+      bassGain.gain.setValueAtTime(0.08, time);
+      bassGain.gain.exponentialRampToValueAtTime(0.001, time + dur * 0.5);
+      bass.start(time);
+      bass.stop(time + dur * 0.5);
+    }
+
+    var startT = ctx.currentTime;
+    isMusicOn = true;
+
+    function scheduleBeat() {
+      if(!isMusicOn) return;
+      var t = ctx.currentTime + 0.1;
+      for(var i = 0; i < 8; i++) {
+        var freq = notes[(noteIdx + i) % notes.length];
+        playNote(t + i * beatTime * 0.5, freq, beatTime * 0.4);
+      }
+      noteIdx = (noteIdx + 8) % notes.length;
+      setTimeout(scheduleBeat, 4000);
+    }
+    scheduleBeat();
+
+    // Pulse effect every beat
+    function pulse() {
+      if(!isMusicOn) return;
+      playBeep(ctx, 880, 0.03, 0.05);
+      setTimeout(pulse, 500);
+    }
+    setTimeout(pulse, 200);
+
+  } catch(e) { console.log('Audio:', e); }
+}
+
+function playBeep(ctx, freq, vol, dur) {
+  try {
+    var o = ctx.createOscillator();
+    var g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type = 'square';
+    o.frequency.value = freq;
+    g.gain.value = vol;
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    o.start(); o.stop(ctx.currentTime + dur);
+  } catch(e) {}
+}
+
+function stopBgMusic() {
+  isMusicOn = false;
+  if(bgGainNode) {
+    try { bgGainNode.gain.value = 0; } catch(e) {}
+  }
+}
+
+// SUCCESS SOUND — triumphant!
+function playSuccessSound() {
+  try {
+    var ctx = getAudioCtx();
+    var melody = [523, 659, 784, 1047]; // C E G C — victory!
+    melody.forEach(function(freq, i) {
+      var o = ctx.createOscillator();
+      var g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.type = 'sine';
+      o.frequency.value = freq;
+      g.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.15);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.4);
+      o.start(ctx.currentTime + i * 0.15);
+      o.stop(ctx.currentTime + i * 0.15 + 0.5);
+    });
+    // Final chord
+    setTimeout(function() {
+      [523, 659, 784].forEach(function(f) { playBeep(ctx, f, 0.15, 0.8); });
+    }, 700);
+  } catch(e) {}
+}
+
+// ERROR SOUND
+function playErrorSound() {
+  try {
+    var ctx = getAudioCtx();
+    [400, 300, 200].forEach(function(freq, i) {
+      setTimeout(function() { playBeep(ctx, freq, 0.1, 0.2); }, i * 150);
+    });
+  } catch(e) {}
+}
+
+// ROBOT VOICE — speaks the funny lines!
+function speakLine(text) {
+  if(!window.speechSynthesis) return;
+  // Clean emoji from text for speech
+  var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu, '')
+                  .replace(/[^\u0000-\u024F\u0900-\u097F ]/g, '')
+                  .trim();
+  if(!clean) return;
+  window.speechSynthesis.cancel();
+  var utt = new SpeechSynthesisUtterance(clean);
+  utt.lang = 'hi-IN';
+  utt.rate = 1.1;
+  utt.pitch = 1.3; // Slightly robotic high pitch
+  utt.volume = 0.9;
+  window.speechSynthesis.speak(utt);
+}
+
 // ══ LOADING ANIMATION SYSTEM ══
 var funnyLines = [
   "🤖 Ek second... main aapki photo ko 3D mein badal raha hoon!",
@@ -905,7 +1053,7 @@ var funnyLines = [
   "🎯 Accuracy: 99.9%... baaki 0.1% Gopal ji ke liye chhod diya!",
   "🖨️ Mimaki 3DUJ-553 printer taiyaar ho rahi hai Pali mein!",
   "🚀 Hunyuan AI ka jaadu dekho... Chinese technology, Indian innovation!",
-  "💫 DPIIT: DIPP274037 | Patent: IN202611090765 — guarantee hai quality ki!",
+  "💫 DPIIT number hai, Patent hai — guarantee hai quality ki!",
   "🎪 3D model almost ready... thoda aur wait karo mere dost!",
   "🤩 Jab model aayega, tum dekhte reh jaoge!",
   "🏆 RIPS 2024 MoU signed, Government ka bharosa — quality assured!",
@@ -916,6 +1064,8 @@ var particleAnim = null;
 
 function startSpeechBubbles() {
   lineIdx = 0;
+  // Speak first line immediately
+  speakLine(funnyLines[0]);
   speechInt = setInterval(function(){
     lineIdx = (lineIdx + 1) % funnyLines.length;
     var sb = document.getElementById('speechBubble');
@@ -924,16 +1074,19 @@ function startSpeechBubbles() {
       sb.style.opacity = '0';
       sb.style.transform = 'translateY(-5px)';
       setTimeout(function(){
-        st.textContent = funnyLines[lineIdx];
+        var line = funnyLines[lineIdx];
+        st.textContent = line;
         sb.style.opacity = '1';
         sb.style.transform = 'translateY(0)';
+        speakLine(line);
       }, 300);
     }
-  }, 4000);
+  }, 5000);
 }
 
 function stopSpeechBubbles() {
   if(speechInt) clearInterval(speechInt);
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
 }
 
 // Particle system
@@ -1003,6 +1156,7 @@ function startProg(){
   document.getElementById('progressBar').style.width='5%';
   updatePct(5);
   startSpeechBubbles();
+  startBgMusic();
   setTimeout(initParticles, 100);
   progInt=setInterval(function(){
     if(progVal<82){
@@ -1015,17 +1169,22 @@ function startProg(){
 function doneProg(){
   clearInterval(progInt);
   stopSpeechBubbles();
+  stopBgMusic();
   stopParticles();
+  playSuccessSound();
   document.getElementById('progressBar').style.width='100%';
   updatePct(100);
   var st = document.getElementById('speechText');
   if(st) st.textContent = '🎉 Ho gaya! Aapka 3D model ready hai! Dekho dekho!';
-  setTimeout(function(){document.getElementById('progressSection').style.display='none';},1500);
+  speakLine('Ho gaya! Aapka teen dee model ready hai! Dekho dekho!');
+  setTimeout(function(){document.getElementById('progressSection').style.display='none';},1800);
 }
 function stopProg(){
   clearInterval(progInt);
   stopSpeechBubbles();
+  stopBgMusic();
   stopParticles();
+  playErrorSound();
   document.getElementById('progressSection').style.display='none';
 }
 
