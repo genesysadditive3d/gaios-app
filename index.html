@@ -1,455 +1,289 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="hi" data-lang="hi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>GAIOS™ v6.0 — Genesys AI Orchestration System</title>
+<title>GAIOS™ v6.1 — Genesys AI Orchestration System</title>
 <link rel="icon" type="image/png" href="logo.png.jpeg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 <style>
-:root {
-  --navy: #070F1E;
-  --navy2: #0C1830;
-  --gold: #C9A84C;
-  --gold-light: #E8C97A;
-  --gold-dim: rgba(201,168,76,0.12);
-  --gold-border: rgba(201,168,76,0.28);
-  --white: #FFFFFF;
-  --off-white: #E8EDF4;
-  --gray: #7A8FA6;
-  --gray2: #4A5F78;
-  --green: #00D68F;
-  --red: #FF4D6D;
-  --blue: #4D9FFF;
-  --card: rgba(255,255,255,0.035);
-  --card2: rgba(255,255,255,0.06);
-  --font-display: 'Syne', sans-serif;
-  --font-body: 'Space Grotesk', sans-serif;
+:root{
+  --navy:#070F1E;--navy2:#0C1830;
+  --gold:#C9A84C;--gold-light:#E8C97A;
+  --gold-dim:rgba(201,168,76,0.12);
+  --gold-border:rgba(201,168,76,0.28);
+  --white:#FFFFFF;--off-white:#E8EDF4;
+  --gray:#7A8FA6;--gray2:#4A5F78;
+  --green:#00D68F;--red:#FF4D6D;--blue:#4D9FFF;
+  --card:rgba(255,255,255,0.035);
+  --fd:'Space Grotesk',sans-serif;
+  --fh:'Syne',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
-body{
-  background:var(--navy);
-  color:var(--off-white);
-  font-family:var(--font-body);
-  min-height:100vh;
-  overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-}
+body{background:var(--navy);color:var(--off-white);font-family:var(--fd);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
 
-/* ── HEADER ── */
-.header{
-  background:linear-gradient(180deg,#040A14 0%,#070F1E 100%);
-  border-bottom:1px solid var(--gold-border);
-  padding:12px 16px 10px;
-  text-align:center;
-  position:sticky;top:0;z-index:200;
-  box-shadow:0 2px 40px rgba(0,0,0,0.7);
-}
-.logo-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:3px;}
-.logo-img{width:36px;height:36px;object-fit:contain;border-radius:50%;border:1px solid var(--gold-border);}
-.brand-name{
-  font-family:var(--font-display);
-  font-size:28px;font-weight:800;
-  color:var(--gold);letter-spacing:4px;
-  text-shadow:0 0 30px rgba(201,168,76,0.4);
-}
-.brand-v{
-  font-size:10px;font-weight:600;
-  background:var(--gold);color:var(--navy);
-  padding:1px 6px;border-radius:4px;
-  margin-left:4px;letter-spacing:1px;vertical-align:middle;
-}
-.brand-sub{font-size:9.5px;color:rgba(201,168,76,0.6);letter-spacing:2.5px;margin-bottom:7px;}
-.reg-bar{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin-bottom:7px;}
-.reg-tag{
-  background:rgba(201,168,76,0.08);
-  border:1px solid rgba(201,168,76,0.22);
-  color:rgba(201,168,76,0.85);
-  font-size:8px;padding:2px 7px;border-radius:20px;letter-spacing:0.4px;
-}
-.status-row{display:flex;align-items:center;justify-content:center;gap:6px;font-size:10.5px;}
+/* HEADER */
+.header{background:linear-gradient(180deg,#040A14,#070F1E);border-bottom:1px solid var(--gold-border);padding:11px 14px 9px;text-align:center;position:sticky;top:0;z-index:200;box-shadow:0 2px 40px rgba(0,0,0,0.8);}
+.logo-row{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:3px;}
+.logo-img{width:34px;height:34px;object-fit:contain;border-radius:50%;border:1px solid var(--gold-border);}
+.brand-name{font-family:var(--fh);font-size:26px;font-weight:800;color:var(--gold);letter-spacing:4px;text-shadow:0 0 30px rgba(201,168,76,0.4);}
+.brand-v{font-size:9px;font-weight:700;background:var(--gold);color:var(--navy);padding:1px 5px;border-radius:4px;margin-left:3px;letter-spacing:1px;vertical-align:middle;}
+.brand-sub{font-size:9px;color:rgba(201,168,76,0.6);letter-spacing:2.5px;margin-bottom:6px;}
+.reg-bar{display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin-bottom:6px;}
+.reg-tag{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);color:rgba(201,168,76,0.85);font-size:7.5px;padding:2px 6px;border-radius:20px;}
+.status-row{display:flex;align-items:center;justify-content:center;gap:6px;font-size:10px;}
 .dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2.5s infinite;}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,214,143,0.5);}50%{box-shadow:0 0 0 6px rgba(0,214,143,0);}}
-.status-text{color:var(--green);font-weight:600;font-size:10.5px;}
+.status-text{color:var(--green);font-weight:600;}
 
-/* ── NAV ── */
-.nav-tabs{
-  display:flex;background:rgba(0,0,0,0.4);
-  border-bottom:1px solid var(--gold-border);
-  overflow-x:auto;scrollbar-width:none;
-}
+/* LANG TOGGLE */
+.lang-toggle{position:absolute;top:10px;right:12px;display:flex;gap:4px;}
+.lang-btn{font-size:9px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer;border:1px solid var(--gold-border);background:transparent;color:var(--gray);font-family:var(--fd);transition:all 0.2s;}
+.lang-btn.active{background:var(--gold);color:var(--navy);border-color:var(--gold);}
+
+/* NAV */
+.nav-tabs{display:flex;background:rgba(0,0,0,0.4);border-bottom:1px solid var(--gold-border);overflow-x:auto;scrollbar-width:none;}
 .nav-tabs::-webkit-scrollbar{display:none;}
-.nav-tab{
-  flex:none;padding:10px 15px;
-  font-family:var(--font-body);
-  font-size:10.5px;font-weight:600;
-  color:var(--gray);cursor:pointer;
-  border-bottom:2px solid transparent;
-  white-space:nowrap;transition:all 0.2s;letter-spacing:0.4px;
-}
+.nav-tab{flex:none;padding:10px 14px;font-size:10.5px;font-weight:600;color:var(--gray);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.2s;letter-spacing:0.3px;}
 .nav-tab.active{color:var(--gold);border-bottom-color:var(--gold);background:rgba(201,168,76,0.07);}
 
-/* ── SECTIONS ── */
-.section{display:none;padding:14px 14px 80px;}
+/* SECTIONS */
+.section{display:none;padding:13px 13px 80px;}
 .section.active{display:block;}
 
-/* ── CARDS ── */
-.card{
-  background:var(--card);
-  border:1px solid var(--gold-border);
-  border-radius:14px;
-  padding:16px;margin-bottom:14px;
-  transition:border-color 0.2s;
-}
-.card:hover{border-color:rgba(201,168,76,0.5);}
-.card-title{
-  font-family:var(--font-display);
-  color:var(--gold);font-size:11.5px;font-weight:700;
-  letter-spacing:1.5px;margin-bottom:12px;
-  display:flex;align-items:center;gap:7px;
-}
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--gold-border);border-radius:14px;padding:15px;margin-bottom:13px;}
+.card-title{font-family:var(--fh);color:var(--gold);font-size:11px;font-weight:700;letter-spacing:1.5px;margin-bottom:11px;display:flex;align-items:center;gap:6px;}
 
-/* ── CHAT ── */
-.chat-area{
-  background:rgba(0,0,0,0.35);
-  border-radius:10px;border:1px solid rgba(255,255,255,0.05);
-  min-height:200px;max-height:300px;
-  overflow-y:auto;padding:12px;margin-bottom:12px;
-  font-size:13px;line-height:1.6;
-  scroll-behavior:smooth;
-}
+/* CHAT */
+.chat-area{background:rgba(0,0,0,0.35);border-radius:10px;border:1px solid rgba(255,255,255,0.05);min-height:180px;max-height:280px;overflow-y:auto;padding:11px;margin-bottom:11px;font-size:13px;line-height:1.6;}
 .chat-area::-webkit-scrollbar{width:3px;}
 .chat-area::-webkit-scrollbar-thumb{background:var(--gold-border);border-radius:3px;}
-.msg-ai{
-  color:var(--off-white);margin-bottom:10px;
-  padding:10px 13px;
-  background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.03));
-  border-radius:0 12px 12px 12px;
-  border-left:3px solid var(--gold);
-  animation:fadeIn 0.3s ease;
-}
-.msg-user{
-  color:#c8d8ff;margin-bottom:10px;
-  padding:10px 13px;
-  background:rgba(77,159,255,0.08);
-  border-radius:12px 0 12px 12px;
-  border-right:3px solid var(--blue);
-  text-align:right;animation:fadeIn 0.3s ease;
-}
-@keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
-.input-row{display:flex;gap:8px;align-items:center;}
-.ai-input{
-  flex:1;background:rgba(255,255,255,0.06);
-  border:1px solid var(--gold-border);border-radius:10px;
-  color:var(--white);font-family:var(--font-body);
-  font-size:13px;padding:11px 14px;outline:none;
-  transition:border-color 0.2s,background 0.2s;
-}
+.msg-ai{color:var(--off-white);margin-bottom:9px;padding:9px 12px;background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.02));border-radius:0 11px 11px 11px;border-left:3px solid var(--gold);animation:fi 0.3s ease;}
+.msg-user{color:#c8d8ff;margin-bottom:9px;padding:9px 12px;background:rgba(77,159,255,0.08);border-radius:11px 0 11px 11px;border-right:3px solid var(--blue);text-align:right;animation:fi 0.3s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+.input-row{display:flex;gap:7px;align-items:center;}
+.ai-input{flex:1;background:rgba(255,255,255,0.06);border:1px solid var(--gold-border);border-radius:10px;color:var(--white);font-family:var(--fd);font-size:13px;padding:10px 13px;outline:none;transition:all 0.2s;}
 .ai-input:focus{border-color:var(--gold);background:rgba(255,255,255,0.09);}
 .ai-input::placeholder{color:var(--gray2);}
 
-/* ── BUTTONS ── */
-.btn{
-  background:linear-gradient(135deg,#C9A84C,#A8842C);
-  color:var(--navy);border:none;border-radius:10px;
-  padding:11px 16px;font-size:12px;font-weight:700;
-  cursor:pointer;transition:all 0.2s;letter-spacing:0.4px;
-  font-family:var(--font-body);
-}
+/* BUTTONS */
+.btn{background:linear-gradient(135deg,#C9A84C,#A8842C);color:var(--navy);border:none;border-radius:10px;padding:11px 15px;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:var(--fd);}
 .btn:hover{background:linear-gradient(135deg,#E8C97A,#C9A84C);transform:translateY(-1px);box-shadow:0 4px 15px rgba(201,168,76,0.3);}
 .btn:active{transform:none;}
-.btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
-.btn-outline{
-  background:transparent;
-  border:1px solid var(--gold-border);
-  color:var(--gold);border-radius:10px;
-  padding:10px 16px;font-size:12px;font-weight:600;
-  cursor:pointer;transition:all 0.2s;font-family:var(--font-body);
-}
+.btn:disabled{opacity:0.45;cursor:not-allowed;transform:none;}
+.btn-outline{background:transparent;border:1px solid var(--gold-border);color:var(--gold);border-radius:10px;padding:10px 15px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:var(--fd);}
 .btn-outline:hover{background:var(--gold-dim);border-color:var(--gold);}
-.btn-voice{
-  background:rgba(201,168,76,0.1);color:var(--gold);
-  border:1px solid var(--gold-border);border-radius:10px;
-  padding:11px 13px;font-size:16px;cursor:pointer;transition:all 0.2s;
-}
-.btn-voice.listening{
-  background:rgba(255,77,109,0.15);color:#FF4D6D;
-  border-color:#FF4D6D;animation:pulse-red 1s infinite;
-}
-@keyframes pulse-red{0%,100%{box-shadow:0 0 0 0 rgba(255,77,109,0.4);}50%{box-shadow:0 0 0 8px rgba(255,77,109,0);}}
+.btn-voice{background:rgba(201,168,76,0.1);color:var(--gold);border:1px solid var(--gold-border);border-radius:10px;padding:10px 13px;font-size:16px;cursor:pointer;transition:all 0.2s;}
+.btn-voice.listening{background:rgba(255,77,109,0.15);color:#FF4D6D;border-color:#FF4D6D;animation:pr 1s infinite;}
+@keyframes pr{0%,100%{box-shadow:0 0 0 0 rgba(255,77,109,0.4);}50%{box-shadow:0 0 0 8px rgba(255,77,109,0);}}
 .btn-green{background:linear-gradient(135deg,#00D68F,#00A86B);color:#fff;}
 .btn-green:hover{background:linear-gradient(135deg,#00F0A0,#00D68F);}
 .btn-share{background:linear-gradient(135deg,#25D366,#1DA851);color:#fff;}
+.btn-insta{background:linear-gradient(135deg,#E1306C,#833AB4);color:#fff;}
+.btn-fb{background:linear-gradient(135deg,#1877F2,#0D5DBF);color:#fff;}
 
-/* ── QUICK CMDS ── */
-.quick-cmds{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
-.quick-cmd{
-  background:rgba(201,168,76,0.08);
-  border:1px solid rgba(201,168,76,0.2);
-  color:var(--gold);font-size:10px;
-  padding:5px 11px;border-radius:20px;
-  cursor:pointer;transition:all 0.2s;font-family:var(--font-body);
-}
+/* QUICK CMDS */
+.quick-cmds{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px;}
+.quick-cmd{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);color:var(--gold);font-size:9.5px;padding:4px 10px;border-radius:20px;cursor:pointer;transition:all 0.2s;font-family:var(--fd);}
 .quick-cmd:hover{background:rgba(201,168,76,0.2);transform:translateY(-1px);}
 
-/* ── VERTICAL GRID ── */
-.v-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
-.v-card{
-  background:var(--card);border:1px solid var(--gold-border);
-  border-radius:12px;padding:13px;cursor:pointer;
-  transition:all 0.25s;
-}
+/* GRIDS */
+.v-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px;}
+.v-card{background:var(--card);border:1px solid var(--gold-border);border-radius:12px;padding:12px;cursor:pointer;transition:all 0.25s;}
 .v-card:hover{border-color:var(--gold);background:var(--gold-dim);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.3);}
-.v-icon{font-size:24px;margin-bottom:7px;}
-.v-title{font-size:11.5px;font-weight:700;color:var(--gold);margin-bottom:3px;}
-.v-desc{font-size:9.5px;color:var(--gray);line-height:1.5;}
+.v-icon{font-size:22px;margin-bottom:6px;}
+.v-title{font-size:11px;font-weight:700;color:var(--gold);margin-bottom:3px;}
+.v-desc{font-size:9px;color:var(--gray);line-height:1.5;}
 
-/* ── INFO ROWS ── */
-.info-row{
-  display:flex;justify-content:space-between;align-items:flex-start;
-  padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.05);
-  font-size:11.5px;
-}
+/* INFO */
+.info-row{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:11px;}
 .info-row:last-child{border:none;}
 .info-key{color:var(--gray);flex:0 0 42%;}
 .info-val{color:var(--off-white);flex:0 0 56%;text-align:right;font-weight:500;}
 
-/* ── FORM ── */
-.form-group{margin-bottom:13px;}
-.form-label{display:block;font-size:11px;color:var(--gold);font-weight:600;margin-bottom:6px;letter-spacing:0.4px;}
-.form-input,.form-select,.form-textarea{
-  width:100%;background:rgba(255,255,255,0.05);
-  border:1px solid var(--gold-border);border-radius:10px;
-  color:var(--white);font-family:var(--font-body);
-  font-size:13px;padding:11px 13px;outline:none;
-  transition:border-color 0.2s,background 0.2s;
-}
-.form-input:focus,.form-select:focus,.form-textarea:focus{
-  border-color:var(--gold);background:rgba(255,255,255,0.08);
-}
-.form-textarea{min-height:80px;resize:vertical;}
+/* FORM */
+.form-group{margin-bottom:12px;}
+.form-label{display:block;font-size:11px;color:var(--gold);font-weight:600;margin-bottom:5px;letter-spacing:0.4px;}
+.form-input,.form-select,.form-textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--gold-border);border-radius:10px;color:var(--white);font-family:var(--fd);font-size:13px;padding:10px 12px;outline:none;transition:all 0.2s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--gold);background:rgba(255,255,255,0.08);}
+.form-textarea{min-height:75px;resize:vertical;}
 .form-select option{background:var(--navy2);}
 
-/* ── GRANT ITEMS ── */
-.grant-item{
-  background:var(--card);border:1px solid var(--gold-border);
-  border-radius:10px;padding:12px;margin-bottom:8px;
-}
-.grant-name{font-size:12px;font-weight:700;color:var(--gold);margin-bottom:3px;}
-.grant-detail{font-size:10px;color:var(--gray);margin-bottom:5px;}
-.badge{
-  display:inline-block;font-size:9px;
-  padding:2px 9px;border-radius:20px;font-weight:600;
-}
-.badge-green{background:rgba(0,214,143,0.12);color:var(--green);border:1px solid rgba(0,214,143,0.3);}
-.badge-yellow{background:rgba(255,200,0,0.12);color:#ffcc00;border:1px solid rgba(255,200,0,0.3);}
-.badge-blue{background:rgba(77,159,255,0.12);color:var(--blue);border:1px solid rgba(77,159,255,0.3);}
+/* GRANTS */
+.grant-item{background:var(--card);border:1px solid var(--gold-border);border-radius:10px;padding:11px;margin-bottom:8px;}
+.grant-name{font-size:11.5px;font-weight:700;color:var(--gold);margin-bottom:3px;}
+.grant-detail{font-size:9.5px;color:var(--gray);margin-bottom:5px;}
+.badge{display:inline-block;font-size:8.5px;padding:2px 8px;border-radius:20px;font-weight:600;}
+.bg{background:rgba(0,214,143,0.12);color:var(--green);border:1px solid rgba(0,214,143,0.3);}
+.by{background:rgba(255,200,0,0.12);color:#ffcc00;border:1px solid rgba(255,200,0,0.3);}
+.bb{background:rgba(77,159,255,0.12);color:var(--blue);border:1px solid rgba(77,159,255,0.3);}
 
-/* ── SECTION BADGE ── */
-.sec-badge{
-  display:inline-block;
-  background:var(--gold-dim);border:1px solid var(--gold-border);
-  color:var(--gold);font-size:9.5px;font-weight:700;
-  padding:3px 12px;border-radius:20px;margin-bottom:13px;letter-spacing:1.5px;
-}
-.divider{height:1px;background:var(--gold-border);margin:16px 0;opacity:0.5;}
+/* BADGES */
+.sec-badge{display:inline-block;background:var(--gold-dim);border:1px solid var(--gold-border);color:var(--gold);font-size:9px;font-weight:700;padding:3px 11px;border-radius:20px;margin-bottom:12px;letter-spacing:1.5px;}
+.divider{height:1px;background:var(--gold-border);margin:14px 0;opacity:0.4;}
 
-/* ── 3D GEN SPECIFIC ── */
-.gen3d-hero{
-  background:linear-gradient(135deg,rgba(201,168,76,0.1),rgba(201,168,76,0.03));
-  border:1px solid var(--gold-border);border-radius:16px;
-  padding:22px 18px;text-align:center;margin-bottom:16px;
-}
-.gen3d-title{font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--gold);margin-bottom:6px;}
-.gen3d-sub{color:var(--gray);font-size:12px;line-height:1.6;margin-bottom:18px;}
+/* ══ 3D STUDIO ══ */
+.gen3d-hero{background:linear-gradient(135deg,rgba(201,168,76,0.1),rgba(201,168,76,0.02));border:1px solid var(--gold-border);border-radius:16px;padding:20px 16px;text-align:center;margin-bottom:14px;}
+.gen3d-title{font-family:var(--fh);font-size:19px;font-weight:800;color:var(--gold);margin-bottom:5px;}
+.gen3d-sub{color:var(--gray);font-size:11.5px;line-height:1.6;}
 
-/* Multi-photo upload */
-.upload-area{
-  border:2px dashed var(--gold-border);border-radius:12px;
-  padding:22px 16px;cursor:pointer;
-  background:rgba(201,168,76,0.04);
-  transition:all 0.2s;text-align:center;
-  margin-bottom:12px;
-}
+/* UPLOAD */
+.upload-area{border:2px dashed var(--gold-border);border-radius:12px;padding:18px 14px;cursor:pointer;background:rgba(201,168,76,0.03);transition:all 0.2s;text-align:center;margin-bottom:10px;}
 .upload-area:hover{border-color:var(--gold);background:var(--gold-dim);}
-.upload-area.has-files{border-color:var(--green);background:rgba(0,214,143,0.05);}
-.upload-icon{font-size:32px;margin-bottom:8px;}
-.upload-text{color:var(--gold);font-size:13px;font-weight:600;margin-bottom:4px;}
-.upload-hint{color:var(--gray);font-size:10.5px;}
+.upload-area.has-files{border-color:var(--green);background:rgba(0,214,143,0.04);}
+.upload-icon{font-size:30px;margin-bottom:6px;}
+.upload-text{color:var(--gold);font-size:13px;font-weight:600;margin-bottom:3px;}
+.upload-hint{color:var(--gray);font-size:10px;}
 #photo3d-input{display:none;}
 
-/* Photo thumbs */
-.thumb-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
-.thumb{
-  width:64px;height:64px;border-radius:8px;
-  object-fit:cover;border:2px solid var(--gold-border);
-  cursor:pointer;transition:border-color 0.2s;
-}
-.thumb.selected{border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,168,76,0.4);}
+/* IMAGE PREVIEW */
+.preview-section{display:none;margin-bottom:12px;}
+.preview-label{font-size:10px;color:var(--gold);font-weight:600;margin-bottom:8px;letter-spacing:0.5px;}
+.thumb-row{display:flex;gap:8px;flex-wrap:wrap;}
+.thumb-wrap{position:relative;}
+.thumb{width:72px;height:72px;border-radius:10px;object-fit:cover;border:2px solid var(--gold-border);cursor:pointer;transition:all 0.2s;display:block;}
+.thumb.selected{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,0.3);}
+.thumb-remove{position:absolute;top:-6px;right:-6px;width:18px;height:18px;background:var(--red);border-radius:50%;font-size:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-weight:700;border:1px solid var(--navy);}
 
-/* Progress bar */
-.progress-wrap{
-  background:rgba(255,255,255,0.06);
-  border-radius:20px;height:8px;
-  margin:14px 0;overflow:hidden;
-  border:1px solid var(--gold-border);
-}
-.progress-bar{
-  height:100%;border-radius:20px;
-  background:linear-gradient(90deg,#C9A84C,#E8C97A,#C9A84C);
-  background-size:200% 100%;
-  animation:shimmer 1.5s infinite;
-  transition:width 0.5s ease;
-}
+/* QUALITY CHECK */
+.quality-bar{margin-bottom:12px;display:none;}
+.quality-label{font-size:10px;color:var(--gray);margin-bottom:5px;}
+.quality-indicator{display:flex;gap:6px;align-items:center;}
+.quality-dot{width:10px;height:10px;border-radius:50%;}
+.quality-text{font-size:11px;font-weight:600;}
+
+/* COLOUR ADJUSTMENT */
+.colour-box{background:rgba(255,255,255,0.03);border:1px solid var(--gold-border);border-radius:10px;padding:12px;margin-bottom:12px;display:none;}
+.colour-title{font-size:10px;color:var(--gold);font-weight:600;margin-bottom:10px;letter-spacing:0.5px;}
+.slider-group{margin-bottom:8px;}
+.slider-label{display:flex;justify-content:space-between;font-size:10px;color:var(--gray);margin-bottom:4px;}
+.slider{width:100%;height:4px;border-radius:2px;background:rgba(255,255,255,0.1);outline:none;-webkit-appearance:none;cursor:pointer;}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--gold);cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.3);}
+
+/* PROGRESS */
+.progress-wrap{background:rgba(255,255,255,0.06);border-radius:20px;height:8px;overflow:hidden;border:1px solid var(--gold-border);}
+.progress-bar{height:100%;border-radius:20px;background:linear-gradient(90deg,#C9A84C,#E8C97A,#C9A84C);background-size:200% 100%;animation:shimmer 1.5s infinite;transition:width 0.5s ease;}
 @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
-.progress-text{font-size:11px;color:var(--gold);text-align:center;margin-bottom:8px;font-weight:600;}
-.time-estimate{font-size:10px;color:var(--gray);text-align:center;}
+.progress-section{display:none;margin-top:13px;}
+.progress-text{font-size:11px;color:var(--gold);text-align:center;margin-bottom:7px;font-weight:600;}
+.time-est{font-size:9.5px;color:var(--gray);text-align:center;margin-top:5px;}
 
-/* Status messages */
-.status-box{
-  border-radius:10px;padding:12px 14px;
-  margin:12px 0;font-size:12px;font-weight:600;
-  text-align:center;display:none;
-}
-.status-processing{
-  background:rgba(201,168,76,0.1);
-  border:1px solid rgba(201,168,76,0.3);
-  color:var(--gold);
-}
-.status-success{
-  background:rgba(0,214,143,0.1);
-  border:1px solid rgba(0,214,143,0.3);
-  color:var(--green);
-}
-.status-error{
-  background:rgba(255,77,109,0.1);
-  border:1px solid rgba(255,77,109,0.3);
-  color:var(--red);
-}
+/* STEPS INDICATOR */
+.steps-indicator{display:flex;justify-content:space-between;margin-top:10px;}
+.step-dot{flex:1;text-align:center;position:relative;}
+.step-dot:not(:last-child):after{content:'';position:absolute;top:8px;left:60%;width:80%;height:1px;background:var(--gold-border);}
+.step-circle{width:18px;height:18px;border-radius:50%;border:2px solid var(--gold-border);display:inline-flex;align-items:center;justify-content:center;font-size:8px;color:var(--gray);transition:all 0.4s;background:var(--navy);}
+.step-circle.active{border-color:var(--gold);color:var(--gold);box-shadow:0 0 8px rgba(201,168,76,0.4);}
+.step-circle.done{border-color:var(--green);background:var(--green);color:var(--navy);}
+.step-name{font-size:8px;color:var(--gray);margin-top:4px;display:block;}
 
-/* Approval flow */
-.approval-box{
-  background:var(--card);border:1px solid var(--gold-border);
-  border-radius:14px;padding:16px;margin-top:14px;
-  display:none;
-}
-.approval-title{
-  font-family:var(--font-display);
-  font-size:13px;font-weight:700;color:var(--gold);
-  margin-bottom:14px;text-align:center;
-}
-.approval-btns{display:flex;gap:10px;margin-top:14px;}
-.approval-btns .btn{flex:1;padding:13px;}
-.revision-input{
-  width:100%;background:rgba(255,255,255,0.05);
-  border:1px solid var(--gold-border);border-radius:8px;
-  color:var(--white);font-family:var(--font-body);
-  font-size:12px;padding:10px 12px;outline:none;
-  margin-top:10px;display:none;
-  transition:border-color 0.2s;
-}
-.revision-input:focus{border-color:var(--gold);}
+/* STATUS */
+.status-box{border-radius:10px;padding:11px 13px;margin:11px 0;font-size:12px;font-weight:600;text-align:center;display:none;}
+.s-proc{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold);}
+.s-ok{background:rgba(0,214,143,0.1);border:1px solid rgba(0,214,143,0.3);color:var(--green);}
+.s-err{background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.3);color:var(--red);}
 
-/* Download + Share */
-.action-row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
-.action-row .btn{flex:1;min-width:120px;padding:12px;font-size:11.5px;}
+/* VIEWER */
+model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at center,#0D1F3A,#040A14);border-radius:14px;border:1px solid var(--gold-border);margin-top:13px;}
+.viewer-section{display:none;}
 
-/* model-viewer */
-model-viewer{
-  width:100%;height:380px;
-  background:radial-gradient(ellipse at center,#0D1F3A 0%,#040A14 100%);
-  border-radius:14px;border:1px solid var(--gold-border);
-  margin-top:14px;
-}
+/* SIZE SELECTOR */
+.size-section{margin-top:14px;}
+.size-label{font-size:10px;color:var(--gold);font-weight:600;margin-bottom:8px;letter-spacing:0.5px;}
+.size-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px;}
+.size-card{background:var(--card);border:1px solid var(--gold-border);border-radius:9px;padding:9px 5px;text-align:center;cursor:pointer;transition:all 0.2s;}
+.size-card:hover,.size-card.selected{border-color:var(--gold);background:var(--gold-dim);}
+.size-inch{font-size:15px;font-weight:800;color:var(--gold);font-family:var(--fh);}
+.size-price{font-size:9px;color:var(--green);font-weight:600;margin-top:2px;}
+.size-orig{font-size:8px;color:var(--gray);text-decoration:line-through;}
+
+/* APPROVAL */
+.approval-box{background:var(--card);border:1px solid var(--gold-border);border-radius:14px;padding:15px;margin-top:13px;display:none;}
+.approval-title{font-family:var(--fh);font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px;text-align:center;}
+.approval-sub{font-size:10.5px;color:var(--gray);text-align:center;margin-bottom:12px;}
+.approval-btns{display:flex;gap:9px;}
+.approval-btns .btn{flex:1;padding:12px;}
+.rev-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--gold-border);border-radius:9px;color:var(--white);font-family:var(--fd);font-size:12px;padding:10px 12px;outline:none;margin-top:10px;display:none;resize:vertical;min-height:70px;}
+.rev-input:focus{border-color:var(--gold);}
+
+/* ORDER TRACKING */
+.tracking-box{background:var(--card);border:1px solid var(--gold-border);border-radius:12px;padding:14px;margin-top:12px;display:none;}
+.tracking-title{font-size:11px;color:var(--gold);font-weight:700;margin-bottom:10px;}
+.track-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.track-icon{font-size:18px;width:32px;text-align:center;}
+.track-info h4{font-size:11px;font-weight:600;color:var(--off-white);}
+.track-info p{font-size:9.5px;color:var(--gray);}
+.track-status{margin-left:auto;font-size:9px;font-weight:700;}
+.ts-done{color:var(--green);}
+.ts-active{color:var(--gold);}
+.ts-pending{color:var(--gray);}
+
+/* ACTIONS */
+.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.action-grid .btn{padding:11px 8px;font-size:11px;}
+.action-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:8px;}
+.action-grid-3 .btn{padding:10px 5px;font-size:10px;}
+
+/* BULK ORDER */
+.bulk-box{background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:12px;padding:14px;margin-bottom:13px;}
+.bulk-title{font-size:12px;color:var(--gold);font-weight:700;margin-bottom:10px;}
+.qty-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.qty-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--gold-border);background:rgba(255,255,255,0.05);color:var(--gold);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.qty-val{font-size:20px;font-weight:800;color:var(--gold);font-family:var(--fh);min-width:40px;text-align:center;}
+.bulk-price{font-size:11px;color:var(--gray);}
+.bulk-price span{color:var(--green);font-weight:700;}
 
 /* BFOREVER */
-.bforever-hero{
-  background:linear-gradient(135deg,rgba(201,168,76,0.13),rgba(201,168,76,0.04));
-  border:1px solid var(--gold);border-radius:16px;
-  padding:22px 18px;text-align:center;margin-bottom:16px;
-}
-.bforever-title{font-family:var(--font-display);font-size:28px;font-weight:800;color:var(--gold);letter-spacing:4px;margin-bottom:4px;}
-.bforever-tag{font-size:11px;color:rgba(201,168,76,0.65);letter-spacing:1.5px;margin-bottom:12px;}
-.steps-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:14px;}
-.step-card{
-  background:var(--card);border:1px solid var(--gold-border);
-  border-radius:10px;padding:12px 6px;text-align:center;
-}
-.step-icon{font-size:22px;margin-bottom:5px;}
-.step-label{font-size:9px;color:var(--gold);font-weight:700;letter-spacing:0.5px;}
+.bforever-hero{background:linear-gradient(135deg,rgba(201,168,76,0.13),rgba(201,168,76,0.03));border:1px solid var(--gold);border-radius:16px;padding:20px 16px;text-align:center;margin-bottom:14px;}
+.bforever-title{font-family:var(--fh);font-size:26px;font-weight:800;color:var(--gold);letter-spacing:4px;margin-bottom:4px;}
+.bforever-tag{font-size:10.5px;color:rgba(201,168,76,0.65);letter-spacing:1.5px;margin-bottom:11px;}
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:13px;}
+.step-card{background:var(--card);border:1px solid var(--gold-border);border-radius:10px;padding:11px 5px;text-align:center;}
+.step-ico{font-size:20px;margin-bottom:5px;}
+.step-lbl{font-size:8.5px;color:var(--gold);font-weight:700;letter-spacing:0.3px;}
 
-/* Pricing table */
-.price-table{width:100%;border-collapse:collapse;margin-bottom:14px;}
-.price-table th{
-  background:rgba(201,168,76,0.12);color:var(--gold);
-  font-size:10px;font-weight:700;padding:9px 10px;
-  text-align:left;letter-spacing:0.5px;
-  border-bottom:1px solid var(--gold-border);
-}
-.price-table td{
-  font-size:11px;color:var(--off-white);
-  padding:9px 10px;border-bottom:1px solid rgba(255,255,255,0.04);
-}
+/* PRICE TABLE */
+.price-table{width:100%;border-collapse:collapse;margin-bottom:12px;}
+.price-table th{background:rgba(201,168,76,0.12);color:var(--gold);font-size:9.5px;font-weight:700;padding:8px 9px;text-align:left;letter-spacing:0.4px;border-bottom:1px solid var(--gold-border);}
+.price-table td{font-size:11px;color:var(--off-white);padding:8px 9px;border-bottom:1px solid rgba(255,255,255,0.04);}
 .price-table tr:hover td{background:rgba(201,168,76,0.04);}
-.price-strike{text-decoration:line-through;color:var(--gray);font-size:10px;}
-.price-new{color:var(--green);font-weight:700;}
+.ps{text-decoration:line-through;color:var(--gray);font-size:9.5px;}
+.pn{color:var(--green);font-weight:700;}
 
-/* WhatsApp */
-.whatsapp-fab{
-  position:fixed;bottom:72px;right:14px;
-  width:50px;height:50px;background:#25D366;
-  border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-size:24px;box-shadow:0 4px 20px rgba(37,211,102,0.45);
-  cursor:pointer;z-index:150;text-decoration:none;
-  transition:transform 0.2s;
-}
-.whatsapp-fab:hover{transform:scale(1.1);}
+/* TOAST */
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:rgba(0,214,143,0.15);border:1px solid var(--green);color:var(--green);font-size:11.5px;font-weight:600;padding:9px 18px;border-radius:10px;z-index:500;display:none;animation:sd 0.3s ease;backdrop-filter:blur(10px);white-space:nowrap;max-width:90vw;text-align:center;}
+@keyframes sd{from{opacity:0;top:60px;}to{opacity:1;top:80px;}}
 
-/* Bottom nav */
-.bottom-nav{
-  position:fixed;bottom:0;left:0;right:0;
-  background:rgba(4,10,20,0.97);
-  border-top:1px solid var(--gold-border);
-  display:flex;z-index:200;
-  backdrop-filter:blur(10px);
-}
-.bnav-btn{
-  flex:1;padding:9px 2px 7px;text-align:center;
-  cursor:pointer;transition:all 0.2s;
-  font-size:8px;color:var(--gray);font-weight:600;
-  letter-spacing:0.2px;font-family:var(--font-body);
-}
-.bnav-btn .ico{font-size:19px;display:block;margin-bottom:2px;}
+/* WHATSAPP FAB */
+.wa-fab{position:fixed;bottom:72px;right:13px;width:48px;height:48px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 18px rgba(37,211,102,0.45);z-index:150;text-decoration:none;transition:transform 0.2s;}
+.wa-fab:hover{transform:scale(1.1);}
+
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,10,20,0.97);border-top:1px solid var(--gold-border);display:flex;z-index:200;backdrop-filter:blur(10px);}
+.bnav-btn{flex:1;padding:8px 2px 6px;text-align:center;cursor:pointer;transition:all 0.2s;font-size:7.5px;color:var(--gray);font-weight:600;font-family:var(--fd);}
+.bnav-btn .ico{font-size:18px;display:block;margin-bottom:2px;}
 .bnav-btn.active{color:var(--gold);}
 .bnav-btn:hover{color:var(--gold-light);background:rgba(201,168,76,0.06);}
-
-/* Success toast */
-.toast{
-  position:fixed;top:80px;left:50%;transform:translateX(-50%);
-  background:rgba(0,214,143,0.15);border:1px solid var(--green);
-  color:var(--green);font-size:12px;font-weight:600;
-  padding:10px 20px;border-radius:10px;z-index:500;
-  display:none;animation:slideDown 0.3s ease;
-  backdrop-filter:blur(10px);
-}
-@keyframes slideDown{from{opacity:0;top:60px;}to{opacity:1;top:80px;}}
 </style>
 </head>
 <body>
-
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <!-- HEADER -->
 <div class="header">
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('hi')" id="btn-hi">हि</button>
+    <button class="lang-btn" onclick="setLang('en')" id="btn-en">EN</button>
+  </div>
   <div class="logo-row">
     <img src="logo.png.jpeg" alt="GAIOS" class="logo-img" onerror="this.style.display='none'">
-    <div class="brand-name">GAIOS™<span class="brand-v">v6.0</span></div>
+    <div class="brand-name">GAIOS™<span class="brand-v">v6.1</span></div>
   </div>
-  <div class="brand-sub">GENESYS AI ORCHESTRATION SYSTEM | BFOREVER™</div>
+  <div class="brand-sub" data-hi="GENESYS AI ORCHESTRATION SYSTEM | BFOREVER™" data-en="GENESYS AI ORCHESTRATION SYSTEM | BFOREVER™">GENESYS AI ORCHESTRATION SYSTEM | BFOREVER™</div>
   <div class="reg-bar">
     <span class="reg-tag">DPIIT: DIPP274037</span>
     <span class="reg-tag">Patent: IN202611090765</span>
@@ -460,160 +294,206 @@ model-viewer{
   <div class="status-row">
     <div class="dot"></div>
     <span class="status-text">ONLINE</span>
-    <span style="color:var(--gray);font-size:9.5px;">| Claude AI | Hunyuan 3D 3.1 | v6.0</span>
+    <span style="color:var(--gray);font-size:9px;">| Claude AI | Hunyuan 3D 3.1 | v6.1</span>
   </div>
 </div>
 
 <!-- NAV TABS -->
 <div class="nav-tabs">
-  <div class="nav-tab active" onclick="showTab('console')">🤖 AI Console</div>
-  <div class="nav-tab" onclick="showTab('gen3d')">🖨️ 3D Studio</div>
-  <div class="nav-tab" onclick="showTab('bforever')">✨ BFOREVER™</div>
-  <div class="nav-tab" onclick="showTab('verticals')">🎯 Verticals</div>
-  <div class="nav-tab" onclick="showTab('contact')">📞 Contact</div>
-  <div class="nav-tab" onclick="showTab('about')">ℹ️ About</div>
+  <div class="nav-tab active" onclick="showTab('console')" data-hi="🤖 AI Console" data-en="🤖 AI Console">🤖 AI Console</div>
+  <div class="nav-tab" onclick="showTab('gen3d')" data-hi="🖨️ 3D Studio" data-en="🖨️ 3D Studio">🖨️ 3D Studio</div>
+  <div class="nav-tab" onclick="showTab('bforever')" data-hi="✨ BFOREVER™" data-en="✨ BFOREVER™">✨ BFOREVER™</div>
+  <div class="nav-tab" onclick="showTab('verticals')" data-hi="🎯 Verticals" data-en="🎯 Verticals">🎯 Verticals</div>
+  <div class="nav-tab" onclick="showTab('contact')" data-hi="📞 Contact" data-en="📞 Contact">📞 Contact</div>
+  <div class="nav-tab" onclick="showTab('about')" data-hi="ℹ️ About" data-en="ℹ️ About">ℹ️ About</div>
 </div>
 
-<!-- ═══ AI CONSOLE ═══ -->
+<!-- ══ AI CONSOLE ══ -->
 <div class="section active" id="tab-console">
   <div class="card">
-    <div class="card-title">💬 GAIOS™ AI Assistant</div>
+    <div class="card-title">💬 <span data-hi="GAIOS™ AI Assistant" data-en="GAIOS™ AI Assistant">GAIOS™ AI Assistant</span></div>
     <div class="chat-area" id="chatArea">
-      <div class="msg-ai">🙏 Namaskar! Main GAIOS™ hoon — Genesys AI Orchestration System. Pali, Rajasthan se India ki pehli full-colour PolyJet 3D manufacturing platform. Hindi ya English mein poochhein — kya chahiye?</div>
+      <div class="msg-ai" id="welcomeMsg">🙏 Namaskar! Main GAIOS™ hoon — Genesys AI Orchestration System. Pali, Rajasthan se India ki pehli full-colour PolyJet 3D hub. Hindi ya English mein poochhein!</div>
     </div>
     <div class="input-row">
-      <input type="text" class="ai-input" id="userInput" placeholder="Koi bhi sawaal poochhein..." onkeypress="if(event.key==='Enter')sendMessage()">
+      <input type="text" class="ai-input" id="userInput" placeholder="Koi bhi sawaal poochhein..." onkeypress="if(event.key==='Enter')sendMsg()">
       <button class="btn-voice" id="voiceBtn" onclick="toggleVoice()">🎙</button>
-      <button class="btn" onclick="sendMessage()">✨ Ask</button>
+      <button class="btn" onclick="sendMsg()">✨ Ask</button>
     </div>
     <div class="quick-cmds">
-      <span class="quick-cmd" onclick="askQ('GAIOS kya karta hai?')">📊 GAIOS kya hai</span>
-      <span class="quick-cmd" onclick="askQ('BFOREVER figurine ki price kya hai?')">✨ Pricing</span>
-      <span class="quick-cmd" onclick="askQ('3D printing ka process kya hai?')">🖨️ Process</span>
+      <span class="quick-cmd" onclick="askQ('GAIOS kya karta hai?')">📊 GAIOS</span>
+      <span class="quick-cmd" onclick="askQ('BFOREVER figurine ki price kya hai?')">✨ Price</span>
+      <span class="quick-cmd" onclick="askQ('3D model kitne time mein banta hai?')">⏱️ Time</span>
       <span class="quick-cmd" onclick="askQ('Medical DICOM 3D model service kya hai?')">🏥 Medical</span>
-      <span class="quick-cmd" onclick="askQ('Grant aur funding status kya hai?')">💰 Grants</span>
-      <span class="quick-cmd" onclick="askQ('Scan point kaise join karein?')">🤝 Partner bano</span>
+      <span class="quick-cmd" onclick="askQ('Scan partner kaise bane?')">🤝 Partner</span>
+      <span class="quick-cmd" onclick="askQ('Grant aur MoU status kya hai?')">💰 Grants</span>
     </div>
   </div>
 </div>
 
-<!-- ═══ 3D STUDIO ═══ -->
+<!-- ══ 3D STUDIO ══ -->
 <div class="section" id="tab-gen3d">
   <div class="gen3d-hero">
     <div class="gen3d-title">🖨️ GAIOS™ 3D Studio</div>
-    <div class="gen3d-sub">Photo upload karo — AI se full-colour 3D model banayega<br>Powered by Hunyuan 3D 3.1 | Multi-photo support</div>
+    <div class="gen3d-sub">Photo upload karo → AI 3D model banayega → Approve karo → Order karo<br><small style="color:var(--gray2);">Hunyuan 3D 3.1 | Auto-compress | Multi-photo</small></div>
   </div>
 
-  <!-- Upload Area -->
+  <!-- STEP 1: Upload -->
+  <div class="sec-badge">📸 STEP 1 — Photo Upload</div>
   <div class="upload-area" id="uploadArea" onclick="document.getElementById('photo3d-input').click()">
     <div class="upload-icon">📷</div>
-    <div class="upload-text">Photos Choose Karo</div>
-    <div class="upload-hint">1-5 photos | JPG/PNG | Max 2MB each | Click here</div>
+    <div class="upload-text" id="uploadText">Photos Choose Karo</div>
+    <div class="upload-hint">1-5 photos | JPG/PNG | Auto-compressed | Click here</div>
   </div>
   <input type="file" id="photo3d-input" accept="image/*" multiple onchange="handleFiles(this.files)">
 
-  <!-- Thumb preview -->
-  <div class="thumb-row" id="thumbRow"></div>
-
-  <!-- Selected count -->
-  <div id="fileCount" style="font-size:11px;color:var(--gray);margin-bottom:12px;text-align:center;"></div>
-
-  <!-- Generate button -->
-  <button class="btn" id="gen3d-btn" style="width:100%;padding:14px;font-size:14px;letter-spacing:0.5px;" onclick="generate3D()">
-    🚀 3D Model Generate Karo
-  </button>
-
-  <!-- Progress -->
-  <div id="progressSection" style="display:none;margin-top:14px;">
-    <div class="progress-text" id="progressText">⏳ GAIOS™ AI 3D model bana raha hai...</div>
-    <div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:5%"></div></div>
-    <div class="time-estimate" id="timeEst">Estimated: 3-6 minutes</div>
+  <!-- Preview Section -->
+  <div class="preview-section" id="previewSection">
+    <div class="preview-label">📋 SELECTED PHOTOS — Tap to select primary</div>
+    <div class="thumb-row" id="thumbRow"></div>
   </div>
 
-  <!-- Status boxes -->
-  <div class="status-box status-processing" id="statusProcessing"></div>
-  <div class="status-box status-success" id="statusSuccess"></div>
-  <div class="status-box status-error" id="statusError"></div>
+  <!-- Quality Check -->
+  <div class="quality-bar" id="qualityBar">
+    <div class="quality-label">📊 Photo Quality Check</div>
+    <div class="quality-indicator">
+      <div class="quality-dot" id="qualityDot"></div>
+      <span class="quality-text" id="qualityText"></span>
+    </div>
+  </div>
+
+  <!-- Colour Adjustment -->
+  <div class="colour-box" id="colourBox">
+    <div class="colour-title">🎨 PHOTO ADJUSTMENT (Optional)</div>
+    <div class="slider-group">
+      <div class="slider-label"><span>Brightness</span><span id="brightnessVal">100%</span></div>
+      <input type="range" class="slider" id="brightnessSlider" min="50" max="150" value="100" oninput="adjustImage()">
+    </div>
+    <div class="slider-group">
+      <div class="slider-label"><span>Contrast</span><span id="contrastVal">100%</span></div>
+      <input type="range" class="slider" id="contrastSlider" min="50" max="150" value="100" oninput="adjustImage()">
+    </div>
+    <div class="slider-group">
+      <div class="slider-label"><span>Saturation</span><span id="saturationVal">100%</span></div>
+      <input type="range" class="slider" id="saturationSlider" min="50" max="150" value="100" oninput="adjustImage()">
+    </div>
+    <canvas id="adjustCanvas" style="display:none;"></canvas>
+  </div>
+
+  <!-- STEP 2: Size -->
+  <div class="sec-badge" id="step2badge" style="display:none;">📐 STEP 2 — Size Choose Karo</div>
+  <div class="size-section" id="sizeSection" style="display:none;">
+    <div class="size-grid">
+      <div class="size-card" onclick="selectSize(this,'2.5')"><div class="size-inch">2.5"</div><div class="size-price">₹2,250</div><div class="size-orig">₹3,000</div></div>
+      <div class="size-card selected" onclick="selectSize(this,'4')"><div class="size-inch">4"</div><div class="size-price">₹3,750</div><div class="size-orig">₹5,000</div></div>
+      <div class="size-card" onclick="selectSize(this,'5')"><div class="size-inch">5"</div><div class="size-price">₹4,875</div><div class="size-orig">₹6,500</div></div>
+      <div class="size-card" onclick="selectSize(this,'6')"><div class="size-inch">6"</div><div class="size-price">₹6,375</div><div class="size-orig">₹8,500</div></div>
+    </div>
+    <div style="font-size:9px;color:var(--gray);text-align:center;margin-bottom:12px;">*Target prices — subject to production economics</div>
+  </div>
+
+  <!-- BULK ORDER -->
+  <div class="bulk-box" id="bulkBox" style="display:none;">
+    <div class="bulk-title">🎁 Bulk Order (Corporate / Wedding)</div>
+    <div class="qty-row">
+      <div class="qty-btn" onclick="changeQty(-1)">−</div>
+      <div class="qty-val" id="qtyVal">1</div>
+      <div class="qty-btn" onclick="changeQty(1)">+</div>
+      <div class="bulk-price">pieces | Total: <span id="bulkTotal">₹3,750</span></div>
+    </div>
+    <div style="font-size:9.5px;color:var(--gray);">10+ pieces: 10% off | 50+ pieces: 18% off | 100+ pieces: 25% off</div>
+  </div>
+
+  <!-- STEP 3: Generate -->
+  <div class="sec-badge" id="step3badge" style="display:none;">🚀 STEP 3 — 3D Model Generate Karo</div>
+  <button class="btn" id="gen3d-btn" style="width:100%;padding:13px;font-size:13px;margin-bottom:4px;" onclick="generate3D()">🚀 3D Model Generate Karo</button>
+  <div style="font-size:9px;color:var(--gray);text-align:center;margin-bottom:8px;">Processing time: ~3-6 minutes | Auto photo compression</div>
+
+  <!-- Progress -->
+  <div class="progress-section" id="progressSection">
+    <div class="progress-text" id="progressText">⏳ GAIOS™ AI process kar raha hai...</div>
+    <div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:5%"></div></div>
+    <div class="time-est" id="timeEst">Estimated: 3-6 minutes</div>
+    <div class="steps-indicator" style="margin-top:12px;">
+      <div class="step-dot"><div class="step-circle active" id="sc1">1</div><span class="step-name">Upload</span></div>
+      <div class="step-dot"><div class="step-circle" id="sc2">2</div><span class="step-name">AI Process</span></div>
+      <div class="step-dot"><div class="step-circle" id="sc3">3</div><span class="step-name">3D Build</span></div>
+      <div class="step-dot"><div class="step-circle" id="sc4">4</div><span class="step-name">Ready</span></div>
+    </div>
+  </div>
+
+  <!-- Status -->
+  <div class="status-box s-proc" id="sProc"></div>
+  <div class="status-box s-ok" id="sOk"></div>
+  <div class="status-box s-err" id="sErr"></div>
 
   <!-- 3D Viewer -->
-  <div id="viewerSection" style="display:none;">
-    <model-viewer id="modelViewer" auto-rotate camera-controls shadow-intensity="1.2"
-      environment-image="neutral" exposure="1">
-    </model-viewer>
+  <div class="viewer-section" id="viewerSection">
+    <model-viewer id="modelViewer" auto-rotate camera-controls shadow-intensity="1.2" environment-image="neutral" exposure="1"></model-viewer>
 
-    <!-- Customer Approval Flow -->
+    <!-- Order Tracking -->
+    <div class="tracking-box" id="trackingBox">
+      <div class="tracking-title">📦 Order Status</div>
+      <div class="track-row"><div class="track-icon">✅</div><div class="track-info"><h4>Photo Received</h4><p>GAIOS™ mein upload ho gayi</p></div><div class="track-status ts-done">DONE</div></div>
+      <div class="track-row"><div class="track-icon">🧠</div><div class="track-info"><h4>AI Processing</h4><p>Hunyuan 3D 3.1 model bana raha hai</p></div><div class="track-status ts-done">DONE</div></div>
+      <div class="track-row"><div class="track-icon">👁️</div><div class="track-info"><h4>Customer Preview</h4><p>Aap dekh rahe hain — approve karein</p></div><div class="track-status ts-active">ACTIVE ◉</div></div>
+      <div class="track-row"><div class="track-icon">🖨️</div><div class="track-info"><h4>PolyJet Printing</h4><p>Pali hub mein Mimaki 3DUJ-553</p></div><div class="track-status ts-pending">PENDING</div></div>
+      <div class="track-row"><div class="track-icon">📦</div><div class="track-info"><h4>Quality Check & Delivery</h4><p>~5 days estimated</p></div><div class="track-status ts-pending">PENDING</div></div>
+    </div>
+
+    <!-- Approval -->
     <div class="approval-box" id="approvalBox">
       <div class="approval-title">✅ 3D Model Ready — Aapki Approval Chahiye</div>
-      <div style="font-size:11.5px;color:var(--gray);text-align:center;margin-bottom:4px;">
-        Model ko 360° rotate karke dekhen — phir approve karein ya changes batayein
-      </div>
-      <div id="approvalStatus" style="font-size:11px;text-align:center;color:var(--green);margin-top:6px;display:none;"></div>
+      <div class="approval-sub">Model 360° rotate karke dekhen → Approve karein ya changes batayein</div>
+      <div id="approvalStatus" style="font-size:11px;text-align:center;color:var(--green);display:none;margin-bottom:8px;"></div>
       <div class="approval-btns">
         <button class="btn btn-green" onclick="approveModel()">✅ Approve & Order</button>
-        <button class="btn-outline" onclick="requestRevision()">✏️ Changes Chahiye</button>
+        <button class="btn-outline" onclick="toggleRevision()">✏️ Changes</button>
       </div>
-      <textarea class="revision-input" id="revisionText" placeholder="Kya changes chahiye? (e.g. colour thoda light karo, face angle theek karo...)"></textarea>
-      <button class="btn" id="revisionSubmitBtn" style="width:100%;margin-top:10px;display:none;" onclick="submitRevision()">📨 Revision Request Bhejein</button>
+      <textarea class="rev-input" id="revText" placeholder="Kya changes chahiye? (e.g. colour thoda light karo, face angle theek karo...)"></textarea>
+      <button class="btn" id="revSubmitBtn" style="width:100%;margin-top:9px;display:none;" onclick="submitRevision()">📨 Revision Request Bhejein</button>
     </div>
 
     <!-- Download + Share -->
-    <div class="action-row" id="actionRow">
-      <button class="btn" id="downloadBtn" onclick="downloadModel()">⬇️ Download GLB</button>
-      <button class="btn btn-share" onclick="shareWhatsApp()">💬 WhatsApp Share</button>
-      <button class="btn-outline" onclick="copyModelLink()">🔗 Link Copy</button>
+    <div style="margin-top:12px;">
+      <div style="font-size:10px;color:var(--gold);font-weight:600;margin-bottom:8px;letter-spacing:0.5px;">⬇️ DOWNLOAD & SHARE</div>
+      <div class="action-grid">
+        <button class="btn" onclick="downloadModel()">⬇️ Download GLB</button>
+        <button class="btn btn-share" onclick="shareWA()">💬 WhatsApp</button>
+      </div>
+      <div class="action-grid-3" style="margin-top:8px;">
+        <button class="btn btn-insta" onclick="shareInsta()">📸 Instagram</button>
+        <button class="btn btn-fb" onclick="shareFB()">👍 Facebook</button>
+        <button class="btn-outline" onclick="copyLink()" style="font-size:10px;padding:10px 5px;">🔗 Copy Link</button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ═══ BFOREVER ═══ -->
+<!-- ══ BFOREVER ══ -->
 <div class="section" id="tab-bforever">
   <div class="bforever-hero">
     <div class="bforever-title">BFOREVER™</div>
     <div class="bforever-tag">WHERE YOUR MOMENTS LIVE FOREVER</div>
     <p style="font-size:12px;color:rgba(255,255,255,0.8);line-height:1.7;">Ek photo do — hum aapki yaad ko ek khoobsurat full-colour 3D figurine mein badal denge. Hamesha ke liye.</p>
   </div>
-
   <div class="sec-badge">✨ HOW IT WORKS</div>
   <div class="steps-grid">
-    <div class="step-card"><div class="step-icon">📸</div><div class="step-label">PHOTO DO</div></div>
-    <div class="step-card"><div class="step-icon">🧠</div><div class="step-label">AI PROCESS</div></div>
-    <div class="step-card"><div class="step-icon">✅</div><div class="step-label">APPROVE</div></div>
-    <div class="step-card"><div class="step-icon">📦</div><div class="step-label">RECEIVE</div></div>
+    <div class="step-card"><div class="step-ico">📸</div><div class="step-lbl">PHOTO DO</div></div>
+    <div class="step-card"><div class="step-ico">🧠</div><div class="step-lbl">AI PROCESS</div></div>
+    <div class="step-card"><div class="step-ico">✅</div><div class="step-lbl">APPROVE</div></div>
+    <div class="step-card"><div class="step-ico">📦</div><div class="step-lbl">RECEIVE</div></div>
   </div>
-
   <div class="divider"></div>
   <div class="sec-badge">💰 PRICING</div>
   <table class="price-table">
-    <tr>
-      <th>Size</th><th>Market Price</th><th>BFOREVER™ Price</th><th>Delivery</th>
-    </tr>
-    <tr>
-      <td>2.5"</td>
-      <td><span class="price-strike">₹3,000</span></td>
-      <td><span class="price-new">₹2,250</span></td>
-      <td>~5 days</td>
-    </tr>
-    <tr>
-      <td>4"</td>
-      <td><span class="price-strike">₹5,000</span></td>
-      <td><span class="price-new">₹3,750</span></td>
-      <td>~5 days</td>
-    </tr>
-    <tr>
-      <td>5"</td>
-      <td><span class="price-strike">₹6,500</span></td>
-      <td><span class="price-new">₹4,875</span></td>
-      <td>~5 days</td>
-    </tr>
-    <tr>
-      <td>6"</td>
-      <td><span class="price-strike">₹8,500</span></td>
-      <td><span class="price-new">₹6,375</span></td>
-      <td>~5 days</td>
-    </tr>
+    <tr><th>Size</th><th>Market</th><th>BFOREVER™</th><th>Delivery</th></tr>
+    <tr><td>2.5"</td><td><span class="ps">₹3,000</span></td><td><span class="pn">₹2,250</span></td><td>~5 days</td></tr>
+    <tr><td>4"</td><td><span class="ps">₹5,000</span></td><td><span class="pn">₹3,750</span></td><td>~5 days</td></tr>
+    <tr><td>5"</td><td><span class="ps">₹6,500</span></td><td><span class="pn">₹4,875</span></td><td>~5 days</td></tr>
+    <tr><td>6"</td><td><span class="ps">₹8,500</span></td><td><span class="pn">₹6,375</span></td><td>~5 days</td></tr>
   </table>
-  <div style="font-size:9.5px;color:var(--gray);text-align:center;margin-bottom:16px;">*Prices are targets, subject to actual production economics</div>
-
+  <div style="font-size:9px;color:var(--gray);text-align:center;margin-bottom:14px;">*Target prices, subject to actual production economics</div>
   <div class="divider"></div>
   <div class="sec-badge">🎯 USE CASES</div>
   <div class="v-grid">
@@ -622,34 +502,32 @@ model-viewer{
     <div class="v-card"><div class="v-icon">👴</div><div class="v-title">Yaadgar</div><div class="v-desc">Buzurgon ki figurine — unki yaad hamesha</div></div>
     <div class="v-card"><div class="v-icon">🏆</div><div class="v-title">Achievement</div><div class="v-desc">Retirement ya success ka khaas jashn</div></div>
   </div>
-
-  <div style="background:linear-gradient(135deg,rgba(201,168,76,0.12),rgba(201,168,76,0.04));border:1px solid var(--gold-border);border-radius:12px;padding:14px;text-align:center;margin-bottom:16px;">
-    <div style="font-size:13px;color:var(--gold);font-weight:700;margin-bottom:5px;">📍 Pan-India Network</div>
-    <div style="font-size:11px;color:var(--gray);line-height:1.7;">Hub: Pali, Rajasthan | 10 Scan Points — Aapke shehar mein<br>Delhi • Mumbai • Bengaluru • Hyderabad • Pune • Ahmedabad • Surat • Jaipur • Ludhiana • Kolkata</div>
+  <div style="background:linear-gradient(135deg,rgba(201,168,76,0.1),rgba(201,168,76,0.03));border:1px solid var(--gold-border);border-radius:12px;padding:13px;text-align:center;margin-bottom:14px;">
+    <div style="font-size:12px;color:var(--gold);font-weight:700;margin-bottom:5px;">📍 Pan-India Network</div>
+    <div style="font-size:10.5px;color:var(--gray);line-height:1.7;">Hub: Pali, Rajasthan | 10 Scan Points — Aapke shehar mein<br>Delhi • Mumbai • Bengaluru • Hyderabad • Pune<br>Ahmedabad • Surat • Jaipur • Ludhiana • Kolkata</div>
   </div>
-  <button class="btn" style="width:100%;padding:14px;font-size:14px;" onclick="showTab('contact')">📞 Abhi Order Karein</button>
+  <button class="btn" style="width:100%;padding:13px;font-size:13px;" onclick="showTab('gen3d')">🚀 3D Preview Dekho & Order Karo</button>
 </div>
 
-<!-- ═══ VERTICALS ═══ -->
+<!-- ══ VERTICALS ══ -->
 <div class="section" id="tab-verticals">
   <div class="sec-badge">🎯 15 BUSINESS VERTICALS</div>
   <div class="v-grid">
-    <div class="v-card"><div class="v-icon">👥</div><div class="v-title">Consumer Figurines</div><div class="v-desc">Photo se full-colour 3D figurine — BFOREVER™</div></div>
-    <div class="v-card"><div class="v-icon">🏛️</div><div class="v-title">Heritage & Tourism</div><div class="v-desc">Museum replicas, fort models, historical artifacts</div></div>
-    <div class="v-card"><div class="v-icon">🏗️</div><div class="v-title">Real Estate</div><div class="v-desc">Architectural 3D models — builders & developers</div></div>
-    <div class="v-card"><div class="v-icon">🏥</div><div class="v-title">Medical DICOM</div><div class="v-desc">CT/MRI se 3D organ models — surgical planning</div></div>
-    <div class="v-card"><div class="v-icon">🚁</div><div class="v-title">Drone/LiDAR</div><div class="v-desc">GIS/drone data se physical terrain models</div></div>
-    <div class="v-card"><div class="v-icon">🏺</div><div class="v-title">Antique & Museum</div><div class="v-desc">Heritage replica — full colour accuracy</div></div>
-    <div class="v-card"><div class="v-icon">⚙️</div><div class="v-title">Reverse Engineering</div><div class="v-desc">Machine parts scan & reproduce — 24-48 hrs</div></div>
-    <div class="v-card"><div class="v-icon">🛡️</div><div class="v-title">Defence</div><div class="v-desc">Terrain mapping, military models, strategic</div></div>
-    <div class="v-card"><div class="v-icon">🎁</div><div class="v-title">Corporate Gifting</div><div class="v-desc">Premium 3D awards, trophies, corporate gifts</div></div>
-    <div class="v-card"><div class="v-icon">🏔️</div><div class="v-title">Visitor Centre Maps</div><div class="v-desc">Relief maps, terrain models for tourism</div></div>
-    <div class="v-card"><div class="v-icon">⛪</div><div class="v-title">Religious Tourism</div><div class="v-desc">Temple models, deity replicas, souvenirs</div></div>
-    <div class="v-card"><div class="v-icon">🎓</div><div class="v-title">Education/STEM</div><div class="v-desc">3D learning models for schools & colleges</div></div>
+    <div class="v-card"><div class="v-icon">👥</div><div class="v-title">Consumer Figurines</div><div class="v-desc">Photo se full-colour 3D — BFOREVER™</div></div>
+    <div class="v-card"><div class="v-icon">🏛️</div><div class="v-title">Heritage & Tourism</div><div class="v-desc">Museum replicas, fort models, artifacts</div></div>
+    <div class="v-card"><div class="v-icon">🏗️</div><div class="v-title">Real Estate</div><div class="v-desc">Architectural 3D models — builders</div></div>
+    <div class="v-card"><div class="v-icon">🏥</div><div class="v-title">Medical DICOM</div><div class="v-desc">CT/MRI se 3D organ models</div></div>
+    <div class="v-card"><div class="v-icon">🚁</div><div class="v-title">Drone/LiDAR</div><div class="v-desc">GIS data se physical terrain models</div></div>
+    <div class="v-card"><div class="v-icon">🏺</div><div class="v-title">Antique & Museum</div><div class="v-desc">Heritage replica — full colour</div></div>
+    <div class="v-card"><div class="v-icon">⚙️</div><div class="v-title">Reverse Engineering</div><div class="v-desc">Machine parts scan & reproduce</div></div>
+    <div class="v-card"><div class="v-icon">🛡️</div><div class="v-title">Defence</div><div class="v-desc">Terrain mapping, military models</div></div>
+    <div class="v-card"><div class="v-icon">🎁</div><div class="v-title">Corporate Gifting</div><div class="v-desc">Premium 3D awards, trophies</div></div>
+    <div class="v-card"><div class="v-icon">🏔️</div><div class="v-title">Visitor Centre</div><div class="v-desc">Relief maps, terrain models</div></div>
+    <div class="v-card"><div class="v-icon">⛪</div><div class="v-title">Religious Tourism</div><div class="v-desc">Temple models, deity replicas</div></div>
+    <div class="v-card"><div class="v-icon">🎓</div><div class="v-title">Education/STEM</div><div class="v-desc">3D learning models for schools</div></div>
   </div>
-
-  <div class="card" style="text-align:center;">
-    <div class="card-title" style="justify-content:center;">🖨️ Technology Stack</div>
+  <div class="card">
+    <div class="card-title" style="justify-content:center;">🖨️ Technology</div>
     <div class="info-row"><span class="info-key">Printer</span><span class="info-val">Mimaki 3DUJ-553</span></div>
     <div class="info-row"><span class="info-key">Colours</span><span class="info-val">10 Million+</span></div>
     <div class="info-row"><span class="info-key">Resolution</span><span class="info-val">1200×1200 DPI</span></div>
@@ -659,143 +537,72 @@ model-viewer{
   </div>
 </div>
 
-<!-- ═══ CONTACT ═══ -->
+<!-- ══ CONTACT ══ -->
 <div class="section" id="tab-contact">
   <div class="sec-badge">📞 CONTACT US</div>
   <div class="card">
     <div class="card-title">📋 Inquiry Form</div>
+    <div class="form-group"><label class="form-label">Naam *</label><input type="text" class="form-input" id="c_name" placeholder="Poora naam"></div>
+    <div class="form-group"><label class="form-label">Mobile *</label><input type="tel" class="form-input" id="c_phone" placeholder="+91 XXXXXXXXXX"></div>
+    <div class="form-group"><label class="form-label">City</label><input type="text" class="form-input" id="c_city" placeholder="Aapka shehar"></div>
     <div class="form-group">
-      <label class="form-label">Aapka Naam *</label>
-      <input type="text" class="form-input" id="c_name" placeholder="Poora naam">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Mobile Number *</label>
-      <input type="tel" class="form-input" id="c_phone" placeholder="+91 XXXXXXXXXX">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Email</label>
-      <input type="email" class="form-input" id="c_email" placeholder="aapka@email.com">
-    </div>
-    <div class="form-group">
-      <label class="form-label">City / Shehar *</label>
-      <input type="text" class="form-input" id="c_city" placeholder="Aapka shehar">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Service Chahiye *</label>
+      <label class="form-label">Service *</label>
       <select class="form-select" id="c_service">
         <option value="">-- Service Choose Karein --</option>
         <option>BFOREVER™ — 3D Figurine</option>
         <option>Heritage/Museum Replica</option>
-        <option>Real Estate Architectural Model</option>
-        <option>Medical DICOM 3D Model</option>
+        <option>Real Estate Model</option>
+        <option>Medical DICOM Model</option>
         <option>Drone/LiDAR Terrain Model</option>
         <option>Reverse Engineering</option>
         <option>Corporate Gift/Trophy</option>
-        <option>Defence/Strategic Model</option>
-        <option>Antique Replica</option>
+        <option>Bulk Order (Wedding/Corporate)</option>
         <option>Core Scan Partner Banna Chahta Hoon</option>
         <option>Other</option>
       </select>
     </div>
-    <div class="form-group">
-      <label class="form-label">Aapki Zaroorat</label>
-      <textarea class="form-textarea" id="c_msg" placeholder="Project ya requirement describe karein..."></textarea>
-    </div>
-    <button class="btn" style="width:100%;padding:13px;font-size:13px;" onclick="submitForm()">📨 WhatsApp Par Inquiry Bhejein</button>
-    <div class="status-box status-success" id="successMsg" style="margin-top:10px;">✅ Shukriya! Aapki inquiry mil gayi. 24 ghante mein sampark karenge.</div>
+    <div class="form-group"><label class="form-label">Message</label><textarea class="form-textarea" id="c_msg" placeholder="Project ya requirement..."></textarea></div>
+    <button class="btn" style="width:100%;padding:12px;" onclick="submitForm()">📨 WhatsApp Par Bhejein</button>
+    <div class="status-box s-ok" id="successMsg" style="margin-top:9px;">✅ Shukriya! 24 ghante mein sampark karenge.</div>
   </div>
-
   <div class="divider"></div>
-  <div class="sec-badge">📍 DIRECT CONTACT</div>
   <div class="card">
-    <a href="tel:+916350132497" style="text-decoration:none;">
-      <div class="info-row" style="cursor:pointer;padding:11px 0;">
-        <span class="info-key">📱 Call</span>
-        <span class="info-val" style="color:var(--gold);">+91-6350132497</span>
-      </div>
-    </a>
-    <a href="mailto:genesysadditive3dcreation@gmail.com" style="text-decoration:none;">
-      <div class="info-row" style="cursor:pointer;padding:11px 0;">
-        <span class="info-key">✉️ Email</span>
-        <span class="info-val" style="color:var(--gold);font-size:10.5px;">genesysadditive3dcreation@gmail.com</span>
-      </div>
-    </a>
-    <div class="info-row" style="padding:11px 0;">
-      <span class="info-key">🌐 Website</span>
-      <span class="info-val" style="color:var(--gold);">genesysadditive3dcreation.com</span>
-    </div>
-    <div class="info-row" style="padding:11px 0;border:none;">
-      <span class="info-key">📍 Hub</span>
-      <span class="info-val" style="font-size:10.5px;line-height:1.5;">Shop No. 03, Opp. Central Co-op Bank, Main Bapunagar Road, Pali, Rajasthan 306401</span>
-    </div>
+    <a href="tel:+916350132497" style="text-decoration:none;"><div class="info-row" style="cursor:pointer;padding:10px 0;"><span class="info-key">📱 Call</span><span class="info-val" style="color:var(--gold);">+91-6350132497</span></div></a>
+    <a href="mailto:genesysadditive3dcreation@gmail.com" style="text-decoration:none;"><div class="info-row" style="cursor:pointer;padding:10px 0;"><span class="info-key">✉️ Email</span><span class="info-val" style="color:var(--gold);font-size:10px;">genesysadditive3dcreation@gmail.com</span></div></a>
+    <div class="info-row" style="padding:10px 0;"><span class="info-key">🌐 Web</span><span class="info-val" style="color:var(--gold);">genesysadditive3dcreation.com</span></div>
+    <div class="info-row" style="padding:10px 0;border:none;"><span class="info-key">📍 Hub</span><span class="info-val" style="font-size:10px;line-height:1.5;">Shop No. 03, Opp. Central Co-op Bank, Main Bapunagar Road, Pali, Rajasthan 306401</span></div>
   </div>
 </div>
 
-<!-- ═══ ABOUT ═══ -->
+<!-- ══ ABOUT ══ -->
 <div class="section" id="tab-about">
   <div class="sec-badge">🏢 COMPANY INFO</div>
   <div class="card">
-    <div class="info-row"><span class="info-key">Company</span><span class="info-val" style="font-size:10.5px;">Genesys Additive 3D Creation Pvt. Ltd.</span></div>
+    <div class="info-row"><span class="info-key">Company</span><span class="info-val" style="font-size:10px;">Genesys Additive 3D Creation Pvt. Ltd.</span></div>
     <div class="info-row"><span class="info-key">CIN</span><span class="info-val">U32909RJ2026PTC115570</span></div>
     <div class="info-row"><span class="info-key">GSTIN</span><span class="info-val">08AANCG1745Q1ZW</span></div>
     <div class="info-row"><span class="info-key">DPIIT</span><span class="info-val">DIPP274037</span></div>
     <div class="info-row"><span class="info-key">Patent</span><span class="info-val">IN202611090765</span></div>
     <div class="info-row"><span class="info-key">Udyam</span><span class="info-val">UDYAM-RJ-26-0089638</span></div>
-    <div class="info-row"><span class="info-key">IEC</span><span class="info-val">AANCG1745Q</span></div>
     <div class="info-row"><span class="info-key">iSTART</span><span class="info-val">3B9DA1F5</span></div>
     <div class="info-row"><span class="info-key">RIPS 2024 MoU</span><span class="info-val" style="color:var(--green);">MoU/2026-27/37148 ✅</span></div>
     <div class="info-row"><span class="info-key">BFOREVER™ TM</span><span class="info-val">O-0005671986</span></div>
     <div class="info-row" style="border:none;"><span class="info-key">GAIOS™ TM</span><span class="info-val">O-0005674550</span></div>
   </div>
-
   <div class="sec-badge">💰 GRANTS & RECOGNITIONS</div>
-  <div class="grant-item">
-    <div class="grant-name">RIPS 2024 — Govt. of Rajasthan</div>
-    <div class="grant-detail">MoU: MoU/2026-27/37148 | Investment: ₹6 Cr | AI Enabled Additive Manufacturing</div>
-    <span class="badge badge-green">✅ MoU Signed — 19 Aug 2026</span>
-  </div>
-  <div class="grant-item">
-    <div class="grant-name">TCOE TDIP — DoT Govt. of India</div>
-    <div class="grant-detail">Grant ₹1.25 Crore | App: TDIP2026-210422518</div>
-    <span class="badge badge-green">✅ Applied</span>
-  </div>
-  <div class="grant-item">
-    <div class="grant-name">IHFC IIT Delhi — UdyogTech Synapse 2026</div>
-    <div class="grant-detail">Grant up to ₹2 Crore | App: IHFC-786032</div>
-    <span class="badge badge-green">✅ Applied</span>
-  </div>
-  <div class="grant-item">
-    <div class="grant-name">RakshaTech Synapse 2026 — IHFC IIT Delhi</div>
-    <div class="grant-detail">Grant ₹2 Crore | App: IHFC-252212</div>
-    <span class="badge badge-green">✅ Applied</span>
-  </div>
-  <div class="grant-item">
-    <div class="grant-name">iDEX Open Challenge — MoD</div>
-    <div class="grant-detail">Grant up to ₹1.5 Crore | Ref: OP202608113999</div>
-    <span class="badge badge-yellow">⏳ Under Evaluation</span>
-  </div>
-  <div class="grant-item">
-    <div class="grant-name">Schaeffler Social Innovator Fellowship</div>
-    <div class="grant-detail">IHFC + IIMA Ventures + H.O.P.E. | Deadline: 31 Aug 2026</div>
-    <span class="badge badge-green">✅ Applied — 18 Aug 2026</span>
-  </div>
-  <div class="grant-item">
-    <div class="grant-name">iSTART QRate — Rajasthan Govt.</div>
-    <div class="grant-detail">Score: 94.90/292 (Bronze) | Re-evaluation: Oct-Nov 2026</div>
-    <span class="badge badge-yellow">⏳ Re-evaluation Pending</span>
-  </div>
-  <div class="grant-item" style="margin-bottom:0;">
-    <div class="grant-name">TDB RDIF — Ministry of Science & Technology</div>
-    <div class="grant-detail">Low-interest loan | App: TDB/RDIF-0457/2026-2027</div>
-    <span class="badge badge-blue">🔄 Applied</span>
-  </div>
+  <div class="grant-item"><div class="grant-name">RIPS 2024 — Govt. of Rajasthan</div><div class="grant-detail">MoU: MoU/2026-27/37148 | ₹6 Cr | AI Enabled Additive Manufacturing</div><span class="badge bg">✅ MoU Signed — 19 Aug 2026</span></div>
+  <div class="grant-item"><div class="grant-name">TCOE TDIP — DoT Govt. of India</div><div class="grant-detail">₹1.25 Crore | TDIP2026-210422518</div><span class="badge bg">✅ Applied</span></div>
+  <div class="grant-item"><div class="grant-name">IHFC IIT Delhi — UdyogTech Synapse</div><div class="grant-detail">₹2 Crore | IHFC-786032</div><span class="badge bg">✅ Applied</span></div>
+  <div class="grant-item"><div class="grant-name">RakshaTech Synapse — IHFC IIT Delhi</div><div class="grant-detail">₹2 Crore | IHFC-252212</div><span class="badge bg">✅ Applied</span></div>
+  <div class="grant-item"><div class="grant-name">iDEX Open Challenge — MoD</div><div class="grant-detail">₹1.5 Crore | OP202608113999</div><span class="badge by">⏳ Under Evaluation</span></div>
+  <div class="grant-item"><div class="grant-name">Schaeffler Social Innovator Fellowship</div><div class="grant-detail">IHFC + IIMA Ventures + H.O.P.E.</div><span class="badge bg">✅ Applied — 18 Aug 2026</span></div>
+  <div class="grant-item"><div class="grant-name">iSTART QRate — Rajasthan Govt.</div><div class="grant-detail">Score: 94.90/292 | Re-evaluation: Oct-Nov 2026</div><span class="badge by">⏳ Re-evaluation Pending</span></div>
+  <div class="grant-item" style="margin-bottom:0;"><div class="grant-name">TDB RDIF — Ministry of Science & Technology</div><div class="grant-detail">Low-interest loan | TDB/RDIF-0457/2026-2027</div><span class="badge bb">🔄 Applied</span></div>
 </div>
 
-<!-- WhatsApp FAB -->
-<a href="https://wa.me/916350132497?text=Namaskar%2C%20GAIOS%20website%20se%20inquiry%20kar%20raha%20hoon" class="whatsapp-fab" target="_blank">💬</a>
+<a href="https://wa.me/916350132497?text=Namaskar%2C%20GAIOS%20se%20inquiry%20kar%20raha%20hoon" class="wa-fab" target="_blank">💬</a>
 
-<!-- BOTTOM NAV -->
-<div class="bottom-nav">
+<div class="bnav">
   <div class="bnav-btn active" id="nav-console" onclick="showTab('console')"><span class="ico">🤖</span>AI Console</div>
   <div class="bnav-btn" id="nav-gen3d" onclick="showTab('gen3d')"><span class="ico">🖨️</span>3D Studio</div>
   <div class="bnav-btn" id="nav-bforever" onclick="showTab('bforever')"><span class="ico">✨</span>BFOREVER™</div>
@@ -805,356 +612,372 @@ model-viewer{
 </div>
 
 <script>
-// ══ TAB SYSTEM ══
-var TABS = ['console','gen3d','bforever','verticals','contact','about'];
+// ══ LANGUAGE ══
+var lang = 'hi';
+var T = {
+  hi: { welcome:'🙏 Namaskar! Main GAIOS™ hoon — Genesys AI Orchestration System. Pali, Rajasthan se India ki pehli full-colour PolyJet 3D hub. Hindi ya English mein poochhein!', placeholder:'Koi bhi sawaal poochhein...' },
+  en: { welcome:'👋 Hello! I am GAIOS™ — Genesys AI Orchestration System. India\'s first full-colour PolyJet 3D hub from Pali, Rajasthan. Ask me anything!', placeholder:'Ask anything...' }
+};
+function setLang(l) {
+  lang = l;
+  document.documentElement.setAttribute('data-lang', l);
+  document.getElementById('btn-hi').classList.toggle('active', l==='hi');
+  document.getElementById('btn-en').classList.toggle('active', l==='en');
+  document.getElementById('userInput').placeholder = T[l].placeholder;
+  document.getElementById('welcomeMsg').textContent = T[l].welcome;
+}
+
+// ══ TABS ══
+var TABS=['console','gen3d','bforever','verticals','contact','about'];
 function showTab(t) {
   document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
   document.querySelectorAll('.nav-tab').forEach(function(n){n.classList.remove('active');});
   document.querySelectorAll('.bnav-btn').forEach(function(b){b.classList.remove('active');});
-  var el = document.getElementById('tab-'+t);
-  if(el) el.classList.add('active');
-  var nav = document.getElementById('nav-'+t);
-  if(nav) nav.classList.add('active');
-  var idx = TABS.indexOf(t);
-  var navTabs = document.querySelectorAll('.nav-tab');
-  if(idx>=0 && navTabs[idx]) navTabs[idx].classList.add('active');
+  var el=document.getElementById('tab-'+t); if(el) el.classList.add('active');
+  var nv=document.getElementById('nav-'+t); if(nv) nv.classList.add('active');
+  var i=TABS.indexOf(t), tabs=document.querySelectorAll('.nav-tab');
+  if(i>=0&&tabs[i]) tabs[i].classList.add('active');
   window.scrollTo(0,0);
 }
 
 // ══ TOAST ══
-function showToast(msg, dur) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.display = 'block';
-  setTimeout(function(){t.style.display='none';}, dur||3000);
-}
+function toast(m,d){var t=document.getElementById('toast');t.textContent=m;t.style.display='block';setTimeout(function(){t.style.display='none';},d||3000);}
 
-// ══ AI CHAT ══
-var chatArea = document.getElementById('chatArea');
-var isLoading = false;
-var chatHistory = [];
-
-function addMsg(text, isUser) {
-  var d = document.createElement('div');
-  d.className = isUser ? 'msg-user' : 'msg-ai';
-  d.textContent = text;
+// ══ CHAT ══
+var chatArea=document.getElementById('chatArea');
+var isLoad=false, chatHist=[];
+function addMsg(text,isUser){
+  var d=document.createElement('div');
+  d.className=isUser?'msg-user':'msg-ai';
+  d.textContent=text;
   chatArea.appendChild(d);
-  chatArea.scrollTop = chatArea.scrollHeight;
-  if(!isUser) chatHistory.push({role:'assistant',content:text});
-  else chatHistory.push({role:'user',content:text});
+  chatArea.scrollTop=chatArea.scrollHeight;
+  chatHist.push({role:isUser?'user':'assistant',content:text});
 }
-
-function addLoading() {
-  var d = document.createElement('div');
-  d.className = 'msg-ai'; d.id = 'loadMsg';
-  d.innerHTML = '<span style="display:inline-flex;gap:4px;align-items:center;">⏳ <span id="ld1">.</span><span id="ld2">.</span><span id="ld3">.</span></span>';
-  chatArea.appendChild(d);
-  chatArea.scrollTop = chatArea.scrollHeight;
-}
-function removeLoading(){var e=document.getElementById('loadMsg');if(e)e.remove();}
-
-async function sendMessage() {
-  var input = document.getElementById('userInput');
-  var msg = input.value.trim();
-  if(!msg || isLoading) return;
-  input.value = '';
-  addMsg(msg, true);
-  isLoading = true;
-  addLoading();
+function addLoad(){var d=document.createElement('div');d.className='msg-ai';d.id='lm';d.textContent='⏳ ...';chatArea.appendChild(d);chatArea.scrollTop=chatArea.scrollHeight;}
+function remLoad(){var e=document.getElementById('lm');if(e)e.remove();}
+async function sendMsg(){
+  var inp=document.getElementById('userInput');
+  var msg=inp.value.trim();
+  if(!msg||isLoad) return;
+  inp.value=''; addMsg(msg,true); isLoad=true; addLoad();
   try {
-    var msgs = chatHistory.slice(-8);
-    var res = await fetch('/.netlify/functions/claude', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model:'claude-sonnet-4-6',
-        max_tokens:600,
-        system:'Aap GAIOS™ hain — Genesys Additive 3D Creation Pvt. Ltd. ka AI Assistant. Company India ki pehli commercial full-colour PolyJet 3D printing hub hai, Pali, Rajasthan mein. Brands: BFOREVER™ (consumer figurines) aur GAIOS™ (AI platform). Patent: IN202611090765 | DPIIT: DIPP274037 | Printer: Mimaki 3DUJ-553 | Scanner: DreamBot G9-1000 | Contact: +91-6350132497 | 10 Core Scan Partners: Delhi, Mumbai, Bengaluru, Hyderabad, Pune, Ahmedabad, Surat, Jaipur, Ludhiana, Kolkata. Rajasthan Govt. RIPS 2024 MoU signed: MoU/2026-27/37148. Hamesha Hindi ya Hinglish mein jawab do. Helpful, professional aur concise raho. 200 words se zyada mat likhna.',
-        messages: msgs.length > 0 ? msgs : [{role:'user',content:msg}]
-      })
-    });
-    var data = await res.json();
-    removeLoading();
-    var reply = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : 'Kuch technical issue aaya. Dobara try karein.';
-    addMsg(reply, false);
-    if(window.speechSynthesis) {
-      var u = new SpeechSynthesisUtterance(reply);
-      u.lang='hi-IN'; u.rate=0.9;
-      speechSynthesis.speak(u);
-    }
-  } catch(e) {
-    removeLoading();
-    addMsg('Network error. Internet check karein.', false);
-  }
-  isLoading = false;
+    var msgs=chatHist.slice(-8);
+    var res=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      model:'claude-sonnet-4-6',max_tokens:600,
+      system:'Aap GAIOS™ hain — Genesys Additive 3D Creation Pvt. Ltd. ka AI Assistant. India ki pehli commercial full-colour PolyJet 3D printing hub, Pali, Rajasthan. Brands: BFOREVER™ aur GAIOS™. Patent: IN202611090765 | DPIIT: DIPP274037 | Printer: Mimaki 3DUJ-553 | Scanner: DreamBot G9-1000 | Contact: +91-6350132497. RIPS 2024 MoU signed: MoU/2026-27/37148. 10 Scan Partners: Delhi, Mumbai, Bengaluru, Hyderabad, Pune, Ahmedabad, Surat, Jaipur, Ludhiana, Kolkata. User ki language mein jawab do (Hindi/English). 200 words max. Helpful aur professional raho.',
+      messages:msgs.length?msgs:[{role:'user',content:msg}]
+    })});
+    var data=await res.json(); remLoad();
+    var rep=(data.content&&data.content[0]&&data.content[0].text)?data.content[0].text:'Kuch issue aaya. Dobara try karein.';
+    addMsg(rep,false);
+    if(window.speechSynthesis){var u=new SpeechSynthesisUtterance(rep);u.lang=lang==='hi'?'hi-IN':'en-US';u.rate=0.9;speechSynthesis.speak(u);}
+  } catch(e){remLoad();addMsg('Network error.',false);}
+  isLoad=false;
 }
-function askQ(q){document.getElementById('userInput').value=q;sendMessage();}
+function askQ(q){document.getElementById('userInput').value=q;sendMsg();}
 
 // ══ VOICE ══
-var recognition=null, listening=false;
-function toggleVoice() {
-  if(!('webkitSpeechRecognition' in window)&&!('SpeechRecognition' in window)){alert('Voice is not available.');return;}
-  if(listening){recognition.stop();return;}
-  var SR = window.SpeechRecognition||window.webkitSpeechRecognition;
-  recognition = new SR();
-  recognition.lang='hi-IN'; recognition.interimResults=false;
-  recognition.onstart=function(){listening=true;document.getElementById('voiceBtn').classList.add('listening');document.getElementById('voiceBtn').textContent='🔴';};
-  recognition.onresult=function(e){document.getElementById('userInput').value=e.results[0][0].transcript;};
-  recognition.onend=function(){listening=false;document.getElementById('voiceBtn').classList.remove('listening');document.getElementById('voiceBtn').textContent='🎙';if(document.getElementById('userInput').value)sendMessage();};
-  recognition.onerror=function(){listening=false;document.getElementById('voiceBtn').classList.remove('listening');document.getElementById('voiceBtn').textContent='🎙';};
-  recognition.start();
+var rec=null,lis=false;
+function toggleVoice(){
+  if(!('webkitSpeechRecognition' in window)&&!('SpeechRecognition' in window)){alert('Voice not available.');return;}
+  if(lis){rec.stop();return;}
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  rec=new SR(); rec.lang=lang==='hi'?'hi-IN':'en-US'; rec.interimResults=false;
+  rec.onstart=function(){lis=true;document.getElementById('voiceBtn').classList.add('listening');document.getElementById('voiceBtn').textContent='🔴';};
+  rec.onresult=function(e){document.getElementById('userInput').value=e.results[0][0].transcript;};
+  rec.onend=function(){lis=false;document.getElementById('voiceBtn').classList.remove('listening');document.getElementById('voiceBtn').textContent='🎙';if(document.getElementById('userInput').value)sendMsg();};
+  rec.onerror=function(){lis=false;document.getElementById('voiceBtn').classList.remove('listening');document.getElementById('voiceBtn').textContent='🎙';};
+  rec.start();
+}
+
+// ══ PHOTO QUALITY CHECK ══
+function checkQuality(img) {
+  var canvas=document.createElement('canvas');
+  canvas.width=img.width; canvas.height=img.height;
+  var ctx=canvas.getContext('2d');
+  ctx.drawImage(img,0,0);
+  var data=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+  var brightness=0;
+  for(var i=0;i<data.length;i+=4) brightness+=(data[i]+data[i+1]+data[i+2])/3;
+  brightness/=(data.length/4);
+  var qBar=document.getElementById('qualityBar');
+  var qDot=document.getElementById('qualityDot');
+  var qText=document.getElementById('qualityText');
+  qBar.style.display='block';
+  if(brightness<40){qDot.style.background='#FF4D6D';qText.textContent='⚠️ Photo bahut dark hai — roshan jagah mein photo lein';qText.style.color='#FF4D6D';}
+  else if(brightness>220){qDot.style.background='#ffcc00';qText.textContent='⚠️ Photo bahut bright hai — thoda kam light mein lein';qText.style.color='#ffcc00';}
+  else{qDot.style.background='#00D68F';qText.textContent='✅ Photo quality achhi hai — generate karo!';qText.style.color='#00D68F';}
 }
 
 // ══ MULTI-PHOTO UPLOAD ══
-var selectedFiles = [];
-var currentModelUrl = null;
-var currentPredId = null;
+var selFiles=[], selIdx=0, curModelUrl=null;
 
 function handleFiles(files) {
-  selectedFiles = [];
-  var thumbRow = document.getElementById('thumbRow');
-  thumbRow.innerHTML = '';
-  var count = Math.min(files.length, 5);
-  for(var i=0;i<count;i++) {
-    selectedFiles.push(files[i]);
-    (function(file) {
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        var img = document.createElement('img');
-        img.className = 'thumb';
-        img.src = e.target.result;
-        thumbRow.appendChild(img);
+  selFiles=[];
+  var thumbRow=document.getElementById('thumbRow');
+  thumbRow.innerHTML='';
+  var count=Math.min(files.length,5);
+  for(var i=0;i<count;i++){
+    selFiles.push(files[i]);
+    (function(f,idx){
+      var reader=new FileReader();
+      reader.onload=function(e){
+        var wrap=document.createElement('div');
+        wrap.className='thumb-wrap';
+        var img=document.createElement('img');
+        img.className='thumb'+(idx===0?' selected':'');
+        img.src=e.target.result;
+        img.style.width='72px';img.style.height='72px';img.style.objectFit='cover';
+        img.onload=function(){if(idx===0)checkQuality(img);};
+        img.onclick=(function(ix,im){return function(){
+          document.querySelectorAll('.thumb').forEach(function(t){t.classList.remove('selected');});
+          im.classList.add('selected');
+          selIdx=ix;
+          checkQuality(im);
+        };})(idx,img);
+        var rem=document.createElement('div');
+        rem.className='thumb-remove';
+        rem.textContent='×';
+        rem.onclick=(function(ix){return function(ev){
+          ev.stopPropagation();
+          selFiles.splice(ix,1);
+          handleFiles(selFiles);
+        };})(idx);
+        wrap.appendChild(img); wrap.appendChild(rem);
+        thumbRow.appendChild(wrap);
       };
-      reader.readAsDataURL(file);
-    })(files[i]);
+      reader.readAsDataURL(f);
+    })(files[i],i);
   }
-  document.getElementById('fileCount').textContent = count + ' photo(s) selected';
-  document.getElementById('uploadArea').classList.add('has-files');
-  document.getElementById('uploadArea').querySelector('.upload-text').textContent = count + ' Photos Selected ✅';
+  document.getElementById('previewSection').style.display = count>0?'block':'none';
+  document.getElementById('uploadText').textContent = count>0?(count+' Photo(s) Selected ✅'):'Photos Choose Karo';
+  document.getElementById('uploadArea').classList.toggle('has-files',count>0);
+  document.getElementById('colourBox').style.display = count>0?'block':'none';
+  document.getElementById('sizeSection').style.display = count>0?'block':'none';
+  document.getElementById('step2badge').style.display = count>0?'inline-block':'none';
+  document.getElementById('bulkBox').style.display = count>0?'block':'none';
+  document.getElementById('step3badge').style.display = count>0?'inline-block':'none';
 }
 
-// Progress animation
-var progressInterval = null;
-var progressVal = 5;
-function startProgress() {
-  progressVal = 5;
+// ══ COLOUR ADJUSTMENT ══
+function adjustImage(){
+  var b=document.getElementById('brightnessSlider').value;
+  var c=document.getElementById('contrastSlider').value;
+  var s=document.getElementById('saturationSlider').value;
+  document.getElementById('brightnessVal').textContent=b+'%';
+  document.getElementById('contrastVal').textContent=c+'%';
+  document.getElementById('saturationVal').textContent=s+'%';
+  var thumbs=document.querySelectorAll('.thumb.selected');
+  thumbs.forEach(function(t){t.style.filter='brightness('+b+'%) contrast('+c+'%) saturate('+s+')';});
+}
+
+// ══ SIZE SELECTOR ══
+var selSize='4';
+var sizePrices={'2.5':2250,'4':3750,'5':4875,'6':6375};
+function selectSize(el,size){
+  document.querySelectorAll('.size-card').forEach(function(s){s.classList.remove('selected');});
+  el.classList.add('selected'); selSize=size;
+  updateBulkTotal();
+}
+
+// ══ BULK ORDER ══
+var qty=1;
+function changeQty(d){
+  qty=Math.max(1,Math.min(500,qty+d));
+  document.getElementById('qtyVal').textContent=qty;
+  updateBulkTotal();
+}
+function updateBulkTotal(){
+  var base=sizePrices[selSize]||3750;
+  var disc=qty>=100?0.25:qty>=50?0.18:qty>=10?0.10:0;
+  var total=Math.round(base*qty*(1-disc));
+  document.getElementById('bulkTotal').textContent='₹'+total.toLocaleString('en-IN');
+}
+
+// ══ PROGRESS ══
+var progInt=null, progVal=5;
+function startProg(){
+  progVal=5;
   document.getElementById('progressSection').style.display='block';
   document.getElementById('progressBar').style.width='5%';
-  progressInterval = setInterval(function(){
-    if(progressVal < 85) {
-      progressVal += Math.random()*2;
-      document.getElementById('progressBar').style.width = progressVal+'%';
-    }
-  }, 3000);
+  progInt=setInterval(function(){
+    if(progVal<80){progVal+=Math.random()*1.5;document.getElementById('progressBar').style.width=progVal+'%';}
+  },3000);
 }
-function completeProgress() {
-  clearInterval(progressInterval);
-  document.getElementById('progressBar').style.width='100%';
-  setTimeout(function(){document.getElementById('progressSection').style.display='none';},1000);
-}
-function stopProgress() {
-  clearInterval(progressInterval);
-  document.getElementById('progressSection').style.display='none';
-}
+function doneProg(){clearInterval(progInt);document.getElementById('progressBar').style.width='100%';setTimeout(function(){document.getElementById('progressSection').style.display='none';},800);}
+function stopProg(){clearInterval(progInt);document.getElementById('progressSection').style.display='none';}
 
-function showStatus(type, msg) {
-  document.getElementById('statusProcessing').style.display='none';
-  document.getElementById('statusSuccess').style.display='none';
-  document.getElementById('statusError').style.display='none';
-  if(type && msg) {
-    var el = document.getElementById('status'+type);
-    el.textContent = msg;
-    el.style.display='block';
+// ══ STEP INDICATOR ══
+function setStep(n){
+  for(var i=1;i<=4;i++){
+    var c=document.getElementById('sc'+i);
+    if(i<n){c.classList.remove('active');c.classList.add('done');c.textContent='✓';}
+    else if(i===n){c.classList.add('active');c.classList.remove('done');}
+    else{c.classList.remove('active','done');c.textContent=i;}
   }
 }
 
-// ══ 3D GENERATION ══
-async function generate3D() {
-  if(selectedFiles.length === 0) {
-    alert('Pehle photo(s) select karo!');
-    return;
-  }
-  var btn = document.getElementById('gen3d-btn');
-  btn.disabled = true;
-  btn.textContent = '⏳ Generating...';
+function showStat(type,msg){
+  document.getElementById('sProc').style.display='none';
+  document.getElementById('sOk').style.display='none';
+  document.getElementById('sErr').style.display='none';
+  if(type&&msg){document.getElementById('s'+type).textContent=msg;document.getElementById('s'+type).style.display='block';}
+}
 
-  // Hide previous results
+// ══ GENERATE 3D ══
+async function generate3D(){
+  if(selFiles.length===0){alert('Pehle photo(s) select karo!');return;}
+  var btn=document.getElementById('gen3d-btn');
+  btn.disabled=true; btn.textContent='⏳ Generating...';
   document.getElementById('viewerSection').style.display='none';
   document.getElementById('approvalBox').style.display='none';
+  document.getElementById('trackingBox').style.display='none';
 
-  // Use first (or best) photo
-  var file = selectedFiles[0];
-  // Auto-compress if > 1.5MB
-  var processFile = function(cb) {
-    if(file.size > 1500000) {
-      var canvas = document.createElement('canvas');
-      var img = new Image();
-      img.onload = function() {
-        var scale = Math.min(1, 1200/Math.max(img.width,img.height));
-        canvas.width = img.width*scale;
-        canvas.height = img.height*scale;
-        canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
-        canvas.toBlob(function(blob){cb(blob);}, 'image/jpeg', 0.85);
+  var file=selFiles[selIdx]||selFiles[0];
+  var b=document.getElementById('brightnessSlider').value;
+  var c=document.getElementById('contrastSlider').value;
+  var s=document.getElementById('saturationSlider').value;
+  var needsAdjust=(b!='100'||c!='100'||s!='100');
+
+  function getBase64(file, cb) {
+    if(file.size>1500000||needsAdjust){
+      var canvas=document.createElement('canvas');
+      var img=new Image();
+      img.onload=function(){
+        var scale=Math.min(1,1200/Math.max(img.width,img.height));
+        canvas.width=img.width*scale; canvas.height=img.height*scale;
+        var ctx=canvas.getContext('2d');
+        ctx.filter='brightness('+b+'%) contrast('+c+'%) saturate('+s+')';
+        ctx.drawImage(img,0,0,canvas.width,canvas.height);
+        canvas.toBlob(function(blob){
+          var r=new FileReader();
+          r.onload=function(e){cb(e.target.result.split(',')[1]);};
+          r.readAsDataURL(blob);
+        },'image/jpeg',0.85);
       };
-      img.src = URL.createObjectURL(file);
+      img.src=URL.createObjectURL(file);
     } else {
-      cb(file);
+      var r=new FileReader();
+      r.onload=function(e){cb(e.target.result.split(',')[1]);};
+      r.readAsDataURL(file);
     }
-  };
+  }
 
-  processFile(async function(fileToUse) {
-    var reader = new FileReader();
-    reader.onload = async function(e) {
-      var base64 = e.target.result.split(',')[1];
-      var imageType = 'image/jpeg';
+  getBase64(file, async function(base64){
+    startProg(); setStep(2);
+    showStat('Proc','⏳ GAIOS™ AI 3D model shuru kar raha hai...');
+    document.getElementById('progressText').textContent='⏳ Photo compress + upload ho rahi hai...';
+    document.getElementById('timeEst').textContent='Estimated: 3-6 minutes | Hunyuan 3D 3.1';
 
-      startProgress();
-      showStatus('Processing', '⏳ GAIOS™ AI 3D model shuru kar raha hai...');
-      document.getElementById('progressText').textContent='⏳ GAIOS™ AI process kar raha hai...';
-      document.getElementById('timeEst').textContent='Estimated: 3-6 minutes | Tencent Hunyuan 3D 3.1';
-
-      try {
-        var res = await fetch('/.netlify/functions/photo3d', {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({imageBase64:base64, imageType:imageType})
-        });
-        var data = await res.json();
-
-        if(!data.predictionId) {
-          stopProgress();
-          showStatus('Error', '❌ Error: '+(data.error||'Start failed. Dobara try karo.'));
-          btn.disabled=false; btn.textContent='🚀 3D Model Generate Karo';
-          return;
-        }
-
-        currentPredId = data.predictionId;
-        var seconds = 0;
-
-        for(var i=0;i<72;i++) {
-          await new Promise(function(r){setTimeout(r,5000);});
-          seconds += 5;
-          document.getElementById('progressText').textContent='⏳ 3D model ban raha hai... '+seconds+'s';
-          showStatus('Processing','⏳ Processing: '+seconds+' seconds...');
-
-          var pollRes = await fetch('/.netlify/functions/photo3d?id='+currentPredId);
-          var pollData = await pollRes.json();
-
-          if(pollData.status==='succeeded' && pollData.output) {
-            var outputs = Array.isArray(pollData.output)?pollData.output:[pollData.output];
-            var modelUrl = null;
-            outputs.forEach(function(url){
-              if(url&&url.match&&url.match(/\.(glb|obj|gltf)/i)) modelUrl=url;
-            });
-
-            completeProgress();
-            currentModelUrl = modelUrl || outputs[0];
-
-            if(modelUrl) {
-              showStatus('Success','✅ 3D Model Ready! 360° rotate karke dekho!');
-              var viewer = document.getElementById('modelViewer');
-              viewer.setAttribute('src', modelUrl);
-              document.getElementById('viewerSection').style.display='block';
-              document.getElementById('approvalBox').style.display='block';
-              document.getElementById('downloadBtn').setAttribute('data-url', modelUrl);
-            } else {
-              showStatus('Success','✅ Model ready! Download link neeche hai.');
-              document.getElementById('viewerSection').style.display='block';
-            }
-            btn.disabled=false; btn.textContent='🚀 3D Model Generate Karo';
-            showToast('🎉 3D Model Successfully Banaya!', 4000);
-            return;
-
-          } else if(pollData.status==='failed') {
-            stopProgress();
-            var errMsg = (pollData.error && pollData.error.toLowerCase().includes('limit'))
-              ? '⚠️ Server busy hai. 5 minute baad try karein.'
-              : '❌ Generation failed. Dobara try karein.';
-            showStatus('Error', errMsg);
-            btn.disabled=false; btn.textContent='🚀 3D Model Generate Karo';
-            return;
-          }
-        }
-
-        stopProgress();
-        showStatus('Error','⏳ Timeout. Please try again.');
-        btn.disabled=false; btn.textContent='🚀 3D Model Generate Karo';
-
-      } catch(err) {
-        stopProgress();
-        showStatus('Error','❌ Error: '+err.message);
-        btn.disabled=false; btn.textContent='🚀 3D Model Generate Karo';
+    try {
+      var res=await fetch('/.netlify/functions/photo3d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imageBase64:base64,imageType:'image/jpeg'})});
+      var data=await res.json();
+      if(!data.predictionId){
+        stopProg();
+        var em=data.error||'Start failed';
+        var friendly=em.toLowerCase().includes('limit')?'⚠️ Server busy. 5 minute baad try karein.':'❌ Error: '+em+'. Dobara try karein.';
+        showStat('Err',friendly); btn.disabled=false; btn.textContent='🚀 3D Model Generate Karo'; return;
       }
-    };
-    reader.readAsDataURL(fileToUse);
+      setStep(3);
+      document.getElementById('progressText').textContent='⏳ AI 3D model bana raha hai...';
+      var predId=data.predictionId, secs=0;
+      for(var i=0;i<72;i++){
+        await new Promise(function(r){setTimeout(r,5000);});
+        secs+=5;
+        showStat('Proc','⏳ Processing: '+secs+'s — Hunyuan 3D generating...');
+        document.getElementById('progressText').textContent='⏳ 3D model ban raha hai... '+secs+'s';
+        var pr=await fetch('/.netlify/functions/photo3d?id='+predId);
+        var pd=await pr.json();
+        if(pd.status==='succeeded'&&pd.output){
+          var outs=Array.isArray(pd.output)?pd.output:[pd.output];
+          var mu=null;
+          outs.forEach(function(u){if(u&&u.match&&u.match(/\.(glb|obj|gltf)/i))mu=u;});
+          doneProg(); setStep(4); curModelUrl=mu||outs[0];
+          if(mu){
+            showStat('Ok','✅ 3D Model Ready! 360° rotate karke dekho → Approve karo');
+            document.getElementById('modelViewer').setAttribute('src',mu);
+            document.getElementById('viewerSection').style.display='block';
+            document.getElementById('approvalBox').style.display='block';
+            document.getElementById('trackingBox').style.display='block';
+          } else {
+            showStat('Ok','✅ Model ready! Download link neeche.');
+            document.getElementById('viewerSection').style.display='block';
+          }
+          btn.disabled=false; btn.textContent='🚀 3D Model Generate Karo';
+          toast('🎉 3D Model Successfully Bana! '+secs+'s mein!',4000);
+          return;
+        } else if(pd.status==='failed'){
+          stopProg();
+          var fe=(pd.error&&pd.error.toLowerCase().includes('limit'))?'⚠️ Server busy. 5 minute baad try karein.':'❌ Generation failed. Dobara try karein.';
+          showStat('Err',fe); btn.disabled=false; btn.textContent='🚀 3D Model Generate Karo'; return;
+        }
+      }
+      stopProg(); showStat('Err','⏳ Timeout. Dobara try karein.');
+      btn.disabled=false; btn.textContent='🚀 3D Model Generate Karo';
+    } catch(err){
+      stopProg(); showStat('Err','❌ '+err.message);
+      btn.disabled=false; btn.textContent='🚀 3D Model Generate Karo';
+    }
   });
 }
 
-// ══ APPROVAL FLOW ══
-function approveModel() {
+// ══ APPROVAL ══
+function approveModel(){
   document.getElementById('approvalStatus').style.display='block';
-  document.getElementById('approvalStatus').textContent='✅ Model Approved! Order processing ke liye Contact karein.';
-  showToast('✅ Model Approved! Order confirm karne ke liye call karein: +91-6350132497', 5000);
-  // Auto-open WhatsApp
-  setTimeout(function(){
-    window.open('https://wa.me/916350132497?text=Namaskar%2C%20maine%20GAIOS%20par%20apna%203D%20model%20approve%20kar%20diya%20hai.%20Order%20confirm%20karna%20chahta%20hoon.','_blank');
-  }, 1500);
+  document.getElementById('approvalStatus').textContent='✅ Model Approved! Order confirm ke liye call karein.';
+  toast('✅ Approved! Calling... +91-6350132497',4000);
+  setTimeout(function(){window.open('https://wa.me/916350132497?text=Namaskar%2C%20maine%20GAIOS%20par%20apna%203D%20model%20approve%20kar%20diya%20hai.%20Order%20confirm%20karna%20chahta%20hoon.%20Size%3A%20'+selSize+'%22','_blank');},1200);
 }
-
-function requestRevision() {
-  var rt = document.getElementById('revisionText');
-  var rb = document.getElementById('revisionSubmitBtn');
-  rt.style.display = rt.style.display==='block' ? 'none' : 'block';
-  rb.style.display = rb.style.display==='block' ? 'none' : 'block';
-  if(rt.style.display==='block') rt.focus();
+function toggleRevision(){
+  var rt=document.getElementById('revText'),rb=document.getElementById('revSubmitBtn');
+  var show=rt.style.display!=='block';
+  rt.style.display=show?'block':'none';
+  rb.style.display=show?'block':'none';
+  if(show) rt.focus();
 }
-
-function submitRevision() {
-  var text = document.getElementById('revisionText').value.trim();
-  if(!text){alert('Kripya revision details likhein.');return;}
-  var msg = 'Namaskar%2C%20mera%203D%20model%20ban%20gaya%20hai%20lekin%20kuch%20changes%20chahiye%3A%20'+encodeURIComponent(text);
-  window.open('https://wa.me/916350132497?text='+msg,'_blank');
-  showToast('✅ Revision request bhej di gayi!', 3000);
+function submitRevision(){
+  var text=document.getElementById('revText').value.trim();
+  if(!text){alert('Changes likhein pehle.');return;}
+  window.open('https://wa.me/916350132497?text=Namaskar%2C%20mera%203D%20model%20ready%20hai%20lekin%20kuch%20changes%20chahiye%3A%20'+encodeURIComponent(text),'_blank');
+  toast('✅ Revision request bhaij di!',3000);
 }
 
 // ══ DOWNLOAD + SHARE ══
-function downloadModel() {
-  if(!currentModelUrl){showToast('Pehle model generate karo!');return;}
-  var a = document.createElement('a');
-  a.href = currentModelUrl;
-  a.download = 'GAIOS-3D-Model.glb';
-  a.target = '_blank';
-  a.click();
-  showToast('⬇️ Download shuru ho gaya!', 2000);
+function downloadModel(){
+  if(!curModelUrl){toast('Pehle model generate karo!');return;}
+  var a=document.createElement('a');a.href=curModelUrl;a.download='GAIOS-3D-'+selSize+'inch.glb';a.target='_blank';a.click();
+  toast('⬇️ Download shuru!',2000);
 }
-
-function shareWhatsApp() {
-  if(!currentModelUrl){showToast('Pehle model generate karo!');return;}
-  var msg = 'Dekho mera GAIOS™ 3D model! '+currentModelUrl+' — Genesys Additive 3D Creation, Pali';
+function shareWA(){
+  if(!curModelUrl){toast('Pehle model generate karo!');return;}
+  var msg='🎉 Mera GAIOS™ 3D Model dekho!\n'+curModelUrl+'\n\nGenesys Additive 3D Creation, Pali, Rajasthan\n+91-6350132497';
   window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
 }
-
-function copyModelLink() {
-  if(!currentModelUrl){showToast('Pehle model generate karo!');return;}
-  navigator.clipboard.writeText(currentModelUrl).then(function(){
-    showToast('✅ Link copy ho gayi!', 2000);
-  }).catch(function(){
-    showToast('❌ Copy nahi hua. Manually copy karein.');
-  });
+function shareInsta(){
+  if(!curModelUrl){toast('Pehle model generate karo!');return;}
+  navigator.clipboard.writeText(curModelUrl).then(function(){toast('📸 Link copy ho gayi! Instagram Story mein paste karein.',4000);}).catch(function(){toast('Link: '+curModelUrl);});
+}
+function shareFB(){
+  if(!curModelUrl){toast('Pehle model generate karo!');return;}
+  window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(curModelUrl),'_blank');
+}
+function copyLink(){
+  if(!curModelUrl){toast('Pehle model generate karo!');return;}
+  navigator.clipboard.writeText(curModelUrl).then(function(){toast('✅ Link copy ho gayi!',2000);}).catch(function(){toast('Copy nahi hua.');});
 }
 
-// ══ CONTACT FORM ══
-function submitForm() {
-  var name=document.getElementById('c_name').value.trim();
-  var phone=document.getElementById('c_phone').value.trim();
-  var service=document.getElementById('c_service').value;
-  var city=document.getElementById('c_city').value.trim();
-  var msg2=document.getElementById('c_msg').value.trim();
-  if(!name||!phone||!service){alert('Naam, mobile aur service zaroor bharen.');return;}
-  var waMsg='Namaskar%2C%20mera%20naam%20'+encodeURIComponent(name)+'%20hai.%20Mobile%3A%20'+encodeURIComponent(phone)+(city?'%20%7C%20City%3A%20'+encodeURIComponent(city):'')+'%20%7C%20Service%3A%20'+encodeURIComponent(service)+(msg2?'%20%7C%20Details%3A%20'+encodeURIComponent(msg2):'');
+// ══ CONTACT ══
+function submitForm(){
+  var n=document.getElementById('c_name').value.trim();
+  var p=document.getElementById('c_phone').value.trim();
+  var sv=document.getElementById('c_service').value;
+  var ct=document.getElementById('c_city').value.trim();
+  var mg=document.getElementById('c_msg').value.trim();
+  if(!n||!p||!sv){alert('Naam, mobile aur service zaroor bharen.');return;}
+  var waMsg='Namaskar%2C%20Naam%3A%20'+encodeURIComponent(n)+'%20%7C%20Mobile%3A%20'+encodeURIComponent(p)+(ct?'%20%7C%20City%3A%20'+encodeURIComponent(ct):'')+'%20%7C%20Service%3A%20'+encodeURIComponent(sv)+(mg?'%20%7C%20Details%3A%20'+encodeURIComponent(mg):'');
   window.open('https://wa.me/916350132497?text='+waMsg,'_blank');
-  var sm=document.getElementById('successMsg');
-  sm.style.display='block';
+  var sm=document.getElementById('successMsg');sm.style.display='block';
   setTimeout(function(){sm.style.display='none';},5000);
 }
 </script>
