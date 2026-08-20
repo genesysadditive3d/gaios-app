@@ -13,7 +13,7 @@ exports.handler = async (event) => {
     const { text } = JSON.parse(event.body || '{}');
     if (!text) return { statusCode: 400, headers, body: JSON.stringify({ error: 'text required' }) };
 
-    const VOICE_ID = 'EXAVITQu4vr4xnSDxMaL';
+    const VOICE_ID = 'gHu9GtaHOXcSqFTK06ux';
     const API_KEY = 'sk_1c8cc8eb27886b353a698fb4f5e418b3594a1c92c1e05298';
 
     const response = await fetch(https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}, {
