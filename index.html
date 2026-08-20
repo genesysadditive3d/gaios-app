@@ -1400,6 +1400,175 @@ function robotSpeakBrowser(text) {
 function robotSpeak(text) {
   robotSpeakElevenLabs(text);
 }}
+  
+// ===== VERTICAL & BFOREVER MODAL SYSTEM =====
+const verticalData = {
+  'consumer-figurines': {
+    title: '🧍 Consumer Figurines — BFOREVER™',
+    desc: 'Aapki ya aapke priyajan ki photo se world-class full-colour 3D figurine! Mimaki 3DUJ-553 PolyJet printer se banegi — India mein pehli baar. Shaadi, birthday, anniversary — har khaas mauke ke liye perfect yaadgaar tohfa.',
+    music: 'happy',
+    color: '#C9A84C'
+  },
+  'heritage-tourism': {
+    title: '🏛️ Heritage & Tourism',
+    desc: 'Rajasthan ke forts, temples aur historical artifacts ke exact 3D replicas! Museums, tourist centers aur government departments ke liye premium quality models. GAIOS™ AI se scan karein, print karein — heritage ko nayi zindagi milegi.',
+    music: 'classical',
+    color: '#8B6914'
+  },
+  'real-estate': {
+    title: '🏗️ Real Estate',
+    desc: 'Builders aur architects ke liye full-colour 3D architectural models! Blueprint se seedha 3D model — clients ko project dikhana ab aur bhi asaan. Pre-launch marketing mein game changer!',
+    music: 'corporate',
+    color: '#4A90D9'
+  },
+  'medical-dicom': {
+    title: '🏥 Medical DICOM',
+    desc: 'CT scan aur MRI se exact 3D organ models! Surgeons operation se pehle practice kar sakte hain. Medical colleges, hospitals aur diagnostic centers ke liye revolutionary technology. Patient education mein bhi kaam aata hai.',
+    music: 'calm',
+    color: '#E74C3C'
+  },
+  'drone-lidar': {
+    title: '🚁 Drone/LiDAR',
+    desc: 'Drone survey data se physical terrain models! GIS data ko 3D reality mein convert karein. Urban planning, infrastructure projects aur government surveys ke liye perfect solution.',
+    music: 'tech',
+    color: '#27AE60'
+  },
+  'antique-museum': {
+    title: '🏺 Antique & Museum',
+    desc: 'Rare artifacts aur antiques ke full-colour 3D replicas! Original ko preserve karein, replicas sell karein. Museums, collectors aur heritage organizations ke liye unique business opportunity.',
+    music: 'classical',
+    color: '#9B59B6'
+  },
+  'reverse-engineering': {
+    title: '⚙️ Reverse Engineering',
+    desc: 'Machine parts scan karein aur exact replicas banayein! Spare parts jo market mein available nahi — GAIOS™ se possible hai. Manufacturing aur industrial maintenance ke liye revolutionary solution.',
+    music: 'tech',
+    color: '#E67E22'
+  },
+  'defence': {
+    title: '🛡️ Defence',
+    desc: 'Terrain mapping aur military scale models! Training purposes ke liye exact geographical models. Strategic planning aur simulation ke liye use hote hain. Confidential aur precision work mein expert.',
+    music: 'corporate',
+    color: '#2C3E50'
+  },
+  'corporate-gifting': {
+    title: '🎁 Corporate Gifting',
+    desc: 'Premium 3D awards, trophies aur corporate gifts! Company logo, product replicas ya founder ki figurine — sab kuch possible! Employee recognition aur client gifting mein unique impression.',
+    music: 'happy',
+    color: '#F39C12'
+  },
+  'visitor-centre': {
+    title: '🗺️ Visitor Centre',
+    desc: 'Relief maps aur terrain models visitor centers ke liye! National parks, hill stations aur tourist attractions ke liye interactive 3D maps. Visitors ko geography samajhna ab visual aur interesting lagega.',
+    music: 'calm',
+    color: '#16A085'
+  },
+  'religious-tourism': {
+    title: '🕌 Religious Tourism',
+    desc: 'Temple models, deity replicas aur religious artifacts ke 3D prints! Teerth sthalon ki miniature replicas — devotees ke liye precious souvenirs. Mandir trusts aur religious organizations ke liye special service.',
+    music: 'classical',
+    color: '#E74C3C'
+  },
+  'education-stem': {
+    title: '📚 Education/STEM',
+    desc: '3D learning models schools aur colleges ke liye! Anatomy, geography, mathematics — har subject mein 3D models se padhai interesting aur effective hoti hai. NEP 2020 ke anuroop innovative education tools.',
+    music: 'happy',
+    color: '#3498DB'
+  }
+};
+
+const bforeverData = {
+  'shaadi': {
+    title: '💍 Shaadi — Dulha-Dulhan ki 3D Figurine',
+    desc: 'Shaadi ki sabse khaas yaad — Dulha-Dulhan ki full-colour 3D figurine! Actual wedding dress mein, exact chehra, exact look — GAIOS™ AI se scan karein aur Mimaki printer pe print karein. Ek baar dekha toh dil khush ho jayega! Cake topper se lekar mantelpiece decoration tak — yeh gift zindagi bhar yaad rahega.',
+    music: 'wedding',
+    color: '#FFD700'
+  },
+  'birthday': {
+    title: '🎂 Birthday — Unique 3D Gift',
+    desc: 'Birthday pe aisa gift jo kabhi bhula na ja sake! Khud ki ya kisi priye ki exact 3D figurine — unka chehra, unke kapde, unka andaaz — sab kuch 3D mein! Bachche se lekar buzurg tak — sabke liye special. Yeh sirf ek gift nahi, ek yaad hai jo hamesha saath rahegi!',
+    music: 'happy',
+    color: '#FF6B9D'
+  },
+  'yaadgar': {
+    title: '💝 Yaadgaar — Unki Yaad Hamesha',
+    desc: 'Jo humse door ho gaye — unki yaad ko 3D mein jinda rakhen! Purani photo se exact 3D figurine banva sakte hain. Buzurgon ki yaad, kisi priye ki smriti — yeh sirf ek object nahi, ek emotion hai. BFOREVER™ ka matlab hai — "Be Forever" — unki yaad hamesha hamare saath!',
+    music: 'calm',
+    color: '#9B59B6'
+  },
+  'achievement': {
+    title: '🏆 Achievement — Safalta Ka Jashn',
+    desc: 'Retirement, promotion, medal, degree — har badi safalta deserve karti hai ek khaas celebration! Achievement figurine mein wo pehne huye uniform mein, trophy ke saath, ya apne kaam ki jagah par — bilkul waise jaise wo hain! Corporate gifting mein bhi ye sabse popular choice hai.',
+    music: 'corporate',
+    color: '#F39C12'
+  }
+};
+
+function playBgMusic(type) {
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const notes = {
+    'happy': [523, 659, 784, 1047],
+    'classical': [392, 494, 587, 698],
+    'corporate': [440, 554, 659, 880],
+    'calm': [349, 440, 523, 698],
+    'tech': [880, 1047, 1319, 1047],
+    'wedding': [784, 988, 1175, 988]
+  };
+  const seq = notes[type] || notes['happy'];
+  seq.forEach((freq, i) => {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.frequency.value = freq;
+    osc.type = 'sine';
+    gain.gain.setValueAtTime(0.08, audioCtx.currentTime + i * 0.4);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + i * 0.4 + 0.35);
+    osc.start(audioCtx.currentTime + i * 0.4);
+    osc.stop(audioCtx.currentTime + i * 0.4 + 0.4);
+  });
+}
+
+function showVerticalModal(key) {
+  const d = verticalData[key];
+  if (!d) return;
+  playBgMusic(d.music);
+  robotSpeak(d.title.replace(/[🧍🏛️🏗️🏥🚁🏺⚙️🛡️🎁🗺️🕌📚]/g,'') + '. ' + d.desc.substring(0,100));
+  const modal = document.createElement('div');
+  modal.style.cssText = `position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;`;
+  modal.innerHTML = `
+    <div style="background:linear-gradient(135deg,#0C1830,#1a2a4a);border:2px solid ${d.color};border-radius:16px;padding:28px;max-width:480px;width:100%;position:relative;">
+      <button onclick="this.parentElement.parentElement.remove()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;">✕</button>
+      <h2 style="color:${d.color};font-size:1.2rem;margin-bottom:12px;">${d.title}</h2>
+      <p style="color:#e0e0e0;line-height:1.7;font-size:0.95rem;">${d.desc}</p>
+      <div style="margin-top:20px;padding:14px;background:rgba(201,168,76,0.1);border-radius:10px;border-left:3px solid ${d.color};">
+        <p style="color:${d.color};font-weight:bold;margin:0;font-size:0.9rem;">🚀 Coming Soon — Oct/Nov 2026</p>
+        <p style="color:#aaa;font-size:0.85rem;margin:6px 0 0;">Mimaki 3DUJ-553 printer commissioning ke baad yeh service shuru hogi. Pan-India scan points ke through aap yeh service le sakte hain!</p>
+      </div>
+      <button onclick="this.parentElement.parentElement.remove()" style="margin-top:16px;width:100%;padding:12px;background:${d.color};border:none;border-radius:8px;color:#000;font-weight:bold;cursor:pointer;font-size:1rem;">Samajh Gaya! ✓</button>
+    </div>`;
+  document.body.appendChild(modal);
+}
+
+function showBforeverModal(key) {
+  const d = bforeverData[key];
+  if (!d) return;
+  playBgMusic(d.music);
+  robotSpeak(d.title.replace(/[💍🎂💝🏆]/g,'') + '. ' + d.desc.substring(0,100));
+  const modal = document.createElement('div');
+  modal.style.cssText = `position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;`;
+  modal.innerHTML = `
+    <div style="background:linear-gradient(135deg,#1a0a0a,#2a1a1a);border:2px solid ${d.color};border-radius:16px;padding:28px;max-width:480px;width:100%;position:relative;">
+      <button onclick="this.parentElement.parentElement.remove()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;">✕</button>
+      <h2 style="color:${d.color};font-size:1.2rem;margin-bottom:12px;">${d.title}</h2>
+      <p style="color:#e0e0e0;line-height:1.7;font-size:0.95rem;">${d.desc}</p>
+      <div style="margin-top:20px;text-align:center;">
+        <a href="https://bforever.in" target="_blank" style="display:inline-block;padding:12px 24px;background:${d.color};border-radius:8px;color:#000;font-weight:bold;text-decoration:none;margin-right:10px;">🌐 BFOREVER™ Website</a>
+        <button onclick="this.parentElement.parentElement.parentElement.remove()" style="padding:12px 24px;background:transparent;border:2px solid ${d.color};border-radius:8px;color:${d.color};font-weight:bold;cursor:pointer;">Theek Hai ✓</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+}
 </script>
 </body>
 </html>
