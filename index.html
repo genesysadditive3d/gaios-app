@@ -1348,7 +1348,7 @@ function copyLink(){
 }
 
 // ══ CONTACT ══
-async function robotSpeakElevenLabs(text){try{const r=await fetch('/.netlify/functions/elevenlabs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:text})});const d=await r.json();if(!d.audio)throw new Error('no audio');const b=atob(d.audio);const arr=new Uint8Array(b.length);for(let i=0;i<b.length;i++)arr[i]=b.charCodeAt(i);const blob=new Blob([arr],{type:'audio/mpeg'});const url=URL.createObjectURL(blob);new Audio(url).play();}catch(e){const u=new SpeechSynthesisUtterance(text);u.lang='hi-IN';u.rate=0.85;speechSynthesis.speak(u);}} function robotSpeak(text){robotSpeakBrowser(text);} function submitForm(){
+async function robotSpeakElevenLabs(text){try{const r=await fetch('/.netlify/functions/elevenlabs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:text})});const d=await r.json();if(!d.audio)throw new Error('no audio');const b=atob(d.audio);const arr=new Uint8Array(b.length);for(let i=0;i<b.length;i++)arr[i]=b.charCodeAt(i);const blob=new Blob([arr],{type:'audio/mpeg'});const url=URL.createObjectURL(blob);new Audio(url).play();}catch(e){const u=new SpeechSynthesisUtterance(text);u.lang='hi-IN';u.rate=0.85;speechSynthesis.speak(u);}} function robotSpeakBrowser(text){const utter=new SpeechSynthesisUtterance(text);utter.lang='hi-IN';utter.rate=0.85;utter.pitch=1.1;window.speechSynthesis.cancel();window.speechSynthesis.speak(utter);}function robotSpeak(text){robotSpeakBrowser(text);} function submitForm(){
   var n=document.getElementById('c_name').value.trim();
   var p=document.getElementById('c_phone').value.trim();
   var sv=document.getElementById('c_service').value;
