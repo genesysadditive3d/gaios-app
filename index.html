@@ -24,8 +24,6 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{background:var(--navy);color:var(--off-white);font-family:var(--fd);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
-
-/* HEADER */
 .header{background:linear-gradient(180deg,#040A14,#070F1E);border-bottom:1px solid var(--gold-border);padding:11px 14px 9px;text-align:center;position:sticky;top:0;z-index:200;box-shadow:0 2px 40px rgba(0,0,0,0.8);}
 .logo-row{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:3px;}
 .logo-img{width:34px;height:34px;object-fit:contain;border-radius:50%;border:1px solid var(--gold-border);}
@@ -38,27 +36,17 @@ body{background:var(--navy);color:var(--off-white);font-family:var(--fd);min-hei
 .dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2.5s infinite;}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,214,143,0.5);}50%{box-shadow:0 0 0 6px rgba(0,214,143,0);}}
 .status-text{color:var(--green);font-weight:600;}
-
-/* LANG TOGGLE */
 .lang-toggle{position:absolute;top:10px;right:12px;display:flex;gap:4px;}
 .lang-btn{font-size:9px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer;border:1px solid var(--gold-border);background:transparent;color:var(--gray);font-family:var(--fd);transition:all 0.2s;}
 .lang-btn.active{background:var(--gold);color:var(--navy);border-color:var(--gold);}
-
-/* NAV */
 .nav-tabs{display:flex;background:rgba(0,0,0,0.4);border-bottom:1px solid var(--gold-border);overflow-x:auto;scrollbar-width:none;}
 .nav-tabs::-webkit-scrollbar{display:none;}
 .nav-tab{flex:none;padding:10px 14px;font-size:10.5px;font-weight:600;color:var(--gray);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.2s;letter-spacing:0.3px;}
 .nav-tab.active{color:var(--gold);border-bottom-color:var(--gold);background:rgba(201,168,76,0.07);}
-
-/* SECTIONS */
 .section{display:none;padding:13px 13px 80px;}
 .section.active{display:block;}
-
-/* CARDS */
 .card{background:var(--card);border:1px solid var(--gold-border);border-radius:14px;padding:15px;margin-bottom:13px;}
 .card-title{font-family:var(--fh);color:var(--gold);font-size:11px;font-weight:700;letter-spacing:1.5px;margin-bottom:11px;display:flex;align-items:center;gap:6px;}
-
-/* CHAT */
 .chat-area{background:rgba(0,0,0,0.35);border-radius:10px;border:1px solid rgba(255,255,255,0.05);min-height:180px;max-height:280px;overflow-y:auto;padding:11px;margin-bottom:11px;font-size:13px;line-height:1.6;}
 .chat-area::-webkit-scrollbar{width:3px;}
 .chat-area::-webkit-scrollbar-thumb{background:var(--gold-border);border-radius:3px;}
@@ -69,8 +57,6 @@ body{background:var(--navy);color:var(--off-white);font-family:var(--fd);min-hei
 .ai-input{flex:1;background:rgba(255,255,255,0.06);border:1px solid var(--gold-border);border-radius:10px;color:var(--white);font-family:var(--fd);font-size:13px;padding:10px 13px;outline:none;transition:all 0.2s;}
 .ai-input:focus{border-color:var(--gold);background:rgba(255,255,255,0.09);}
 .ai-input::placeholder{color:var(--gray2);}
-
-/* BUTTONS */
 .btn{background:linear-gradient(135deg,#C9A84C,#A8842C);color:var(--navy);border:none;border-radius:10px;padding:11px 15px;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:var(--fd);}
 .btn:hover{background:linear-gradient(135deg,#E8C97A,#C9A84C);transform:translateY(-1px);box-shadow:0 4px 15px rgba(201,168,76,0.3);}
 .btn:active{transform:none;}
@@ -85,35 +71,25 @@ body{background:var(--navy);color:var(--off-white);font-family:var(--fd);min-hei
 .btn-share{background:linear-gradient(135deg,#25D366,#1DA851);color:#fff;}
 .btn-insta{background:linear-gradient(135deg,#E1306C,#833AB4);color:#fff;}
 .btn-fb{background:linear-gradient(135deg,#1877F2,#0D5DBF);color:#fff;}
-
-/* QUICK CMDS */
 .quick-cmds{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px;}
 .quick-cmd{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);color:var(--gold);font-size:9.5px;padding:4px 10px;border-radius:20px;cursor:pointer;transition:all 0.2s;font-family:var(--fd);}
 .quick-cmd:hover{background:rgba(201,168,76,0.2);transform:translateY(-1px);}
-
-/* GRIDS */
 .v-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px;}
 .v-card{background:var(--card);border:1px solid var(--gold-border);border-radius:12px;padding:12px;cursor:pointer;transition:all 0.25s;}
 .v-card:hover{border-color:var(--gold);background:var(--gold-dim);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.3);}
 .v-icon{font-size:22px;margin-bottom:6px;}
 .v-title{font-size:11px;font-weight:700;color:var(--gold);margin-bottom:3px;}
 .v-desc{font-size:9px;color:var(--gray);line-height:1.5;}
-
-/* INFO */
 .info-row{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:11px;}
 .info-row:last-child{border:none;}
 .info-key{color:var(--gray);flex:0 0 42%;}
 .info-val{color:var(--off-white);flex:0 0 56%;text-align:right;font-weight:500;}
-
-/* FORM */
 .form-group{margin-bottom:12px;}
 .form-label{display:block;font-size:11px;color:var(--gold);font-weight:600;margin-bottom:5px;letter-spacing:0.4px;}
 .form-input,.form-select,.form-textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--gold-border);border-radius:10px;color:var(--white);font-family:var(--fd);font-size:13px;padding:10px 12px;outline:none;transition:all 0.2s;}
 .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--gold);background:rgba(255,255,255,0.08);}
 .form-textarea{min-height:75px;resize:vertical;}
 .form-select option{background:var(--navy2);}
-
-/* GRANTS */
 .grant-item{background:var(--card);border:1px solid var(--gold-border);border-radius:10px;padding:11px;margin-bottom:8px;}
 .grant-name{font-size:11.5px;font-weight:700;color:var(--gold);margin-bottom:3px;}
 .grant-detail{font-size:9.5px;color:var(--gray);margin-bottom:5px;}
@@ -121,17 +97,11 @@ body{background:var(--navy);color:var(--off-white);font-family:var(--fd);min-hei
 .bg{background:rgba(0,214,143,0.12);color:var(--green);border:1px solid rgba(0,214,143,0.3);}
 .by{background:rgba(255,200,0,0.12);color:#ffcc00;border:1px solid rgba(255,200,0,0.3);}
 .bb{background:rgba(77,159,255,0.12);color:var(--blue);border:1px solid rgba(77,159,255,0.3);}
-
-/* BADGES */
 .sec-badge{display:inline-block;background:var(--gold-dim);border:1px solid var(--gold-border);color:var(--gold);font-size:9px;font-weight:700;padding:3px 11px;border-radius:20px;margin-bottom:12px;letter-spacing:1.5px;}
 .divider{height:1px;background:var(--gold-border);margin:14px 0;opacity:0.4;}
-
-/* ══ 3D STUDIO ══ */
 .gen3d-hero{background:linear-gradient(135deg,rgba(201,168,76,0.1),rgba(201,168,76,0.02));border:1px solid var(--gold-border);border-radius:16px;padding:20px 16px;text-align:center;margin-bottom:14px;}
 .gen3d-title{font-family:var(--fh);font-size:19px;font-weight:800;color:var(--gold);margin-bottom:5px;}
 .gen3d-sub{color:var(--gray);font-size:11.5px;line-height:1.6;}
-
-/* UPLOAD */
 .upload-area{border:2px dashed var(--gold-border);border-radius:12px;padding:18px 14px;cursor:pointer;background:rgba(201,168,76,0.03);transition:all 0.2s;text-align:center;margin-bottom:10px;}
 .upload-area:hover{border-color:var(--gold);background:var(--gold-dim);}
 .upload-area.has-files{border-color:var(--green);background:rgba(0,214,143,0.04);}
@@ -139,8 +109,6 @@ body{background:var(--navy);color:var(--off-white);font-family:var(--fd);min-hei
 .upload-text{color:var(--gold);font-size:13px;font-weight:600;margin-bottom:3px;}
 .upload-hint{color:var(--gray);font-size:10px;}
 #photo3d-input{display:none;}
-
-/* IMAGE PREVIEW */
 .preview-section{display:none;margin-bottom:12px;}
 .preview-label{font-size:10px;color:var(--gold);font-weight:600;margin-bottom:8px;letter-spacing:0.5px;}
 .thumb-row{display:flex;gap:8px;flex-wrap:wrap;}
@@ -148,31 +116,21 @@ body{background:var(--navy);color:var(--off-white);font-family:var(--fd);min-hei
 .thumb{width:72px;height:72px;border-radius:10px;object-fit:cover;border:2px solid var(--gold-border);cursor:pointer;transition:all 0.2s;display:block;}
 .thumb.selected{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,0.3);}
 .thumb-remove{position:absolute;top:-6px;right:-6px;width:18px;height:18px;background:var(--red);border-radius:50%;font-size:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-weight:700;border:1px solid var(--navy);}
-
-/* QUALITY CHECK */
 .quality-bar{margin-bottom:12px;display:none;}
 .quality-label{font-size:10px;color:var(--gray);margin-bottom:5px;}
 .quality-indicator{display:flex;gap:6px;align-items:center;}
 .quality-dot{width:10px;height:10px;border-radius:50%;}
 .quality-text{font-size:11px;font-weight:600;}
-
-/* COLOUR ADJUSTMENT */
 .colour-box{background:rgba(255,255,255,0.03);border:1px solid var(--gold-border);border-radius:10px;padding:12px;margin-bottom:12px;display:none;}
 .colour-title{font-size:10px;color:var(--gold);font-weight:600;margin-bottom:10px;letter-spacing:0.5px;}
 .slider-group{margin-bottom:8px;}
 .slider-label{display:flex;justify-content:space-between;font-size:10px;color:var(--gray);margin-bottom:4px;}
 .slider{width:100%;height:4px;border-radius:2px;background:rgba(255,255,255,0.1);outline:none;-webkit-appearance:none;cursor:pointer;}
 .slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--gold);cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.3);}
-
-/* PROGRESS */
 .progress-wrap{background:rgba(255,255,255,0.06);border-radius:20px;height:8px;overflow:hidden;border:1px solid var(--gold-border);}
 .progress-bar{height:100%;border-radius:20px;background:linear-gradient(90deg,#C9A84C,#E8C97A,#C9A84C);background-size:200% 100%;animation:shimmer 1.5s infinite;transition:width 0.5s ease;}
 @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
 .progress-section{display:none;margin-top:13px;}
-.progress-text{font-size:11px;color:var(--gold);text-align:center;margin-bottom:7px;font-weight:600;}
-.time-est{font-size:9.5px;color:var(--gray);text-align:center;margin-top:5px;}
-
-/* STEPS INDICATOR */
 .steps-indicator{display:flex;justify-content:space-between;margin-top:10px;}
 .step-dot{flex:1;text-align:center;position:relative;}
 .step-dot:not(:last-child):after{content:'';position:absolute;top:8px;left:60%;width:80%;height:1px;background:var(--gold-border);}
@@ -180,28 +138,19 @@ body{background:var(--navy);color:var(--off-white);font-family:var(--fd);min-hei
 .step-circle.active{border-color:var(--gold);color:var(--gold);box-shadow:0 0 8px rgba(201,168,76,0.4);}
 .step-circle.done{border-color:var(--green);background:var(--green);color:var(--navy);}
 .step-name{font-size:8px;color:var(--gray);margin-top:4px;display:block;}
-
-/* STATUS */
 .status-box{border-radius:10px;padding:11px 13px;margin:11px 0;font-size:12px;font-weight:600;text-align:center;display:none;}
 .s-proc{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold);}
 .s-ok{background:rgba(0,214,143,0.1);border:1px solid rgba(0,214,143,0.3);color:var(--green);}
 .s-err{background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.3);color:var(--red);}
-
-/* VIEWER */
 model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at center,#0D1F3A,#040A14);border-radius:14px;border:1px solid var(--gold-border);margin-top:13px;}
 .viewer-section{display:none;}
-
-/* SIZE SELECTOR */
 .size-section{margin-top:14px;}
-.size-label{font-size:10px;color:var(--gold);font-weight:600;margin-bottom:8px;letter-spacing:0.5px;}
 .size-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px;}
 .size-card{background:var(--card);border:1px solid var(--gold-border);border-radius:9px;padding:9px 5px;text-align:center;cursor:pointer;transition:all 0.2s;}
 .size-card:hover,.size-card.selected{border-color:var(--gold);background:var(--gold-dim);}
 .size-inch{font-size:15px;font-weight:800;color:var(--gold);font-family:var(--fh);}
 .size-price{font-size:9px;color:var(--green);font-weight:600;margin-top:2px;}
 .size-orig{font-size:8px;color:var(--gray);text-decoration:line-through;}
-
-/* APPROVAL */
 .approval-box{background:var(--card);border:1px solid var(--gold-border);border-radius:14px;padding:15px;margin-top:13px;display:none;}
 .approval-title{font-family:var(--fh);font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px;text-align:center;}
 .approval-sub{font-size:10.5px;color:var(--gray);text-align:center;margin-bottom:12px;}
@@ -209,8 +158,6 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
 .approval-btns .btn{flex:1;padding:12px;}
 .rev-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--gold-border);border-radius:9px;color:var(--white);font-family:var(--fd);font-size:12px;padding:10px 12px;outline:none;margin-top:10px;display:none;resize:vertical;min-height:70px;}
 .rev-input:focus{border-color:var(--gold);}
-
-/* ORDER TRACKING */
 .tracking-box{background:var(--card);border:1px solid var(--gold-border);border-radius:12px;padding:14px;margin-top:12px;display:none;}
 .tracking-title{font-size:11px;color:var(--gold);font-weight:700;margin-bottom:10px;}
 .track-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
@@ -221,14 +168,10 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
 .ts-done{color:var(--green);}
 .ts-active{color:var(--gold);}
 .ts-pending{color:var(--gray);}
-
-/* ACTIONS */
 .action-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
 .action-grid .btn{padding:11px 8px;font-size:11px;}
 .action-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:8px;}
 .action-grid-3 .btn{padding:10px 5px;font-size:10px;}
-
-/* BULK ORDER */
 .bulk-box{background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:12px;padding:14px;margin-bottom:13px;}
 .bulk-title{font-size:12px;color:var(--gold);font-weight:700;margin-bottom:10px;}
 .qty-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
@@ -236,8 +179,6 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
 .qty-val{font-size:20px;font-weight:800;color:var(--gold);font-family:var(--fh);min-width:40px;text-align:center;}
 .bulk-price{font-size:11px;color:var(--gray);}
 .bulk-price span{color:var(--green);font-weight:700;}
-
-/* BFOREVER */
 .bforever-hero{background:linear-gradient(135deg,rgba(201,168,76,0.13),rgba(201,168,76,0.03));border:1px solid var(--gold);border-radius:16px;padding:20px 16px;text-align:center;margin-bottom:14px;}
 .bforever-title{font-family:var(--fh);font-size:26px;font-weight:800;color:var(--gold);letter-spacing:4px;margin-bottom:4px;}
 .bforever-tag{font-size:10.5px;color:rgba(201,168,76,0.65);letter-spacing:1.5px;margin-bottom:11px;}
@@ -245,45 +186,28 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
 .step-card{background:var(--card);border:1px solid var(--gold-border);border-radius:10px;padding:11px 5px;text-align:center;}
 .step-ico{font-size:20px;margin-bottom:5px;}
 .step-lbl{font-size:8.5px;color:var(--gold);font-weight:700;letter-spacing:0.3px;}
-
-/* PRICE TABLE */
 .price-table{width:100%;border-collapse:collapse;margin-bottom:12px;}
 .price-table th{background:rgba(201,168,76,0.12);color:var(--gold);font-size:9.5px;font-weight:700;padding:8px 9px;text-align:left;letter-spacing:0.4px;border-bottom:1px solid var(--gold-border);}
 .price-table td{font-size:11px;color:var(--off-white);padding:8px 9px;border-bottom:1px solid rgba(255,255,255,0.04);}
 .price-table tr:hover td{background:rgba(201,168,76,0.04);}
 .ps{text-decoration:line-through;color:var(--gray);font-size:9.5px;}
 .pn{color:var(--green);font-weight:700;}
-
-/* ══ LOADING ANIMATION ══ */
 @keyframes scanAnim{0%{top:0;}100%{top:100%;}}
 @keyframes robotBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
 @keyframes eyeBlink{0%,90%,100%{transform:scaleY(1);}95%{transform:scaleY(0.1);}}
 @keyframes antennaPulse{0%,100%{fill:#E8C97A;r:3;}50%{fill:#fff;r:4;}}
 @keyframes armWave{0%,100%{transform:rotate(0deg);transform-origin:top center;}25%{transform:rotate(15deg);transform-origin:top center;}75%{transform:rotate(-15deg);transform-origin:top center;}}
 @keyframes cubeRise{0%,100%{transform:scaleY(0.3);opacity:0.3;}50%{transform:scaleY(1);opacity:1;}}
-@keyframes mouthHappy{0%,100%{d:path('M 30 33 Q 40 40 50 33');}50%{d:path('M 30 35 Q 40 28 50 35');}}
 #robotSvg{animation:robotBob 1.5s ease-in-out infinite;}
 #eye1,#eye2{animation:eyeBlink 3s ease-in-out infinite;}
 #antennaDot{animation:antennaPulse 1s ease-in-out infinite;}
 #armL{animation:armWave 1.2s ease-in-out infinite;}
 #armR{animation:armWave 1.2s ease-in-out infinite reverse;}
-.build-cube{
-  width:10px;height:20px;
-  background:linear-gradient(180deg,#C9A84C,#6A4E20);
-  border-radius:2px;
-  animation:cubeRise 1s ease-in-out infinite;
-  transform-origin:bottom;
-}
-
-/* TOAST */
+.build-cube{width:10px;height:20px;background:linear-gradient(180deg,#C9A84C,#6A4E20);border-radius:2px;animation:cubeRise 1s ease-in-out infinite;transform-origin:bottom;}
 .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:rgba(0,214,143,0.15);border:1px solid var(--green);color:var(--green);font-size:11.5px;font-weight:600;padding:9px 18px;border-radius:10px;z-index:500;display:none;animation:sd 0.3s ease;backdrop-filter:blur(10px);white-space:nowrap;max-width:90vw;text-align:center;}
 @keyframes sd{from{opacity:0;top:60px;}to{opacity:1;top:80px;}}
-
-/* WHATSAPP FAB */
 .wa-fab{position:fixed;bottom:72px;right:13px;width:48px;height:48px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 18px rgba(37,211,102,0.45);z-index:150;text-decoration:none;transition:transform 0.2s;}
 .wa-fab:hover{transform:scale(1.1);}
-
-/* BOTTOM NAV */
 .bnav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,10,20,0.97);border-top:1px solid var(--gold-border);display:flex;z-index:200;backdrop-filter:blur(10px);}
 .bnav-btn{flex:1;padding:8px 2px 6px;text-align:center;cursor:pointer;transition:all 0.2s;font-size:7.5px;color:var(--gray);font-weight:600;font-family:var(--fd);}
 .bnav-btn .ico{font-size:18px;display:block;margin-bottom:2px;}
@@ -293,8 +217,6 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
 </head>
 <body>
 <div class="toast" id="toast"></div>
-
-<!-- HEADER -->
 <div class="header">
   <div class="lang-toggle">
     <button class="lang-btn active" onclick="setLang('hi')" id="btn-hi">हि</button>
@@ -304,7 +226,7 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
     <img src="logo.png.jpeg" alt="GAIOS" class="logo-img" onerror="this.style.display='none'">
     <div class="brand-name">GAIOS™<span class="brand-v">v6.1</span></div>
   </div>
-  <div class="brand-sub" data-hi="GENESYS AI ORCHESTRATION SYSTEM | BFOREVER™" data-en="GENESYS AI ORCHESTRATION SYSTEM | BFOREVER™">GENESYS AI ORCHESTRATION SYSTEM | BFOREVER™</div>
+  <div class="brand-sub">GENESYS AI ORCHESTRATION SYSTEM | BFOREVER™</div>
   <div class="reg-bar">
     <span class="reg-tag">DPIIT: DIPP274037</span>
     <span class="reg-tag">Patent: IN202611090765</span>
@@ -318,21 +240,19 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
     <span style="color:var(--gray);font-size:9px;">| Claude AI | Hunyuan 3D 3.1 | v6.1</span>
   </div>
 </div>
-
-<!-- NAV TABS -->
 <div class="nav-tabs">
-  <div class="nav-tab active" onclick="showTab('console')" data-hi="🤖 AI Console" data-en="🤖 AI Console">🤖 AI Console</div>
-  <div class="nav-tab" onclick="showTab('gen3d')" data-hi="🖨️ 3D Studio" data-en="🖨️ 3D Studio">🖨️ 3D Studio</div>
-  <div class="nav-tab" onclick="showTab('bforever')" data-hi="✨ BFOREVER™" data-en="✨ BFOREVER™">✨ BFOREVER™</div>
-  <div class="nav-tab" onclick="showTab('verticals')" data-hi="🎯 Verticals" data-en="🎯 Verticals">🎯 Verticals</div>
-  <div class="nav-tab" onclick="showTab('contact')" data-hi="📞 Contact" data-en="📞 Contact">📞 Contact</div>
-  <div class="nav-tab" onclick="showTab('about')" data-hi="ℹ️ About" data-en="ℹ️ About">ℹ️ About</div>
+  <div class="nav-tab active" onclick="showTab('console')">🤖 AI Console</div>
+  <div class="nav-tab" onclick="showTab('gen3d')">🖨️ 3D Studio</div>
+  <div class="nav-tab" onclick="showTab('bforever')">✨ BFOREVER™</div>
+  <div class="nav-tab" onclick="showTab('verticals')">🎯 Verticals</div>
+  <div class="nav-tab" onclick="showTab('contact')">📞 Contact</div>
+  <div class="nav-tab" onclick="showTab('about')">ℹ️ About</div>
 </div>
 
-<!-- ══ AI CONSOLE ══ -->
+<!-- AI CONSOLE -->
 <div class="section active" id="tab-console">
   <div class="card">
-    <div class="card-title">💬 <span data-hi="GAIOS™ AI Assistant" data-en="GAIOS™ AI Assistant">GAIOS™ AI Assistant</span></div>
+    <div class="card-title">💬 GAIOS™ AI Assistant</div>
     <div class="chat-area" id="chatArea">
       <div class="msg-ai" id="welcomeMsg">🙏 Namaskar! Main GAIOS™ hoon — Genesys AI Orchestration System. Pali, Rajasthan se India ki pehli full-colour PolyJet 3D hub. Hindi ya English mein poochhein!</div>
     </div>
@@ -352,14 +272,12 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
   </div>
 </div>
 
-<!-- ══ 3D STUDIO ══ -->
+<!-- 3D STUDIO -->
 <div class="section" id="tab-gen3d">
   <div class="gen3d-hero">
     <div class="gen3d-title">🖨️ GAIOS™ 3D Studio</div>
     <div class="gen3d-sub">Photo upload karo → AI 3D model banayega → Approve karo → Order karo<br><small style="color:var(--gray2);">Hunyuan 3D 3.1 | Auto-compress | Multi-photo</small></div>
   </div>
-
-  <!-- STEP 1: Upload -->
   <div class="sec-badge">📸 STEP 1 — Photo Upload</div>
   <div class="upload-area" id="uploadArea" onclick="document.getElementById('photo3d-input').click()">
     <div class="upload-icon">📷</div>
@@ -367,14 +285,10 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
     <div class="upload-hint">1-5 photos | JPG/PNG | Auto-compressed | Click here</div>
   </div>
   <input type="file" id="photo3d-input" accept="image/*" multiple onchange="handleFiles(this.files)">
-
-  <!-- Preview Section -->
   <div class="preview-section" id="previewSection">
     <div class="preview-label">📋 SELECTED PHOTOS — Tap to select primary</div>
     <div class="thumb-row" id="thumbRow"></div>
   </div>
-
-  <!-- Quality Check -->
   <div class="quality-bar" id="qualityBar">
     <div class="quality-label">📊 Photo Quality Check</div>
     <div class="quality-indicator">
@@ -382,8 +296,6 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
       <span class="quality-text" id="qualityText"></span>
     </div>
   </div>
-
-  <!-- Colour Adjustment -->
   <div class="colour-box" id="colourBox">
     <div class="colour-title">🎨 PHOTO ADJUSTMENT (Optional)</div>
     <div class="slider-group">
@@ -400,8 +312,6 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
     </div>
     <canvas id="adjustCanvas" style="display:none;"></canvas>
   </div>
-
-  <!-- STEP 2: Size -->
   <div class="sec-badge" id="step2badge" style="display:none;">📐 STEP 2 — Size Choose Karo</div>
   <div class="size-section" id="sizeSection" style="display:none;">
     <div class="size-grid">
@@ -412,8 +322,6 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
     </div>
     <div style="font-size:9px;color:var(--gray);text-align:center;margin-bottom:12px;">*Target prices — subject to production economics</div>
   </div>
-
-  <!-- BULK ORDER -->
   <div class="bulk-box" id="bulkBox" style="display:none;">
     <div class="bulk-title">🎁 Bulk Order (Corporate / Wedding)</div>
     <div class="qty-row">
@@ -424,65 +332,38 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
     </div>
     <div style="font-size:9.5px;color:var(--gray);">10+ pieces: 10% off | 50+ pieces: 18% off | 100+ pieces: 25% off</div>
   </div>
-
-  <!-- STEP 3: Generate -->
   <div class="sec-badge" id="step3badge" style="display:none;">🚀 STEP 3 — 3D Model Generate Karo</div>
   <button class="btn" id="gen3d-btn" style="width:100%;padding:13px;font-size:13px;margin-bottom:4px;" onclick="generate3D()">🚀 3D Model Generate Karo</button>
   <div style="font-size:9px;color:var(--gray);text-align:center;margin-bottom:8px;">Processing time: ~3-6 minutes | Auto photo compression</div>
-
-  <!-- WORLD CLASS LOADING ANIMATION -->
   <div class="progress-section" id="progressSection">
-
-    <!-- Animation Stage -->
     <div id="animStage" style="background:linear-gradient(135deg,#040A14,#0A1628,#040A14);border:1px solid rgba(201,168,76,0.3);border-radius:16px;padding:20px 16px;margin-bottom:12px;text-align:center;position:relative;overflow:hidden;min-height:280px;">
-
-      <!-- Particle canvas background -->
       <canvas id="particleCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.4;"></canvas>
-
-      <!-- Main character animation -->
       <div id="animChar" style="position:relative;z-index:2;margin-bottom:10px;">
-        <!-- GAIOS Robot SVG -->
         <svg id="robotSvg" width="80" height="100" viewBox="0 0 80 100" style="display:inline-block;filter:drop-shadow(0 0 12px rgba(201,168,76,0.6));">
-          <!-- Head -->
           <rect x="22" y="10" width="36" height="30" rx="8" fill="#1A1A2E" stroke="#C9A84C" stroke-width="2"/>
-          <!-- Eyes -->
           <circle id="eye1" cx="32" cy="25" r="5" fill="#C9A84C"/>
           <circle id="eye2" cx="48" cy="25" r="5" fill="#C9A84C"/>
           <circle cx="32" cy="25" r="2" fill="#040A14" id="pupil1"/>
           <circle cx="48" cy="25" r="2" fill="#040A14" id="pupil2"/>
-          <!-- Antenna -->
           <line x1="40" y1="10" x2="40" y2="2" stroke="#C9A84C" stroke-width="2"/>
           <circle id="antennaDot" cx="40" cy="2" r="3" fill="#E8C97A"/>
-          <!-- Mouth -->
           <path id="robotMouth" d="M 30 33 Q 40 40 50 33" stroke="#C9A84C" stroke-width="2" fill="none" stroke-linecap="round"/>
-          <!-- Body -->
           <rect x="18" y="44" width="44" height="35" rx="8" fill="#1A1A2E" stroke="#C9A84C" stroke-width="2"/>
-          <!-- Chest screen -->
           <rect x="26" y="50" width="28" height="20" rx="4" fill="#0D1F3A" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
-          <!-- GAIOS text on screen -->
           <text x="40" y="60" font-family="Arial" font-size="5" fill="#C9A84C" text-anchor="middle">GAIOS™</text>
           <text x="40" y="66" font-family="Arial" font-size="4" fill="#00D68F" text-anchor="middle" id="screenText">PROCESSING</text>
-          <!-- Arms -->
           <rect id="armL" x="6" y="46" width="10" height="24" rx="5" fill="#1A1A2E" stroke="#C9A84C" stroke-width="2"/>
           <rect id="armR" x="64" y="46" width="10" height="24" rx="5" fill="#1A1A2E" stroke="#C9A84C" stroke-width="2"/>
-          <!-- Legs -->
           <rect x="24" y="82" width="12" height="16" rx="4" fill="#1A1A2E" stroke="#C9A84C" stroke-width="2"/>
           <rect x="44" y="82" width="12" height="16" rx="4" fill="#1A1A2E" stroke="#C9A84C" stroke-width="2"/>
-          <!-- Feet -->
           <rect x="20" y="94" width="18" height="6" rx="3" fill="#C9A84C"/>
           <rect x="42" y="94" width="18" height="6" rx="3" fill="#C9A84C"/>
         </svg>
       </div>
-
-      <!-- Speech bubble -->
       <div id="speechBubble" style="position:relative;z-index:3;background:rgba(201,168,76,0.12);border:1.5px solid rgba(201,168,76,0.5);border-radius:12px;padding:10px 14px;margin:0 8px 12px;font-size:12px;font-weight:600;color:#E8C97A;min-height:44px;transition:all 0.5s ease;">
         <span id="speechText">🤖 Ek second... main aapki photo ko 3D mein badal raha hoon!</span>
       </div>
-
-      <!-- Scan line effect -->
       <div id="scanLine" style="position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.8),transparent);animation:scanAnim 2s linear infinite;top:0;z-index:1;"></div>
-
-      <!-- 3D Model building visual -->
       <div id="buildViz" style="display:flex;justify-content:center;gap:4px;margin-bottom:12px;position:relative;z-index:2;">
         <div class="build-cube" style="animation-delay:0s"></div>
         <div class="build-cube" style="animation-delay:0.1s"></div>
@@ -497,8 +378,6 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
         <div class="build-cube" style="animation-delay:1.0s"></div>
         <div class="build-cube" style="animation-delay:1.1s"></div>
       </div>
-
-      <!-- Progress bar inside animation -->
       <div style="margin:0 8px;">
         <div style="display:flex;justify-content:space-between;font-size:9.5px;color:rgba(201,168,76,0.7);margin-bottom:5px;">
           <span id="progressText">⏳ Shuru ho raha hai...</span>
@@ -508,27 +387,18 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
         <div style="font-size:9px;color:var(--gray);text-align:center;margin-top:5px;" id="timeEst">Estimated: 3-6 minutes | Hunyuan 3D 3.1</div>
       </div>
     </div>
-
-    <!-- Step indicator outside -->
     <div class="steps-indicator" style="margin-bottom:8px;">
       <div class="step-dot"><div class="step-circle active" id="sc1">1</div><span class="step-name">Upload</span></div>
       <div class="step-dot"><div class="step-circle" id="sc2">2</div><span class="step-name">AI Process</span></div>
       <div class="step-dot"><div class="step-circle" id="sc3">3</div><span class="step-name">3D Build</span></div>
       <div class="step-dot"><div class="step-circle" id="sc4">4</div><span class="step-name">Ready</span></div>
     </div>
-
   </div>
-
-  <!-- Status -->
   <div class="status-box s-proc" id="sProc"></div>
   <div class="status-box s-ok" id="sOk"></div>
   <div class="status-box s-err" id="sErr"></div>
-
-  <!-- 3D Viewer -->
   <div class="viewer-section" id="viewerSection">
     <model-viewer id="modelViewer" auto-rotate camera-controls shadow-intensity="1.2" environment-image="neutral" exposure="1"></model-viewer>
-
-    <!-- Order Tracking -->
     <div class="tracking-box" id="trackingBox">
       <div class="tracking-title">📦 Order Status</div>
       <div class="track-row"><div class="track-icon">✅</div><div class="track-info"><h4>Photo Received</h4><p>GAIOS™ mein upload ho gayi</p></div><div class="track-status ts-done">DONE</div></div>
@@ -537,8 +407,6 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
       <div class="track-row"><div class="track-icon">🖨️</div><div class="track-info"><h4>PolyJet Printing</h4><p>Pali hub mein Mimaki 3DUJ-553</p></div><div class="track-status ts-pending">PENDING</div></div>
       <div class="track-row"><div class="track-icon">📦</div><div class="track-info"><h4>Quality Check & Delivery</h4><p>~5 days estimated</p></div><div class="track-status ts-pending">PENDING</div></div>
     </div>
-
-    <!-- Approval -->
     <div class="approval-box" id="approvalBox">
       <div class="approval-title">✅ 3D Model Ready — Aapki Approval Chahiye</div>
       <div class="approval-sub">Model 360° rotate karke dekhen → Approve karein ya changes batayein</div>
@@ -547,11 +415,9 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
         <button class="btn btn-green" onclick="approveModel()">✅ Approve & Order</button>
         <button class="btn-outline" onclick="toggleRevision()">✏️ Changes</button>
       </div>
-      <textarea class="rev-input" id="revText" placeholder="Kya changes chahiye? (e.g. colour thoda light karo, face angle theek karo...)"></textarea>
+      <textarea class="rev-input" id="revText" placeholder="Kya changes chahiye?"></textarea>
       <button class="btn" id="revSubmitBtn" style="width:100%;margin-top:9px;display:none;" onclick="submitRevision()">📨 Revision Request Bhejein</button>
     </div>
-
-    <!-- Download + Share -->
     <div style="margin-top:12px;">
       <div style="font-size:10px;color:var(--gold);font-weight:600;margin-bottom:8px;letter-spacing:0.5px;">⬇️ DOWNLOAD & SHARE</div>
       <div class="action-grid">
@@ -567,7 +433,7 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
   </div>
 </div>
 
-<!-- ══ BFOREVER ══ -->
+<!-- BFOREVER -->
 <div class="section" id="tab-bforever">
   <div class="bforever-hero">
     <div class="bforever-title">BFOREVER™</div>
@@ -594,10 +460,10 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
   <div class="divider"></div>
   <div class="sec-badge">🎯 USE CASES</div>
   <div class="v-grid">
-    <div class="v-card" onclick="showBforeverModal('shaadi')"><div class="v-icon">💒</div><div class="v-title" onclick="showBforeverModal('shaadi')">Shaadi</div><div class="v-desc">Dulha-Dulhan ki 3D figurine — ek yaadgar tohfa</div></div>
-    <div class="v-card" onclick="showBforeverModal('birthday')"><div class="v-icon">🎂</div><div class="v-title" onclick="showBforeverModal('birthday')">Birthday</div><div class="v-desc">Unique gift — khud ki ya kisi priye ki figurine</div></div>
-    <div class="v-card" onclick="showBforeverModal('yaadgar')"><div class="v-icon">👴</div><div class="v-title" onclick="showBforeverModal('yaadgar')">Yaadgar</div><div class="v-desc">Buzurgon ki figurine — unki yaad hamesha</div></div>
-    <div class="v-card" onclick="showBforeverModal('achievement')"><div class="v-icon">🏆</div><div class="v-title" onclick="showBforeverModal('achievement')">Achievement</div><div class="v-desc">Retirement ya success ka khaas jashn</div></div>
+    <div class="v-card" onclick="showBforeverModal('shaadi')"><div class="v-icon">💒</div><div class="v-title">Shaadi</div><div class="v-desc">Dulha-Dulhan ki 3D figurine — ek yaadgar tohfa</div></div>
+    <div class="v-card" onclick="showBforeverModal('birthday')"><div class="v-icon">🎂</div><div class="v-title">Birthday</div><div class="v-desc">Unique gift — khud ki ya kisi priye ki figurine</div></div>
+    <div class="v-card" onclick="showBforeverModal('yaadgar')"><div class="v-icon">👴</div><div class="v-title">Yaadgar</div><div class="v-desc">Buzurgon ki figurine — unki yaad hamesha</div></div>
+    <div class="v-card" onclick="showBforeverModal('achievement')"><div class="v-icon">🏆</div><div class="v-title">Achievement</div><div class="v-desc">Retirement ya success ka khaas jashn</div></div>
   </div>
   <div style="background:linear-gradient(135deg,rgba(201,168,76,0.1),rgba(201,168,76,0.03));border:1px solid var(--gold-border);border-radius:12px;padding:13px;text-align:center;margin-bottom:14px;">
     <div style="font-size:12px;color:var(--gold);font-weight:700;margin-bottom:5px;">📍 Pan-India Network</div>
@@ -606,22 +472,22 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
   <button class="btn" style="width:100%;padding:13px;font-size:13px;" onclick="showTab('gen3d')">🚀 3D Preview Dekho & Order Karo</button>
 </div>
 
-<!-- ══ VERTICALS ══ -->
+<!-- VERTICALS -->
 <div class="section" id="tab-verticals">
   <div class="sec-badge">🎯 15 BUSINESS VERTICALS</div>
   <div class="v-grid">
-    <div class="v-card" onclick="showVerticalModal(this.querySelector('.v-title').textContent.toLowerCase().replace(/[^a-z]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,''))"><div class="v-icon">👥</div><div class="v-title">Consumer Figurines</div><div class="v-desc">Photo se full-colour 3D — BFOREVER™</div></div>
-    <div class="v-card" onclick="showVerticalModal(this.querySelector('.v-title').textContent.toLowerCase().replace(/[^a-z]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,''))"><div class="v-icon">🏛️</div><div class="v-title">Heritage & Tourism</div><div class="v-desc">Museum replicas, fort models, artifacts</div></div>
-    <div class="v-card" onclick="showVerticalModal(this.querySelector('.v-title').textContent.toLowerCase().replace(/[^a-z]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,''))"><div class="v-icon">🏗️</div><div class="v-title">Real Estate</div><div class="v-desc">Architectural 3D models — builders</div></div>
-    <div class="v-card" onclick="showVerticalModal(this.querySelector('.v-title').textContent.toLowerCase().replace(/[^a-z]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,''))"><div class="v-icon">🏥</div><div class="v-title">Medical DICOM</div><div class="v-desc">CT/MRI se 3D organ models</div></div>
-    <div class="v-card" onclick="showVerticalModal(this.querySelector('.v-title').textContent.toLowerCase().replace(/[^a-z]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,''))"><div class="v-icon">🚁</div><div class="v-title">Drone/LiDAR</div><div class="v-desc">GIS data se physical terrain models</div></div>
-    <div class="v-card" onclick="showVerticalModal(this.querySelector('.v-title').textContent.toLowerCase().replace(/[^a-z]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,''))"><div class="v-icon">🏺</div><div class="v-title">Antique & Museum</div><div class="v-desc">Heritage replica — full colour</div></div>
-    <div class="v-card" onclick="showVerticalModal(this.querySelector('.v-title').textContent.toLowerCase().replace(/[^a-z]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,''))"><div class="v-icon">⚙️</div><div class="v-title">Reverse Engineering</div><div class="v-desc">Machine parts scan & reproduce</div></div>
-    <div class="v-card" onclick="showVerticalModal(this.querySelector('.v-title').textContent.toLowerCase().replace(/[^a-z]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,''))"><div class="v-icon">🛡️</div><div class="v-title">Defence</div><div class="v-desc">Terrain mapping, military models</div></div>
-    <div class="v-card" onclick="showVerticalModal(this.querySelector('.v-title').textContent.toLowerCase().replace(/[^a-z]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,''))"><div class="v-icon">🎁</div><div class="v-title">Corporate Gifting</div><div class="v-desc">Premium 3D awards, trophies</div></div>
-    <div class="v-card" onclick="showVerticalModal(this.querySelector('.v-title').textContent.toLowerCase().replace(/[^a-z]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,''))"><div class="v-icon">🏔️</div><div class="v-title">Visitor Centre</div><div class="v-desc">Relief maps, terrain models</div></div>
-    <div class="v-card" onclick="showVerticalModal(this.querySelector('.v-title').textContent.toLowerCase().replace(/[^a-z]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,''))"><div class="v-icon">⛪</div><div class="v-title">Religious Tourism</div><div class="v-desc">Temple models, deity replicas</div></div>
-    <div class="v-card" onclick="showVerticalModal(this.querySelector('.v-title').textContent.toLowerCase().replace(/[^a-z]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,''))"><div class="v-icon">🎓</div><div class="v-title">Education/STEM</div><div class="v-desc">3D learning models for schools</div></div>
+    <div class="v-card" onclick="showVerticalModal('consumer-figurines')"><div class="v-icon">👥</div><div class="v-title">Consumer Figurines</div><div class="v-desc">Photo se full-colour 3D — BFOREVER™</div></div>
+    <div class="v-card" onclick="showVerticalModal('heritage-tourism')"><div class="v-icon">🏛️</div><div class="v-title">Heritage & Tourism</div><div class="v-desc">Museum replicas, fort models, artifacts</div></div>
+    <div class="v-card" onclick="showVerticalModal('real-estate')"><div class="v-icon">🏗️</div><div class="v-title">Real Estate</div><div class="v-desc">Architectural 3D models — builders</div></div>
+    <div class="v-card" onclick="showVerticalModal('medical-dicom')"><div class="v-icon">🏥</div><div class="v-title">Medical DICOM</div><div class="v-desc">CT/MRI se 3D organ models</div></div>
+    <div class="v-card" onclick="showVerticalModal('drone-lidar')"><div class="v-icon">🚁</div><div class="v-title">Drone/LiDAR</div><div class="v-desc">GIS data se physical terrain models</div></div>
+    <div class="v-card" onclick="showVerticalModal('antique-museum')"><div class="v-icon">🏺</div><div class="v-title">Antique & Museum</div><div class="v-desc">Heritage replica — full colour</div></div>
+    <div class="v-card" onclick="showVerticalModal('reverse-engineering')"><div class="v-icon">⚙️</div><div class="v-title">Reverse Engineering</div><div class="v-desc">Machine parts scan & reproduce</div></div>
+    <div class="v-card" onclick="showVerticalModal('defence')"><div class="v-icon">🛡️</div><div class="v-title">Defence</div><div class="v-desc">Terrain mapping, military models</div></div>
+    <div class="v-card" onclick="showVerticalModal('corporate-gifting')"><div class="v-icon">🎁</div><div class="v-title">Corporate Gifting</div><div class="v-desc">Premium 3D awards, trophies</div></div>
+    <div class="v-card" onclick="showVerticalModal('visitor-centre')"><div class="v-icon">🏔️</div><div class="v-title">Visitor Centre</div><div class="v-desc">Relief maps, terrain models</div></div>
+    <div class="v-card" onclick="showVerticalModal('religious-tourism')"><div class="v-icon">⛪</div><div class="v-title">Religious Tourism</div><div class="v-desc">Temple models, deity replicas</div></div>
+    <div class="v-card" onclick="showVerticalModal('education-stem')"><div class="v-icon">🎓</div><div class="v-title">Education/STEM</div><div class="v-desc">3D learning models for schools</div></div>
   </div>
   <div class="card">
     <div class="card-title" style="justify-content:center;">🖨️ Technology</div>
@@ -634,7 +500,7 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
   </div>
 </div>
 
-<!-- ══ CONTACT ══ -->
+<!-- CONTACT -->
 <div class="section" id="tab-contact">
   <div class="sec-badge">📞 CONTACT US</div>
   <div class="card">
@@ -671,7 +537,7 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
   </div>
 </div>
 
-<!-- ══ ABOUT ══ -->
+<!-- ABOUT -->
 <div class="section" id="tab-about">
   <div class="sec-badge">🏢 COMPANY INFO</div>
   <div class="card">
@@ -711,17 +577,11 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
 <script>
 // ══ LANGUAGE ══
 var lang = 'hi';
-var T = {
-  hi: { welcome:'🙏 Namaskar! Main GAIOS™ hoon — Genesys AI Orchestration System. Pali, Rajasthan se India ki pehli full-colour PolyJet 3D hub. Hindi ya English mein poochhein!', placeholder:'Koi bhi sawaal poochhein...' },
-  en: { welcome:'👋 Hello! I am GAIOS™ — Genesys AI Orchestration System. India\'s first full-colour PolyJet 3D hub from Pali, Rajasthan. Ask me anything!', placeholder:'Ask anything...' }
-};
 function setLang(l) {
   lang = l;
   document.documentElement.setAttribute('data-lang', l);
   document.getElementById('btn-hi').classList.toggle('active', l==='hi');
   document.getElementById('btn-en').classList.toggle('active', l==='en');
-  document.getElementById('userInput').placeholder = T[l].placeholder;
-  document.getElementById('welcomeMsg').textContent = T[l].welcome;
 }
 
 // ══ TABS ══
@@ -739,6 +599,22 @@ function showTab(t) {
 
 // ══ TOAST ══
 function toast(m,d){var t=document.getElementById('toast');t.textContent=m;t.style.display='block';setTimeout(function(){t.style.display='none';},d||3000);}
+
+// ══ ROBOT SPEAK — GLOBAL SCOPE ══
+function robotSpeakBrowser(text) {
+  var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu, '').replace(/[^\u0000-\u024F\u0900-\u097F ]/g, '').trim();
+  if(!clean) return;
+  window.speechSynthesis.cancel();
+  var utter = new SpeechSynthesisUtterance(clean);
+  utter.lang = 'hi-IN';
+  utter.rate = 0.85;
+  utter.pitch = 1.1;
+  window.speechSynthesis.speak(utter);
+}
+
+function robotSpeak(text) {
+  robotSpeakBrowser(text);
+}
 
 // ══ CHAT ══
 var chatArea=document.getElementById('chatArea');
@@ -802,14 +678,13 @@ function checkQuality(img) {
   var qDot=document.getElementById('qualityDot');
   var qText=document.getElementById('qualityText');
   qBar.style.display='block';
-  if(brightness<40){qDot.style.background='#FF4D6D';qText.textContent='⚠️ Photo bahut dark hai — roshan jagah mein photo lein';qText.style.color='#FF4D6D';}
-  else if(brightness>220){qDot.style.background='#ffcc00';qText.textContent='⚠️ Photo bahut bright hai — thoda kam light mein lein';qText.style.color='#ffcc00';}
-  else{qDot.style.background='#00D68F';qText.textContent='✅ Photo quality achhi hai — generate karo!';qText.style.color='#00D68F';}
+  if(brightness<40){qDot.style.background='#FF4D6D';qText.textContent='⚠️ Photo bahut dark hai';qText.style.color='#FF4D6D';}
+  else if(brightness>220){qDot.style.background='#ffcc00';qText.textContent='⚠️ Photo bahut bright hai';qText.style.color='#ffcc00';}
+  else{qDot.style.background='#00D68F';qText.textContent='✅ Photo quality achhi hai!';qText.style.color='#00D68F';}
 }
 
 // ══ MULTI-PHOTO UPLOAD ══
 var selFiles=[], selIdx=0, curModelUrl=null;
-
 function handleFiles(files) {
   selFiles=[];
   var thumbRow=document.getElementById('thumbRow');
@@ -820,8 +695,7 @@ function handleFiles(files) {
     (function(f,idx){
       var reader=new FileReader();
       reader.onload=function(e){
-        var wrap=document.createElement('div');
-        wrap.className='thumb-wrap';
+        var wrap=document.createElement('div');wrap.className='thumb-wrap';
         var img=document.createElement('img');
         img.className='thumb'+(idx===0?' selected':'');
         img.src=e.target.result;
@@ -829,35 +703,25 @@ function handleFiles(files) {
         img.onload=function(){if(idx===0)checkQuality(img);};
         img.onclick=(function(ix,im){return function(){
           document.querySelectorAll('.thumb').forEach(function(t){t.classList.remove('selected');});
-          im.classList.add('selected');
-          selIdx=ix;
-          checkQuality(im);
+          im.classList.add('selected');selIdx=ix;checkQuality(im);
         };})(idx,img);
-        var rem=document.createElement('div');
-        rem.className='thumb-remove';
-        rem.textContent='×';
-        rem.onclick=(function(ix){return function(ev){
-          ev.stopPropagation();
-          selFiles.splice(ix,1);
-          handleFiles(selFiles);
-        };})(idx);
-        wrap.appendChild(img); wrap.appendChild(rem);
-        thumbRow.appendChild(wrap);
+        var rem=document.createElement('div');rem.className='thumb-remove';rem.textContent='×';
+        rem.onclick=(function(ix){return function(ev){ev.stopPropagation();selFiles.splice(ix,1);handleFiles(selFiles);};})(idx);
+        wrap.appendChild(img);wrap.appendChild(rem);thumbRow.appendChild(wrap);
       };
       reader.readAsDataURL(f);
     })(files[i],i);
   }
-  document.getElementById('previewSection').style.display = count>0?'block':'none';
-  document.getElementById('uploadText').textContent = count>0?(count+' Photo(s) Selected ✅'):'Photos Choose Karo';
+  document.getElementById('previewSection').style.display=count>0?'block':'none';
+  document.getElementById('uploadText').textContent=count>0?(count+' Photo(s) Selected ✅'):'Photos Choose Karo';
   document.getElementById('uploadArea').classList.toggle('has-files',count>0);
-  document.getElementById('colourBox').style.display = count>0?'block':'none';
-  document.getElementById('sizeSection').style.display = count>0?'block':'none';
-  document.getElementById('step2badge').style.display = count>0?'inline-block':'none';
-  document.getElementById('bulkBox').style.display = count>0?'block':'none';
-  document.getElementById('step3badge').style.display = count>0?'inline-block':'none';
+  document.getElementById('colourBox').style.display=count>0?'block':'none';
+  document.getElementById('sizeSection').style.display=count>0?'block':'none';
+  document.getElementById('step2badge').style.display=count>0?'inline-block':'none';
+  document.getElementById('bulkBox').style.display=count>0?'block':'none';
+  document.getElementById('step3badge').style.display=count>0?'inline-block':'none';
 }
 
-// ══ COLOUR ADJUSTMENT ══
 function adjustImage(){
   var b=document.getElementById('brightnessSlider').value;
   var c=document.getElementById('contrastSlider').value;
@@ -865,490 +729,180 @@ function adjustImage(){
   document.getElementById('brightnessVal').textContent=b+'%';
   document.getElementById('contrastVal').textContent=c+'%';
   document.getElementById('saturationVal').textContent=s+'%';
-  var thumbs=document.querySelectorAll('.thumb.selected');
-  thumbs.forEach(function(t){t.style.filter='brightness('+b+'%) contrast('+c+'%) saturate('+s+')';});
+  document.querySelectorAll('.thumb.selected').forEach(function(t){t.style.filter='brightness('+b+'%) contrast('+c+'%) saturate('+s+')';});
 }
 
-// ══ SIZE SELECTOR ══
 var selSize='4';
 var sizePrices={'2.5':2250,'4':3750,'5':4875,'6':6375};
 function selectSize(el,size){
   document.querySelectorAll('.size-card').forEach(function(s){s.classList.remove('selected');});
-  el.classList.add('selected'); selSize=size;
-  updateBulkTotal();
+  el.classList.add('selected');selSize=size;updateBulkTotal();
 }
 
-// ══ BULK ORDER ══
 var qty=1;
-function changeQty(d){
-  qty=Math.max(1,Math.min(500,qty+d));
-  document.getElementById('qtyVal').textContent=qty;
-  updateBulkTotal();
-}
+function changeQty(d){qty=Math.max(1,Math.min(500,qty+d));document.getElementById('qtyVal').textContent=qty;updateBulkTotal();}
 function updateBulkTotal(){
   var base=sizePrices[selSize]||3750;
   var disc=qty>=100?0.25:qty>=50?0.18:qty>=10?0.10:0;
-  var total=Math.round(base*qty*(1-disc));
-  document.getElementById('bulkTotal').textContent='₹'+total.toLocaleString('en-IN');
+  document.getElementById('bulkTotal').textContent='₹'+Math.round(base*qty*(1-disc)).toLocaleString('en-IN');
 }
 
 // ══ AUDIO SYSTEM ══
-var audioCtx = null;
-var bgMusicNode = null;
-var bgGainNode = null;
-var isMusicOn = false;
+var audioCtx=null,bgGainNode=null,isMusicOn=false;
+function getAudioCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
 
-function getAudioCtx() {
-  if(!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  return audioCtx;
-}
-
-// Futuristic background music using Web Audio API
-function startBgMusic() {
-  try {
-    var ctx = getAudioCtx();
-    bgGainNode = ctx.createGain();
-    bgGainNode.gain.value = 0.08;
-    bgGainNode.connect(ctx.destination);
-
-    // Rhythm pattern - tech beat
-    var notes = [130, 196, 261, 196, 130, 165, 196, 261];
-    var noteIdx = 0;
-    var bpm = 120;
-    var beatTime = 60 / bpm;
-
-    function playNote(time, freq, dur) {
-      var osc = ctx.createOscillator();
-      var gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(bgGainNode);
-      osc.type = 'sine';
-      osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0.15, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
-      osc.start(time);
-      osc.stop(time + dur);
-
-      // Sub bass
-      var bass = ctx.createOscillator();
-      var bassGain = ctx.createGain();
-      bass.connect(bassGain);
-      bassGain.connect(bgGainNode);
-      bass.type = 'triangle';
-      bass.frequency.value = freq / 2;
-      bassGain.gain.setValueAtTime(0.08, time);
-      bassGain.gain.exponentialRampToValueAtTime(0.001, time + dur * 0.5);
-      bass.start(time);
-      bass.stop(time + dur * 0.5);
+function startBgMusic(){
+  try{
+    var ctx=getAudioCtx();bgGainNode=ctx.createGain();bgGainNode.gain.value=0.08;bgGainNode.connect(ctx.destination);
+    var notes=[130,196,261,196,130,165,196,261],noteIdx=0,bpm=120,beatTime=60/bpm;
+    function playNote(time,freq,dur){
+      var osc=ctx.createOscillator(),gain=ctx.createGain();osc.connect(gain);gain.connect(bgGainNode);
+      osc.type='sine';osc.frequency.value=freq;
+      gain.gain.setValueAtTime(0.15,time);gain.gain.exponentialRampToValueAtTime(0.001,time+dur);
+      osc.start(time);osc.stop(time+dur);
     }
-
-    var startT = ctx.currentTime;
-    isMusicOn = true;
-
-    function scheduleBeat() {
-      if(!isMusicOn) return;
-      var t = ctx.currentTime + 0.1;
-      for(var i = 0; i < 8; i++) {
-        var freq = notes[(noteIdx + i) % notes.length];
-        playNote(t + i * beatTime * 0.5, freq, beatTime * 0.4);
-      }
-      noteIdx = (noteIdx + 8) % notes.length;
-      setTimeout(scheduleBeat, 4000);
+    isMusicOn=true;
+    function scheduleBeat(){
+      if(!isMusicOn)return;
+      var t=ctx.currentTime+0.1;
+      for(var i=0;i<8;i++)playNote(t+i*beatTime*0.5,notes[(noteIdx+i)%notes.length],beatTime*0.4);
+      noteIdx=(noteIdx+8)%notes.length;setTimeout(scheduleBeat,4000);
     }
     scheduleBeat();
-
-    // Pulse effect every beat
-    function pulse() {
-      if(!isMusicOn) return;
-      playBeep(ctx, 880, 0.03, 0.05);
-      setTimeout(pulse, 500);
-    }
-    setTimeout(pulse, 200);
-
-  } catch(e) { console.log('Audio:', e); }
+  }catch(e){}
 }
 
-function playBeep(ctx, freq, vol, dur) {
-  try {
-    var o = ctx.createOscillator();
-    var g = ctx.createGain();
-    o.connect(g); g.connect(ctx.destination);
-    o.type = 'square';
-    o.frequency.value = freq;
-    g.gain.value = vol;
-    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
-    o.start(); o.stop(ctx.currentTime + dur);
-  } catch(e) {}
+function playBeep(ctx,freq,vol,dur){
+  try{var o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='square';o.frequency.value=freq;g.gain.value=vol;g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);o.start();o.stop(ctx.currentTime+dur);}catch(e){}
 }
 
-function stopBgMusic() {
-  isMusicOn = false;
-  if(bgGainNode) {
-    try { bgGainNode.gain.value = 0; } catch(e) {}
-  }
+function stopBgMusic(){isMusicOn=false;if(bgGainNode){try{bgGainNode.gain.value=0;}catch(e){}}}
+
+function playSuccessSound(){
+  try{var ctx=getAudioCtx();[523,659,784,1047].forEach(function(freq,i){var o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='sine';o.frequency.value=freq;g.gain.setValueAtTime(0.3,ctx.currentTime+i*0.15);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+i*0.15+0.4);o.start(ctx.currentTime+i*0.15);o.stop(ctx.currentTime+i*0.15+0.5);});}catch(e){}
 }
 
-// SUCCESS SOUND — triumphant!
-function playSuccessSound() {
-  try {
-    var ctx = getAudioCtx();
-    var melody = [523, 659, 784, 1047]; // C E G C — victory!
-    melody.forEach(function(freq, i) {
-      var o = ctx.createOscillator();
-      var g = ctx.createGain();
-      o.connect(g); g.connect(ctx.destination);
-      o.type = 'sine';
-      o.frequency.value = freq;
-      g.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.15);
-      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.4);
-      o.start(ctx.currentTime + i * 0.15);
-      o.stop(ctx.currentTime + i * 0.15 + 0.5);
-    });
-    // Final chord
-    setTimeout(function() {
-      [523, 659, 784].forEach(function(f) { playBeep(ctx, f, 0.15, 0.8); });
-    }, 700);
-  } catch(e) {}
-}
+function playErrorSound(){try{var ctx=getAudioCtx();[400,300,200].forEach(function(freq,i){setTimeout(function(){playBeep(ctx,freq,0.1,0.2);},i*150);});}catch(e){}}
 
-// ERROR SOUND
-function playErrorSound() {
-  try {
-    var ctx = getAudioCtx();
-    [400, 300, 200].forEach(function(freq, i) {
-      setTimeout(function() { playBeep(ctx, freq, 0.1, 0.2); }, i * 150);
-    });
-  } catch(e) {}
-}
-
-// ROBOT VOICE — speaks the funny lines!
-function speakLine(text) {
-  if(!window.speechSynthesis) return;
-  // Clean emoji from text for speech
-  var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu, '')
-                  .replace(/[^\u0000-\u024F\u0900-\u097F ]/g, '')
-                  .trim();
-  if(!clean) return;
+function speakLine(text){
+  var clean=text.replace(/[\u{1F300}-\u{1FFFF}]/gu,'').replace(/[^\u0000-\u024F\u0900-\u097F ]/g,'').trim();
+  if(!clean||!window.speechSynthesis)return;
   window.speechSynthesis.cancel();
-  var utt = new SpeechSynthesisUtterance(clean);
-  utt.lang = 'hi-IN';
-  utt.rate = 1.1;
-  utt.pitch = 1.3; // Slightly robotic high pitch
-  utt.volume = 0.9;
+  var utt=new SpeechSynthesisUtterance(clean);utt.lang='hi-IN';utt.rate=1.1;utt.pitch=1.3;utt.volume=0.9;
   window.speechSynthesis.speak(utt);
 }
 
-// ══ LOADING ANIMATION SYSTEM ══
-var funnyLines = [
-  "🤖 Ek second... main aapki photo ko 3D mein badal raha hoon!",
-  "😅 Yaar, itni sundar photo thi... ab 3D mein aur bhi sundar lagoge!",
-  "🔬 Har pixel ko personally check kar raha hoon... patience!",
-  "🎨 Rang bharenge, chehra banayenge... Mimaki printer ke liye taiyaar kar raha hoon!",
-  "🏗️ Ek ek layer build ho rahi hai... jaise Pali mein ghar banta hai!",
-  "🧠 GAIOS™ soch raha hai... aur woh bahut tez sochta hai!",
-  "☕ Thoda chai peeyein... model ban raha hai!",
-  "🌟 India ka pehla full-colour 3D hub — Pali, Rajasthan se namaste!",
-  "🎯 Accuracy: 99.9%... baaki 0.1% Gopal ji ke liye chhod diya!",
-  "🖨️ Mimaki 3DUJ-553 printer taiyaar ho rahi hai Pali mein!",
-  "🚀 Hunyuan AI ka jaadu dekho... Chinese technology, Indian innovation!",
-  "💫 DPIIT number hai, Patent hai — guarantee hai quality ki!",
-  "🎪 3D model almost ready... thoda aur wait karo mere dost!",
-  "🤩 Jab model aayega, tum dekhte reh jaoge!",
-  "🏆 RIPS 2024 MoU signed, Government ka bharosa — quality assured!",
-];
-var lineIdx = 0;
-var speechInt = null;
-var particleAnim = null;
+var funnyLines=["🤖 Ek second... main aapki photo ko 3D mein badal raha hoon!","😅 Itni sundar photo thi... ab 3D mein aur bhi sundar lagoge!","🔬 Har pixel ko personally check kar raha hoon... patience!","🎨 Rang bharenge, chehra banayenge... Mimaki printer ke liye taiyaar!","🏗️ Ek ek layer build ho rahi hai... jaise Pali mein ghar banta hai!","🧠 GAIOS™ soch raha hai... aur woh bahut tez sochta hai!","☕ Thoda chai peeyein... model ban raha hai!","🌟 India ka pehla full-colour 3D hub — Pali, Rajasthan se namaste!","🎯 Accuracy: 99.9%... baaki 0.1% Gopal ji ke liye chhod diya!","🖨️ Mimaki 3DUJ-553 printer taiyaar ho rahi hai Pali mein!","🚀 Hunyuan AI ka jaadu dekho... Chinese technology, Indian innovation!","💫 DPIIT number hai, Patent hai — guarantee hai quality ki!","🎪 3D model almost ready... thoda aur wait karo mere dost!","🤩 Jab model aayega, tum dekhte reh jaoge!","🏆 RIPS 2024 MoU signed, Government ka bharosa — quality assured!"];
+var lineIdx=0,speechInt=null,particleAnim=null;
 
-function startSpeechBubbles() {
-  lineIdx = 0;
-  // Speak first line immediately
-  speakLine(funnyLines[0]);
-  speechInt = setInterval(function(){
-    lineIdx = (lineIdx + 1) % funnyLines.length;
-    var sb = document.getElementById('speechBubble');
-    var st = document.getElementById('speechText');
-    if(sb && st) {
-      sb.style.opacity = '0';
-      sb.style.transform = 'translateY(-5px)';
-      setTimeout(function(){
-        var line = funnyLines[lineIdx];
-        st.textContent = line;
-        sb.style.opacity = '1';
-        sb.style.transform = 'translateY(0)';
-        speakLine(line);
-      }, 300);
-    }
-  }, 5000);
+function startSpeechBubbles(){
+  lineIdx=0;speakLine(funnyLines[0]);
+  speechInt=setInterval(function(){
+    lineIdx=(lineIdx+1)%funnyLines.length;
+    var sb=document.getElementById('speechBubble'),st=document.getElementById('speechText');
+    if(sb&&st){sb.style.opacity='0';setTimeout(function(){st.textContent=funnyLines[lineIdx];sb.style.opacity='1';speakLine(funnyLines[lineIdx]);},300);}
+  },5000);
 }
 
-function stopSpeechBubbles() {
-  if(speechInt) clearInterval(speechInt);
-  if(window.speechSynthesis) window.speechSynthesis.cancel();
-}
+function stopSpeechBubbles(){if(speechInt)clearInterval(speechInt);if(window.speechSynthesis)window.speechSynthesis.cancel();}
 
-// Particle system
-function initParticles() {
-  var canvas = document.getElementById('particleCanvas');
-  if(!canvas) return;
-  var ctx = canvas.getContext('2d');
-  var particles = [];
-  var W = canvas.offsetWidth;
-  var H = canvas.offsetHeight;
-  canvas.width = W;
-  canvas.height = H;
-
-  for(var i = 0; i < 40; i++) {
-    particles.push({
-      x: Math.random() * W,
-      y: Math.random() * H,
-      r: Math.random() * 2 + 0.5,
-      dx: (Math.random() - 0.5) * 0.5,
-      dy: -Math.random() * 0.8 - 0.3,
-      alpha: Math.random(),
-      gold: Math.random() > 0.5
-    });
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-    particles.forEach(function(p) {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = p.gold
-        ? 'rgba(201,168,76,' + p.alpha + ')'
-        : 'rgba(0,214,143,' + p.alpha * 0.5 + ')';
-      ctx.fill();
-      p.x += p.dx;
-      p.y += p.dy;
-      p.alpha += (Math.random() - 0.5) * 0.05;
-      p.alpha = Math.max(0.1, Math.min(0.8, p.alpha));
-      if(p.y < 0) { p.y = H; p.x = Math.random() * W; }
-      if(p.x < 0 || p.x > W) p.dx *= -1;
-    });
-    particleAnim = requestAnimationFrame(draw);
+function initParticles(){
+  var canvas=document.getElementById('particleCanvas');if(!canvas)return;
+  var ctx=canvas.getContext('2d'),particles=[],W=canvas.offsetWidth,H=canvas.offsetHeight;
+  canvas.width=W;canvas.height=H;
+  for(var i=0;i<40;i++)particles.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+0.5,dx:(Math.random()-0.5)*0.5,dy:-Math.random()*0.8-0.3,alpha:Math.random(),gold:Math.random()>0.5});
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(function(p){ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.gold?'rgba(201,168,76,'+p.alpha+')':'rgba(0,214,143,'+(p.alpha*0.5)+')';ctx.fill();p.x+=p.dx;p.y+=p.dy;p.alpha+=(Math.random()-0.5)*0.05;p.alpha=Math.max(0.1,Math.min(0.8,p.alpha));if(p.y<0){p.y=H;p.x=Math.random()*W;}if(p.x<0||p.x>W)p.dx*=-1;});
+    particleAnim=requestAnimationFrame(draw);
   }
   draw();
 }
 
-function stopParticles() {
-  if(particleAnim) cancelAnimationFrame(particleAnim);
-  var canvas = document.getElementById('particleCanvas');
-  if(canvas) {
-    var ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
-}
+function stopParticles(){if(particleAnim)cancelAnimationFrame(particleAnim);}
+function updatePct(val){var el=document.getElementById('progressPct');if(el)el.textContent=Math.round(val)+'%';}
 
-// Update progress percentage display
-function updatePct(val) {
-  var el = document.getElementById('progressPct');
-  if(el) el.textContent = Math.round(val) + '%';
-}
-
-// ══ PROGRESS ══
-var progInt=null, progVal=5;
+var progInt=null,progVal=5;
 function startProg(){
-  progVal=5;
-  document.getElementById('progressSection').style.display='block';
-  document.getElementById('progressBar').style.width='5%';
-  updatePct(5);
-  startSpeechBubbles();
-  startBgMusic();
-  setTimeout(initParticles, 100);
-  progInt=setInterval(function(){
-    if(progVal<82){
-      progVal+=Math.random()*1.8;
-      document.getElementById('progressBar').style.width=progVal+'%';
-      updatePct(progVal);
-    }
-  },3000);
+  progVal=5;document.getElementById('progressSection').style.display='block';
+  document.getElementById('progressBar').style.width='5%';updatePct(5);
+  startSpeechBubbles();startBgMusic();setTimeout(initParticles,100);
+  progInt=setInterval(function(){if(progVal<82){progVal+=Math.random()*1.8;document.getElementById('progressBar').style.width=progVal+'%';updatePct(progVal);}},3000);
 }
 function doneProg(){
-  clearInterval(progInt);
-  stopSpeechBubbles();
-  stopBgMusic();
-  stopParticles();
-  playSuccessSound();
-  document.getElementById('progressBar').style.width='100%';
-  updatePct(100);
-  var st = document.getElementById('speechText');
-  if(st) st.textContent = '🎉 Ho gaya! Aapka 3D model ready hai! Dekho dekho!';
-  speakLine('Ho gaya! Aapka teen dee model ready hai! Dekho dekho!');
+  clearInterval(progInt);stopSpeechBubbles();stopBgMusic();stopParticles();playSuccessSound();
+  document.getElementById('progressBar').style.width='100%';updatePct(100);
+  var st=document.getElementById('speechText');if(st)st.textContent='🎉 Ho gaya! Aapka 3D model ready hai!';
+  speakLine('Ho gaya! Aapka teen dee model ready hai!');
   setTimeout(function(){document.getElementById('progressSection').style.display='none';},1800);
 }
-function stopProg(){
-  clearInterval(progInt);
-  stopSpeechBubbles();
-  stopBgMusic();
-  stopParticles();
-  playErrorSound();
-  document.getElementById('progressSection').style.display='none';
-}
+function stopProg(){clearInterval(progInt);stopSpeechBubbles();stopBgMusic();stopParticles();playErrorSound();document.getElementById('progressSection').style.display='none';}
 
-// ══ STEP INDICATOR ══
-function setStep(n){
-  for(var i=1;i<=4;i++){
-    var c=document.getElementById('sc'+i);
-    if(i<n){c.classList.remove('active');c.classList.add('done');c.textContent='✓';}
-    else if(i===n){c.classList.add('active');c.classList.remove('done');}
-    else{c.classList.remove('active','done');c.textContent=i;}
-  }
-}
-
-function showStat(type,msg){
-  document.getElementById('sProc').style.display='none';
-  document.getElementById('sOk').style.display='none';
-  document.getElementById('sErr').style.display='none';
-  if(type&&msg){document.getElementById('s'+type).textContent=msg;document.getElementById('s'+type).style.display='block';}
-}
+function setStep(n){for(var i=1;i<=4;i++){var c=document.getElementById('sc'+i);if(i<n){c.classList.remove('active');c.classList.add('done');c.textContent='✓';}else if(i===n){c.classList.add('active');c.classList.remove('done');}else{c.classList.remove('active','done');c.textContent=i;}}}
+function showStat(type,msg){['sProc','sOk','sErr'].forEach(function(id){document.getElementById(id).style.display='none';});if(type&&msg){document.getElementById('s'+type).textContent=msg;document.getElementById('s'+type).style.display='block';}}
 
 // ══ GENERATE 3D ══
 async function generate3D(){
   if(selFiles.length===0){alert('Pehle photo(s) select karo!');return;}
   var btn=document.getElementById('gen3d-btn');
-  btn.disabled=true; btn.textContent='⏳ Generating...';
+  btn.disabled=true;btn.textContent='⏳ Generating...';
   document.getElementById('viewerSection').style.display='none';
   document.getElementById('approvalBox').style.display='none';
   document.getElementById('trackingBox').style.display='none';
-
   var file=selFiles[selIdx]||selFiles[0];
   var b=document.getElementById('brightnessSlider').value;
   var c=document.getElementById('contrastSlider').value;
   var s=document.getElementById('saturationSlider').value;
   var needsAdjust=(b!='100'||c!='100'||s!='100');
-
-  function getBase64(file, cb) {
+  function getBase64(file,cb){
     if(file.size>1500000||needsAdjust){
-      var canvas=document.createElement('canvas');
-      var img=new Image();
-      img.onload=function(){
-        var scale=Math.min(1,1200/Math.max(img.width,img.height));
-        canvas.width=img.width*scale; canvas.height=img.height*scale;
-        var ctx=canvas.getContext('2d');
-        ctx.filter='brightness('+b+'%) contrast('+c+'%) saturate('+s+')';
-        ctx.drawImage(img,0,0,canvas.width,canvas.height);
-        canvas.toBlob(function(blob){
-          var r=new FileReader();
-          r.onload=function(e){cb(e.target.result.split(',')[1]);};
-          r.readAsDataURL(blob);
-        },'image/jpeg',0.85);
-      };
+      var canvas=document.createElement('canvas'),img=new Image();
+      img.onload=function(){var scale=Math.min(1,1200/Math.max(img.width,img.height));canvas.width=img.width*scale;canvas.height=img.height*scale;var ctx=canvas.getContext('2d');ctx.filter='brightness('+b+'%) contrast('+c+'%) saturate('+s+')';ctx.drawImage(img,0,0,canvas.width,canvas.height);canvas.toBlob(function(blob){var r=new FileReader();r.onload=function(e){cb(e.target.result.split(',')[1]);};r.readAsDataURL(blob);},'image/jpeg',0.85);};
       img.src=URL.createObjectURL(file);
-    } else {
-      var r=new FileReader();
-      r.onload=function(e){cb(e.target.result.split(',')[1]);};
-      r.readAsDataURL(file);
-    }
+    }else{var r=new FileReader();r.onload=function(e){cb(e.target.result.split(',')[1]);};r.readAsDataURL(file);}
   }
-
-  getBase64(file, async function(base64){
-    startProg(); setStep(2);
-    showStat('Proc','⏳ GAIOS™ AI 3D model shuru kar raha hai...');
-    document.getElementById('progressText').textContent='⏳ Photo compress + upload ho rahi hai...';
-    document.getElementById('timeEst').textContent='Estimated: 3-6 minutes | Hunyuan 3D 3.1';
-
-    try {
+  getBase64(file,async function(base64){
+    startProg();setStep(2);showStat('Proc','⏳ GAIOS™ AI 3D model shuru kar raha hai...');
+    try{
       var res=await fetch('/.netlify/functions/photo3d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imageBase64:base64,imageType:'image/jpeg'})});
       var data=await res.json();
-      if(!data.predictionId){
-        stopProg();
-        var em=data.error||'Start failed';
-        var friendly=em.toLowerCase().includes('limit')?'⚠️ Server busy. 5 minute baad try karein.':'❌ Error: '+em+'. Dobara try karein.';
-        showStat('Err',friendly); btn.disabled=false; btn.textContent='🚀 3D Model Generate Karo'; return;
-      }
-      setStep(3);
-      document.getElementById('progressText').textContent='⏳ AI 3D model bana raha hai...';
-      var predId=data.predictionId, secs=0;
+      if(!data.predictionId){stopProg();showStat('Err','❌ '+(data.error||'Start failed'));btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';return;}
+      setStep(3);var predId=data.predictionId,secs=0;
       for(var i=0;i<72;i++){
-        await new Promise(function(r){setTimeout(r,5000);});
-        secs+=5;
+        await new Promise(function(r){setTimeout(r,5000);});secs+=5;
         showStat('Proc','⏳ Processing: '+secs+'s — Hunyuan 3D generating...');
-        document.getElementById('progressText').textContent='⏳ 3D model ban raha hai... '+secs+'s';
         var pr=await fetch('/.netlify/functions/photo3d?id='+predId);
         var pd=await pr.json();
         if(pd.status==='succeeded'&&pd.output){
-          var outs=Array.isArray(pd.output)?pd.output:[pd.output];
-          var mu=null;
+          var outs=Array.isArray(pd.output)?pd.output:[pd.output];var mu=null;
           outs.forEach(function(u){if(u&&u.match&&u.match(/\.(glb|obj|gltf)/i))mu=u;});
-          doneProg(); setStep(4); curModelUrl=mu||outs[0];
-          if(mu){
-            showStat('Ok','✅ 3D Model Ready! 360° rotate karke dekho → Approve karo');
-            document.getElementById('modelViewer').setAttribute('src',mu);
-            document.getElementById('viewerSection').style.display='block';
-            document.getElementById('approvalBox').style.display='block';
-            document.getElementById('trackingBox').style.display='block';
-          } else {
-            showStat('Ok','✅ Model ready! Download link neeche.');
-            document.getElementById('viewerSection').style.display='block';
-          }
-          btn.disabled=false; btn.textContent='🚀 3D Model Generate Karo';
-          toast('🎉 3D Model Successfully Bana! '+secs+'s mein!',4000);
-          return;
-        } else if(pd.status==='failed'){
-          stopProg();
-          var fe=(pd.error&&pd.error.toLowerCase().includes('limit'))?'⚠️ Server busy. 5 minute baad try karein.':'❌ Generation failed. Dobara try karein.';
-          showStat('Err',fe); btn.disabled=false; btn.textContent='🚀 3D Model Generate Karo'; return;
-        }
+          doneProg();setStep(4);curModelUrl=mu||outs[0];
+          if(mu){showStat('Ok','✅ 3D Model Ready!');document.getElementById('modelViewer').setAttribute('src',mu);document.getElementById('viewerSection').style.display='block';document.getElementById('approvalBox').style.display='block';document.getElementById('trackingBox').style.display='block';}
+          else{showStat('Ok','✅ Model ready!');document.getElementById('viewerSection').style.display='block';}
+          btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';toast('🎉 3D Model Bana! '+secs+'s mein!',4000);return;
+        }else if(pd.status==='failed'){stopProg();showStat('Err','❌ Generation failed.');btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';return;}
       }
-      stopProg(); showStat('Err','⏳ Timeout. Dobara try karein.');
-      btn.disabled=false; btn.textContent='🚀 3D Model Generate Karo';
-    } catch(err){
-      stopProg(); showStat('Err','❌ '+err.message);
-      btn.disabled=false; btn.textContent='🚀 3D Model Generate Karo';
-    }
+      stopProg();showStat('Err','⏳ Timeout. Dobara try karein.');btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';
+    }catch(err){stopProg();showStat('Err','❌ '+err.message);btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';}
   });
 }
 
-// ══ APPROVAL ══
 function approveModel(){
   document.getElementById('approvalStatus').style.display='block';
-  document.getElementById('approvalStatus').textContent='✅ Model Approved! Order confirm ke liye call karein.';
-  toast('✅ Approved! Calling... +91-6350132497',4000);
-  setTimeout(function(){window.open('https://wa.me/916350132497?text=Namaskar%2C%20maine%20GAIOS%20par%20apna%203D%20model%20approve%20kar%20diya%20hai.%20Order%20confirm%20karna%20chahta%20hoon.%20Size%3A%20'+selSize+'%22','_blank');},1200);
+  document.getElementById('approvalStatus').textContent='✅ Model Approved!';
+  toast('✅ Approved! +91-6350132497',4000);
+  setTimeout(function(){window.open('https://wa.me/916350132497?text=Namaskar%2C%20maine%20GAIOS%20par%20apna%203D%20model%20approve%20kar%20diya%20hai.%20Size%3A%20'+selSize+'%22','_blank');},1200);
 }
-function toggleRevision(){
-  var rt=document.getElementById('revText'),rb=document.getElementById('revSubmitBtn');
-  var show=rt.style.display!=='block';
-  rt.style.display=show?'block':'none';
-  rb.style.display=show?'block':'none';
-  if(show) rt.focus();
-}
-function submitRevision(){
-  var text=document.getElementById('revText').value.trim();
-  if(!text){alert('Changes likhein pehle.');return;}
-  window.open('https://wa.me/916350132497?text=Namaskar%2C%20mera%203D%20model%20ready%20hai%20lekin%20kuch%20changes%20chahiye%3A%20'+encodeURIComponent(text),'_blank');
-  toast('✅ Revision request bhaij di!',3000);
-}
-
-// ══ DOWNLOAD + SHARE ══
-function downloadModel(){
-  if(!curModelUrl){toast('Pehle model generate karo!');return;}
-  var a=document.createElement('a');a.href=curModelUrl;a.download='GAIOS-3D-'+selSize+'inch.glb';a.target='_blank';a.click();
-  toast('⬇️ Download shuru!',2000);
-}
-function shareWA(){
-  if(!curModelUrl){toast('Pehle model generate karo!');return;}
-  var msg='🎉 Mera GAIOS™ 3D Model dekho!\n'+curModelUrl+'\n\nGenesys Additive 3D Creation, Pali, Rajasthan\n+91-6350132497';
-  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
-}
-function shareInsta(){
-  if(!curModelUrl){toast('Pehle model generate karo!');return;}
-  navigator.clipboard.writeText(curModelUrl).then(function(){toast('📸 Link copy ho gayi! Instagram Story mein paste karein.',4000);}).catch(function(){toast('Link: '+curModelUrl);});
-}
-function shareFB(){
-  if(!curModelUrl){toast('Pehle model generate karo!');return;}
-  window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(curModelUrl),'_blank');
-}
-function copyLink(){
-  if(!curModelUrl){toast('Pehle model generate karo!');return;}
-  navigator.clipboard.writeText(curModelUrl).then(function(){toast('✅ Link copy ho gayi!',2000);}).catch(function(){toast('Copy nahi hua.');});
-}
+function toggleRevision(){var rt=document.getElementById('revText'),rb=document.getElementById('revSubmitBtn');var show=rt.style.display!=='block';rt.style.display=show?'block':'none';rb.style.display=show?'block':'none';if(show)rt.focus();}
+function submitRevision(){var text=document.getElementById('revText').value.trim();if(!text){alert('Changes likhein.');return;}window.open('https://wa.me/916350132497?text=Changes%3A%20'+encodeURIComponent(text),'_blank');toast('✅ Revision request bhaij di!',3000);}
+function downloadModel(){if(!curModelUrl){toast('Pehle model generate karo!');return;}var a=document.createElement('a');a.href=curModelUrl;a.download='GAIOS-3D-'+selSize+'inch.glb';a.target='_blank';a.click();}
+function shareWA(){if(!curModelUrl){toast('Pehle model generate karo!');return;}window.open('https://wa.me/?text='+encodeURIComponent('🎉 Mera GAIOS™ 3D Model!\n'+curModelUrl),'_blank');}
+function shareInsta(){if(!curModelUrl){toast('Pehle model generate karo!');return;}navigator.clipboard.writeText(curModelUrl).then(function(){toast('📸 Link copy ho gayi!',4000);});}
+function shareFB(){if(!curModelUrl){toast('Pehle model generate karo!');return;}window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(curModelUrl),'_blank');}
+function copyLink(){if(!curModelUrl){toast('Pehle model generate karo!');return;}navigator.clipboard.writeText(curModelUrl).then(function(){toast('✅ Link copy ho gayi!',2000);});}
 
 // ══ CONTACT ══
-async function robotSpeakElevenLabs(text){try{const r=await fetch('/.netlify/functions/elevenlabs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:text})});const d=await r.json();if(!d.audio)throw new Error('no audio');const b=atob(d.audio);const arr=new Uint8Array(b.length);for(let i=0;i<b.length;i++)arr[i]=b.charCodeAt(i);const blob=new Blob([arr],{type:'audio/mpeg'});const url=URL.createObjectURL(blob);new Audio(url).play();}catch(e){const u=new SpeechSynthesisUtterance(text);u.lang='hi-IN';u.rate=0.85;speechSynthesis.speak(u);}} function robotSpeakBrowser(text){const utter=new SpeechSynthesisUtterance(text);utter.lang='hi-IN';utter.rate=0.85;utter.pitch=1.1;window.speechSynthesis.cancel();window.speechSynthesis.speak(utter);}function robotSpeak(text){robotSpeakBrowser(text);}function submitForm(){
+function submitForm(){
   var n=document.getElementById('c_name').value.trim();
   var p=document.getElementById('c_phone').value.trim();
   var sv=document.getElementById('c_service').value;
@@ -1357,216 +911,70 @@ async function robotSpeakElevenLabs(text){try{const r=await fetch('/.netlify/fun
   if(!n||!p||!sv){alert('Naam, mobile aur service zaroor bharen.');return;}
   var waMsg='Namaskar%2C%20Naam%3A%20'+encodeURIComponent(n)+'%20%7C%20Mobile%3A%20'+encodeURIComponent(p)+(ct?'%20%7C%20City%3A%20'+encodeURIComponent(ct):'')+'%20%7C%20Service%3A%20'+encodeURIComponent(sv)+(mg?'%20%7C%20Details%3A%20'+encodeURIComponent(mg):'');
   window.open('https://wa.me/916350132497?text='+waMsg,'_blank');
-  var sm=document.getElementById('successMsg');sm.style.display='block';
-  setTimeout(function(){sm.style.display='none';},5000);
-// ===== ELEVENLABS VOICE SYSTEM =====
-const ELEVEN_API_KEY = 'sk_1c8cc8eb27886b353a698fb4f5e418b3594a1c92c1e05298';
-const ELEVEN_VOICE_ID = 'EXAVITQu4vr4xnSDxMaL'; // Sarah - clear female voice
+  var sm=document.getElementById('successMsg');sm.style.display='block';setTimeout(function(){sm.style.display='none';},5000);
+}
 
-async function robotSpeakElevenLabs(text) {
-  try {
-    const response = await fetch(`/.netlify/functions/elevenlabs`, {
-      method: 'POST',
-      headers: {
-        'xi-api-key': ELEVEN_API_KEY,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        text: text,
-        model_id: 'eleven_multilingual_v2',
-        voice_settings: { stability: 0.5, similarity_boost: 0.75 }
-      })
+// ══ MODAL MUSIC ══
+function playBgMusic(type){
+  try{
+    var ctx=new(window.AudioContext||window.webkitAudioContext)();
+    var notes={'happy':[523,659,784,1047],'classical':[392,494,587,698],'corporate':[440,554,659,880],'calm':[349,440,523,698],'tech':[880,1047,1319,1047],'wedding':[784,988,1175,988]};
+    var seq=notes[type]||notes['happy'];
+    seq.forEach(function(freq,i){
+      var osc=ctx.createOscillator(),gain=ctx.createGain();osc.connect(gain);gain.connect(ctx.destination);
+      osc.frequency.value=freq;osc.type='sine';
+      gain.gain.setValueAtTime(0.08,ctx.currentTime+i*0.4);gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+i*0.4+0.35);
+      osc.start(ctx.currentTime+i*0.4);osc.stop(ctx.currentTime+i*0.4+0.4);
     });
-    if (!response.ok) throw new Error('ElevenLabs failed');
-    const audioBlob = await response.blob();
-    const audioUrl = URL.createObjectURL(audioBlob);
-    const audio = new Audio(audioUrl);
-    audio.play();
-  } catch (err) {
-    // Fallback to browser TTS
-    robotSpeakBrowser(text);
-  }
+  }catch(e){}
 }
 
-function robotSpeakBrowser(text) {
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = 'hi-IN';
-  utter.rate = 0.85;
-  utter.pitch = 1.1;
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(utter);
-}
-
-function robotSpeak(text) {
-  robotSpeakBrowser(text);
-}}
-  
-// ===== VERTICAL & BFOREVER MODAL SYSTEM =====
-const verticalData = {
-  'consumer-figurines': {
-    title: '🧍 Consumer Figurines — BFOREVER™',
-    desc: 'Aapki ya aapke priyajan ki photo se world-class full-colour 3D figurine! Mimaki 3DUJ-553 PolyJet printer se banegi — India mein pehli baar. Shaadi, birthday, anniversary — har khaas mauke ke liye perfect yaadgaar tohfa.',
-    music: 'happy',
-    color: '#C9A84C'
-  },
-  'heritage-tourism': {
-    title: '🏛️ Heritage & Tourism',
-    desc: 'Rajasthan ke forts, temples aur historical artifacts ke exact 3D replicas! Museums, tourist centers aur government departments ke liye premium quality models. GAIOS™ AI se scan karein, print karein — heritage ko nayi zindagi milegi.',
-    music: 'classical',
-    color: '#8B6914'
-  },
-  'real-estate': {
-    title: '🏗️ Real Estate',
-    desc: 'Builders aur architects ke liye full-colour 3D architectural models! Blueprint se seedha 3D model — clients ko project dikhana ab aur bhi asaan. Pre-launch marketing mein game changer!',
-    music: 'corporate',
-    color: '#4A90D9'
-  },
-  'medical-dicom': {
-    title: '🏥 Medical DICOM',
-    desc: 'CT scan aur MRI se exact 3D organ models! Surgeons operation se pehle practice kar sakte hain. Medical colleges, hospitals aur diagnostic centers ke liye revolutionary technology. Patient education mein bhi kaam aata hai.',
-    music: 'calm',
-    color: '#E74C3C'
-  },
-  'drone-lidar': {
-    title: '🚁 Drone/LiDAR',
-    desc: 'Drone survey data se physical terrain models! GIS data ko 3D reality mein convert karein. Urban planning, infrastructure projects aur government surveys ke liye perfect solution.',
-    music: 'tech',
-    color: '#27AE60'
-  },
-  'antique-museum': {
-    title: '🏺 Antique & Museum',
-    desc: 'Rare artifacts aur antiques ke full-colour 3D replicas! Original ko preserve karein, replicas sell karein. Museums, collectors aur heritage organizations ke liye unique business opportunity.',
-    music: 'classical',
-    color: '#9B59B6'
-  },
-  'reverse-engineering': {
-    title: '⚙️ Reverse Engineering',
-    desc: 'Machine parts scan karein aur exact replicas banayein! Spare parts jo market mein available nahi — GAIOS™ se possible hai. Manufacturing aur industrial maintenance ke liye revolutionary solution.',
-    music: 'tech',
-    color: '#E67E22'
-  },
-  'defence': {
-    title: '🛡️ Defence',
-    desc: 'Terrain mapping aur military scale models! Training purposes ke liye exact geographical models. Strategic planning aur simulation ke liye use hote hain. Confidential aur precision work mein expert.',
-    music: 'corporate',
-    color: '#2C3E50'
-  },
-  'corporate-gifting': {
-    title: '🎁 Corporate Gifting',
-    desc: 'Premium 3D awards, trophies aur corporate gifts! Company logo, product replicas ya founder ki figurine — sab kuch possible! Employee recognition aur client gifting mein unique impression.',
-    music: 'happy',
-    color: '#F39C12'
-  },
-  'visitor-centre': {
-    title: '🗺️ Visitor Centre',
-    desc: 'Relief maps aur terrain models visitor centers ke liye! National parks, hill stations aur tourist attractions ke liye interactive 3D maps. Visitors ko geography samajhna ab visual aur interesting lagega.',
-    music: 'calm',
-    color: '#16A085'
-  },
-  'religious-tourism': {
-    title: '🕌 Religious Tourism',
-    desc: 'Temple models, deity replicas aur religious artifacts ke 3D prints! Teerth sthalon ki miniature replicas — devotees ke liye precious souvenirs. Mandir trusts aur religious organizations ke liye special service.',
-    music: 'classical',
-    color: '#E74C3C'
-  },
-  'education-stem': {
-    title: '📚 Education/STEM',
-    desc: '3D learning models schools aur colleges ke liye! Anatomy, geography, mathematics — har subject mein 3D models se padhai interesting aur effective hoti hai. NEP 2020 ke anuroop innovative education tools.',
-    music: 'happy',
-    color: '#3498DB'
-  }
+// ══ VERTICAL DATA ══
+var verticalData={
+  'consumer-figurines':{title:'🧍 Consumer Figurines — BFOREVER™',desc:'Aapki ya aapke priyajan ki photo se world-class full-colour 3D figurine! Mimaki 3DUJ-553 PolyJet printer se banegi — India mein pehli baar. Shaadi, birthday, anniversary — har khaas mauke ke liye perfect yaadgaar tohfa.',music:'happy',color:'#C9A84C'},
+  'heritage-tourism':{title:'🏛️ Heritage & Tourism',desc:'Rajasthan ke forts, temples aur historical artifacts ke exact 3D replicas! Museums, tourist centers aur government departments ke liye premium quality models. GAIOS™ AI se scan karein, print karein — heritage ko nayi zindagi milegi.',music:'classical',color:'#8B6914'},
+  'real-estate':{title:'🏗️ Real Estate',desc:'Builders aur architects ke liye full-colour 3D architectural models! Blueprint se seedha 3D model — clients ko project dikhana ab aur bhi asaan. Pre-launch marketing mein game changer!',music:'corporate',color:'#4A90D9'},
+  'medical-dicom':{title:'🏥 Medical DICOM',desc:'CT scan aur MRI se exact 3D organ models! Surgeons operation se pehle practice kar sakte hain. Medical colleges, hospitals aur diagnostic centers ke liye revolutionary technology.',music:'calm',color:'#E74C3C'},
+  'drone-lidar':{title:'🚁 Drone/LiDAR',desc:'Drone survey data se physical terrain models! GIS data ko 3D reality mein convert karein. Urban planning, infrastructure projects aur government surveys ke liye perfect solution.',music:'tech',color:'#27AE60'},
+  'antique-museum':{title:'🏺 Antique & Museum',desc:'Rare artifacts aur antiques ke full-colour 3D replicas! Original ko preserve karein, replicas sell karein. Museums, collectors aur heritage organizations ke liye unique business opportunity.',music:'classical',color:'#9B59B6'},
+  'reverse-engineering':{title:'⚙️ Reverse Engineering',desc:'Machine parts scan karein aur exact replicas banayein! Spare parts jo market mein available nahi — GAIOS™ se possible hai. Manufacturing aur industrial maintenance ke liye revolutionary solution.',music:'tech',color:'#E67E22'},
+  'defence':{title:'🛡️ Defence',desc:'Terrain mapping aur military scale models! Training purposes ke liye exact geographical models. Strategic planning aur simulation ke liye use hote hain.',music:'corporate',color:'#2C3E50'},
+  'corporate-gifting':{title:'🎁 Corporate Gifting',desc:'Premium 3D awards, trophies aur corporate gifts! Company logo, product replicas ya founder ki figurine — sab kuch possible! Employee recognition aur client gifting mein unique impression.',music:'happy',color:'#F39C12'},
+  'visitor-centre':{title:'🗺️ Visitor Centre',desc:'Relief maps aur terrain models visitor centers ke liye! National parks, hill stations aur tourist attractions ke liye interactive 3D maps.',music:'calm',color:'#16A085'},
+  'religious-tourism':{title:'🕌 Religious Tourism',desc:'Temple models, deity replicas aur religious artifacts ke 3D prints! Teerth sthalon ki miniature replicas — devotees ke liye precious souvenirs.',music:'classical',color:'#E74C3C'},
+  'education-stem':{title:'📚 Education/STEM',desc:'3D learning models schools aur colleges ke liye! Anatomy, geography, mathematics — har subject mein 3D models se padhai interesting aur effective hoti hai.',music:'happy',color:'#3498DB'}
 };
 
-const bforeverData = {
-  'shaadi': {
-    title: '💍 Shaadi — Dulha-Dulhan ki 3D Figurine',
-    desc: 'Shaadi ki sabse khaas yaad — Dulha-Dulhan ki full-colour 3D figurine! Actual wedding dress mein, exact chehra, exact look — GAIOS™ AI se scan karein aur Mimaki printer pe print karein. Ek baar dekha toh dil khush ho jayega! Cake topper se lekar mantelpiece decoration tak — yeh gift zindagi bhar yaad rahega.',
-    music: 'wedding',
-    color: '#FFD700'
-  },
-  'birthday': {
-    title: '🎂 Birthday — Unique 3D Gift',
-    desc: 'Birthday pe aisa gift jo kabhi bhula na ja sake! Khud ki ya kisi priye ki exact 3D figurine — unka chehra, unke kapde, unka andaaz — sab kuch 3D mein! Bachche se lekar buzurg tak — sabke liye special. Yeh sirf ek gift nahi, ek yaad hai jo hamesha saath rahegi!',
-    music: 'happy',
-    color: '#FF6B9D'
-  },
-  'yaadgar': {
-    title: '💝 Yaadgaar — Unki Yaad Hamesha',
-    desc: 'Jo humse door ho gaye — unki yaad ko 3D mein jinda rakhen! Purani photo se exact 3D figurine banva sakte hain. Buzurgon ki yaad, kisi priye ki smriti — yeh sirf ek object nahi, ek emotion hai. BFOREVER™ ka matlab hai — "Be Forever" — unki yaad hamesha hamare saath!',
-    music: 'calm',
-    color: '#9B59B6'
-  },
-  'achievement': {
-    title: '🏆 Achievement — Safalta Ka Jashn',
-    desc: 'Retirement, promotion, medal, degree — har badi safalta deserve karti hai ek khaas celebration! Achievement figurine mein wo pehne huye uniform mein, trophy ke saath, ya apne kaam ki jagah par — bilkul waise jaise wo hain! Corporate gifting mein bhi ye sabse popular choice hai.',
-    music: 'corporate',
-    color: '#F39C12'
-  }
+var bforeverData={
+  'shaadi':{title:'💍 Shaadi — Dulha-Dulhan ki 3D Figurine',desc:'Shaadi ki sabse khaas yaad — Dulha-Dulhan ki full-colour 3D figurine! Actual wedding dress mein, exact chehra, exact look — GAIOS™ AI se scan karein aur Mimaki printer pe print karein. Cake topper se lekar mantelpiece decoration tak — yeh gift zindagi bhar yaad rahega.',music:'wedding',color:'#FFD700'},
+  'birthday':{title:'🎂 Birthday — Unique 3D Gift',desc:'Birthday pe aisa gift jo kabhi bhula na ja sake! Khud ki ya kisi priye ki exact 3D figurine — unka chehra, unke kapde, unka andaaz — sab kuch 3D mein! Yeh sirf ek gift nahi, ek yaad hai jo hamesha saath rahegi!',music:'happy',color:'#FF6B9D'},
+  'yaadgar':{title:'💝 Yaadgaar — Unki Yaad Hamesha',desc:'Jo humse door ho gaye — unki yaad ko 3D mein jinda rakhen! Purani photo se exact 3D figurine banva sakte hain. BFOREVER™ ka matlab hai — "Be Forever" — unki yaad hamesha hamare saath!',music:'calm',color:'#9B59B6'},
+  'achievement':{title:'🏆 Achievement — Safalta Ka Jashn',desc:'Retirement, promotion, medal, degree — har badi safalta deserve karti hai ek khaas celebration! Achievement figurine mein wo pehne huye uniform mein, trophy ke saath — bilkul waise jaise wo hain!',music:'corporate',color:'#F39C12'}
 };
 
-function playBgMusic(type) {
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  const notes = {
-    'happy': [523, 659, 784, 1047],
-    'classical': [392, 494, 587, 698],
-    'corporate': [440, 554, 659, 880],
-    'calm': [349, 440, 523, 698],
-    'tech': [880, 1047, 1319, 1047],
-    'wedding': [784, 988, 1175, 988]
-  };
-  const seq = notes[type] || notes['happy'];
-  seq.forEach((freq, i) => {
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.frequency.value = freq;
-    osc.type = 'sine';
-    gain.gain.setValueAtTime(0.08, audioCtx.currentTime + i * 0.4);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + i * 0.4 + 0.35);
-    osc.start(audioCtx.currentTime + i * 0.4);
-    osc.stop(audioCtx.currentTime + i * 0.4 + 0.4);
-  });
-}
-
-function showVerticalModal(key) {
-  const d = verticalData[key];
-  if (!d) return;
+// ══ VERTICAL MODAL ══
+function showVerticalModal(key){
+  var d=verticalData[key];
+  if(!d)return;
   playBgMusic(d.music);
-  window._currentAudio=null;window.speechSynthesis.cancel();robotSpeak(d.title.replace(/[🧍🏛️🏗️🏥🚁🏺⚙️🛡️🎁🗺️🕌📚]/g,'') + '. ' + d.desc);
-  const modal = document.createElement('div');
-  modal.style.cssText = `position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;`;
-  modal.innerHTML = `
-    <div style="background:linear-gradient(135deg,#0C1830,#1a2a4a);border:2px solid ${d.color};border-radius:16px;padding:28px;max-width:480px;width:100%;position:relative;">
-      <button onclick="window.speechSynthesis.cancel();this.parentElement.parentElement.remove()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;">✕</button>
-      <h2 style="color:${d.color};font-size:1.2rem;margin-bottom:12px;">${d.title}</h2>
-      <p style="color:#e0e0e0;line-height:1.7;font-size:0.95rem;">${d.desc}</p>
-      <div style="margin-top:20px;padding:14px;background:rgba(201,168,76,0.1);border-radius:10px;border-left:3px solid ${d.color};">
-        <p style="color:${d.color};font-weight:bold;margin:0;font-size:0.9rem;">🚀 Coming Soon — Oct/Nov 2026</p>
-        <p style="color:#aaa;font-size:0.85rem;margin:6px 0 0;">Mimaki 3DUJ-553 printer commissioning ke baad yeh service shuru hogi. Pan-India scan points ke through aap yeh service le sakte hain!</p>
-      </div>
-      <button onclick="window.speechSynthesis.cancel();this.parentElement.parentElement.remove()" style="margin-top:16px;width:100%;padding:12px;background:${d.color};border:none;border-radius:8px;color:#000;font-weight:bold;cursor:pointer;font-size:1rem;">Samajh Gaya! ✓</button>
-    </div>`;
+  window.speechSynthesis.cancel();
+  robotSpeak(d.title.replace(/[^\w\s\u0900-\u097F.,!?]/g,'') + '. ' + d.desc);
+  var modal=document.createElement('div');
+  modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
+  modal.innerHTML='<div style="background:linear-gradient(135deg,#0C1830,#1a2a4a);border:2px solid '+d.color+';border-radius:16px;padding:28px;max-width:480px;width:100%;position:relative;"><button onclick="window.speechSynthesis.cancel();this.parentElement.parentElement.remove()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;">✕</button><h2 style="color:'+d.color+';font-size:1.2rem;margin-bottom:12px;">'+d.title+'</h2><p style="color:#e0e0e0;line-height:1.7;font-size:0.95rem;">'+d.desc+'</p><div style="margin-top:20px;padding:14px;background:rgba(201,168,76,0.1);border-radius:10px;border-left:3px solid '+d.color+';"><p style="color:'+d.color+';font-weight:bold;margin:0;font-size:0.9rem;">🚀 Coming Soon — Oct/Nov 2026</p><p style="color:#aaa;font-size:0.85rem;margin:6px 0 0;">Mimaki 3DUJ-553 printer commissioning ke baad yeh service shuru hogi. Pan-India scan points ke through aap yeh service le sakte hain!</p></div><button onclick="window.speechSynthesis.cancel();this.parentElement.parentElement.remove()" style="margin-top:16px;width:100%;padding:12px;background:'+d.color+';border:none;border-radius:8px;color:#000;font-weight:bold;cursor:pointer;font-size:1rem;">Samajh Gaya! ✓</button></div>';
   document.body.appendChild(modal);
 }
 
-function showBforeverModal(key) {
-  const d = bforeverData[key];
-  if (!d) return;
+// ══ BFOREVER MODAL ══
+function showBforeverModal(key){
+  var d=bforeverData[key];
+  if(!d)return;
   playBgMusic(d.music);
-  window._currentAudio=null;window.speechSynthesis.cancel();robotSpeak(d.title.replace(/[💍🎂💝🏆]/g,'') + '. ' + d.desc);
-  const modal = document.createElement('div');
-  modal.style.cssText = `position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;`;
-  modal.innerHTML = `
-    <div style="background:linear-gradient(135deg,#1a0a0a,#2a1a1a);border:2px solid ${d.color};border-radius:16px;padding:28px;max-width:480px;width:100%;position:relative;">
-      <button onclick="window.speechSynthesis.cancel();this.parentElement.parentElement.remove()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;">✕</button>
-      <h2 style="color:${d.color};font-size:1.2rem;margin-bottom:12px;">${d.title}</h2>
-      <p style="color:#e0e0e0;line-height:1.7;font-size:0.95rem;">${d.desc}</p>
-      <div style="margin-top:20px;text-align:center;">
-        <a href="https://bforever.in" target="_blank" style="display:inline-block;padding:12px 24px;background:${d.color};border-radius:8px;color:#000;font-weight:bold;text-decoration:none;margin-right:10px;">🌐 BFOREVER™ Website</a>
-        <button onclick="window.speechSynthesis.cancel();this.parentElement.parentElement.parentElement.remove()" style="padding:12px 24px;background:transparent;border:2px solid ${d.color};border-radius:8px;color:${d.color};font-weight:bold;cursor:pointer;">Theek Hai ✓</button>
-      </div>
-    </div>`;
+  window.speechSynthesis.cancel();
+  robotSpeak(d.title.replace(/[^\w\s\u0900-\u097F.,!?]/g,'') + '. ' + d.desc);
+  var modal=document.createElement('div');
+  modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
+  modal.innerHTML='<div style="background:linear-gradient(135deg,#1a0a0a,#2a1a1a);border:2px solid '+d.color+';border-radius:16px;padding:28px;max-width:480px;width:100%;position:relative;"><button onclick="window.speechSynthesis.cancel();this.parentElement.parentElement.remove()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;">✕</button><h2 style="color:'+d.color+';font-size:1.2rem;margin-bottom:12px;">'+d.title+'</h2><p style="color:#e0e0e0;line-height:1.7;font-size:0.95rem;">'+d.desc+'</p><div style="margin-top:20px;text-align:center;"><a href="https://bforever.in" target="_blank" style="display:inline-block;padding:12px 24px;background:'+d.color+';border-radius:8px;color:#000;font-weight:bold;text-decoration:none;margin-right:10px;">🌐 BFOREVER™ Website</a><button onclick="window.speechSynthesis.cancel();this.parentElement.parentElement.parentElement.remove()" style="padding:12px 24px;background:transparent;border:2px solid '+d.color+';border-radius:8px;color:'+d.color+';font-weight:bold;cursor:pointer;">Theek Hai ✓</button></div></div>';
   document.body.appendChild(modal);
 }
 </script>
