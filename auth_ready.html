@@ -30,8 +30,13 @@ const auth = getAuth(app);
 const gProvider = new GoogleAuthProvider();
 
 // ── Already logged in? Redirect ──
+// Only auto-redirect if already logged in (not during fresh login)
+// This prevents redirect loop
+let _loginInProgress = false;
+
 onAuthStateChanged(auth, async (user) => {
-  if (user) {
+  if (user && !_loginInProgress) {
+    // Already logged in — redirect to appropriate dashboard
     const idToken = await user.getIdToken();
     const role = await verifyRole(idToken, user.email);
     if (role) redirectByRole(role);
@@ -84,6 +89,7 @@ window.loginEmail = async function() {
   const pass  = document.getElementById('passInp').value;
   if (!email || !pass) { showErr('Email aur password dono zaroori hain'); return; }
 
+  _loginInProgress = true;
   setLoading(true);
   try {
     const cred    = await signInWithEmailAndPassword(auth, email, pass);
@@ -108,6 +114,7 @@ window.loginEmail = async function() {
 
 // ── Google Login ──
 window.loginGoogle = async function() {
+  _loginInProgress = true;
   setLoading(true);
   try {
     const cred    = await signInWithPopup(auth, gProvider);
@@ -164,7 +171,7 @@ window.togglePass = function() {
   const inp = document.getElementById('passInp');
   const btn = document.getElementById('eyeBtn');
   inp.type = inp.type === 'password' ? 'text' : 'password';
-  btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+  btn.textContent = inp.type === 'password' ? '👁️' : '🙈';
 };
 </script>
 
@@ -385,7 +392,7 @@ body{
                placeholder="••••••••"
                onkeypress="if(event.key==='Enter')loginEmail()"
                style="padding-right:44px;">
-        <button class="eye-btn" id="eyeBtn" onclick="togglePass()">👁</button>
+        <button class="eye-btn" id="eyeBtn" onclick="togglePass()">👁️</button>
       </div>
     </div>
     <div class="forgot">
@@ -458,4 +465,3 @@ function switchTab(tab) {
 </script>
 
 </body>
-</html>
