@@ -246,6 +246,9 @@ body{background:var(--navy);color:var(--off);font-family:var(--fd);min-height:10
   <div class="nav-item active" onclick="showSection('overview')">
     <span class="nav-icon">📊</span> Overview
   </div>
+  <div class="nav-item" onclick="window.open('/index.html','_blank')">
+    <span class="nav-icon">🎨</span> 3D Studio
+  </div>
   <div class="nav-item" onclick="showSection('orders')">
     <span class="nav-icon">📦</span> All Orders
   </div>
@@ -354,6 +357,31 @@ body{background:var(--navy);color:var(--off);font-family:var(--fd);min-height:10
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-header">
+          <span class="card-title">⚡ Quick Actions</span>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+          <a href="/index.html" target="_blank" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--navy3);border-radius:8px;text-decoration:none;border:1px solid rgba(201,168,76,0.15);">
+            <span style="font-size:20px;">🎨</span>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:var(--gold);">3D Studio</div>
+              <div style="font-size:10px;color:rgba(255,255,255,0.3);">Photo → 3D Model generate करें</div>
+            </div>
+            <span style="margin-left:auto;color:rgba(201,168,76,0.4);font-size:14px;">→</span>
+          </a>
+          <a href="/auth_ready.html" target="_blank" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--navy3);border-radius:8px;text-decoration:none;border:1px solid rgba(255,255,255,0.06);">
+            <span style="font-size:20px;">🔐</span>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:var(--off);">Login Page</div>
+              <div style="font-size:10px;color:rgba(255,255,255,0.3);">Customer login page देखें</div>
+            </div>
+            <span style="margin-left:auto;color:rgba(255,255,255,0.2);font-size:14px;">→</span>
+          </a>
         </div>
       </div>
 
