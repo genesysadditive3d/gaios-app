@@ -1,17 +1,2 @@
 [build]
   publish = "."
-
-[[redirects]]
-  from = "/index"
-  to = "/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/dashboard-admin"
-  to = "/dashboard-admin.html"
-  status = 200
-
-[[redirects]]
-  from = "/auth"
-  to = "/auth_ready.html"
-  status = 200
