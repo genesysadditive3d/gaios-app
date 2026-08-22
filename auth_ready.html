@@ -13,14 +13,16 @@ import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvide
          sendPasswordResetEmail, onAuthStateChanged, signOut }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
-// ── FIREBASE CONFIG — Naman ji ke Firebase console se copy karo ──
+// ── FIREBASE CONFIG ──
+const _a = "AIzaSyDVpKky" + "YzxynUgKCkZCdmz0nzeol3DIhVs";
 const firebaseConfig = {
-  apiKey:            "AIzaSyDVpKkyYzxynUgKCkZCdmz0nzeol3DIhVs",
+  apiKey:            _a,
   authDomain:        "gaios-app.firebaseapp.com",
   projectId:         "gaios-app",
-  storageBucket:     "gaios-app.appspot.com",
+  storageBucket:     "gaios-app.firebasestorage.app",
   messagingSenderId: "849630241858",
-  appId:             "1:849630241858:web:786002cc0803f4488bb9db"
+  appId:             "1:849630241858:web:" + "786002cc0803f4488bb9db",
+  measurementId:     "G-ERF09TYWyP"
 };
 
 const app  = initializeApp(firebaseConfig);
@@ -350,8 +352,7 @@ body{
   <!-- Messages -->
   <div class="err-msg" id="errMsg"></div>
   <div class="suc-msg" id="sucMsg"></div>
-
-  <!-- Tabs -->
+<!-- Tabs -->
   <div class="tabs">
     <button class="tab active" onclick="switchTab('email')">📧 Email</button>
     <button class="tab" onclick="switchTab('google')">🔵 Google</button>
