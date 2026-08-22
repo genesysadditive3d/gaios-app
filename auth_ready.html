@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>GAIOS™ — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider,
+         sendPasswordResetEmail, onAuthStateChanged, signOut }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+
+// ── FIREBASE CONFIG — Naman ji ke Firebase console se copy karo ──
+const firebaseConfig = {
+  apiKey:            "AIzaSyDVpKkyYzxynUgKCkZCdmz0nzeol3DIhVs",
+  authDomain:        "gaios-app.firebaseapp.com",
+  projectId:         "gaios-app",
+  storageBucket:     "gaios-app.appspot.com",
+  messagingSenderId: "849630241858",
+  appId:             "1:849630241858:web:786002cc0803f4488bb9db"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const gProvider = new GoogleAuthProvider();
+
+// ── Already logged in? Redirect ──
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    const idToken = await user.getIdToken();
+    const role = await verifyRole(idToken);
+    if (role) redirectByRole(role);
+  }
+});
+
+// ── Verify role from Netlify function ──
+async function verifyRole(idToken) {
+  try {
+    const res = await fetch('/.netlify/functions/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'verify', idToken })
+    });
+    const data = await res.json();
+    if (data.role) {
+      localStorage.setItem('gaios_user', JSON.stringify(data));
+      return data.role;
+    }
+    return null;
+  } catch(e) { return null; }
+}
+
+// ── Redirect by role ──
+function redirectByRole(role) {
+  const routes = {
+    admin:      '/dashboard-admin.html',
+    production: '/dashboard-production.html',
+    scanpoint:  '/dashboard-scanpoint.html',
+    customer:   '/index.html'
+  };
+  window.location.href = routes[role] || '/index.html';
+}
+
+// ── Email + Password Login ──
+window.loginEmail = async function() {
+  const email = document.getElementById('emailInp').value.trim();
+  const pass  = document.getElementById('passInp').value;
+  if (!email || !pass) { showErr('Email aur password dono zaroori hain'); return; }
+
+  setLoading(true);
+  try {
+    const cred    = await signInWithEmailAndPassword(auth, email, pass);
+    const idToken = await cred.user.getIdToken();
+    const role    = await verifyRole(idToken);
+    if (role) {
+      showSuccess('Login ho gaya! Redirect ho raha hai...');
+      setTimeout(() => redirectByRole(role), 800);
+    } else {
+      showErr('Role verify nahi ho paya. Support se contact karein.');
+    }
+  } catch(e) {
+    const msgs = {
+      'auth/user-not-found':  'Yeh email registered nahi hai',
+      'auth/wrong-password':  'Password galat hai',
+      'auth/too-many-requests': 'Bahut zyada attempts. Thodi der baad try karein.',
+      'auth/invalid-email':   'Email format sahi nahi hai'
+    };
+    showErr(msgs[e.code] || 'Login fail hua: ' + e.message);
+  } finally { setLoading(false); }
+};
+
+// ── Google Login ──
+window.loginGoogle = async function() {
+  setLoading(true);
+  try {
+    const cred    = await signInWithPopup(auth, gProvider);
+    const idToken = await cred.user.getIdToken();
+    const role    = await verifyRole(idToken);
+    if (role) {
+      showSuccess('Google login successful!');
+      setTimeout(() => redirectByRole(role), 800);
+    } else {
+      showErr('Account registered nahi hai. Customer ke roop mein continue karein?');
+      // Customer default redirect
+      setTimeout(() => { localStorage.setItem('gaios_user', JSON.stringify({role:'customer', email: cred.user.email})); window.location.href='/index.html'; }, 1500);
+    }
+  } catch(e) {
+    if (e.code !== 'auth/popup-closed-by-user') showErr('Google login fail: ' + e.message);
+  } finally { setLoading(false); }
+};
+
+// ── OTP / Phone — Customer ke liye (future) ──
+// Abhi Email+Google sufficient hai
+
+// ── Forgot Password ──
+window.forgotPassword = async function() {
+  const email = document.getElementById('emailInp').value.trim();
+  if (!email) { showErr('Pehle email daalo'); document.getElementById('emailInp').focus(); return; }
+  try {
+    await sendPasswordResetEmail(auth, email);
+    showSuccess('Password reset link bhej diya! Email check karein.');
+  } catch(e) {
+    showErr('Reset email send nahi hua: ' + e.message);
+  }
+};
+
+// ── UI Helpers ──
+function showErr(msg) {
+  const el = document.getElementById('errMsg');
+  el.textContent = msg; el.style.display = 'block';
+  document.getElementById('sucMsg').style.display = 'none';
+  setTimeout(() => { el.style.display = 'none'; }, 5000);
+}
+function showSuccess(msg) {
+  const el = document.getElementById('sucMsg');
+  el.textContent = msg; el.style.display = 'block';
+  document.getElementById('errMsg').style.display = 'none';
+}
+function setLoading(on) {
+  document.getElementById('loginBtn').disabled  = on;
+  document.getElementById('googleBtn').disabled = on;
+  document.getElementById('loginBtn').textContent = on ? 'Please wait...' : 'Login करें';
+}
+
+// ── Password show/hide ──
+window.togglePass = function() {
+  const inp = document.getElementById('passInp');
+  const btn = document.getElementById('eyeBtn');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+};
+</script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#070F1E; --navy2:#0C1830;
+  --gold:#C9A84C; --gold-dim:rgba(201,168,76,0.12);
+  --gold-border:rgba(201,168,76,0.28);
+  --white:#fff; --gray:#7A8FA6;
+  --green:#00D68F; --red:#FF4D6D;
+  --fd:'Space Grotesk',sans-serif;
+  --fh:'Syne',sans-serif;
+}
+html,body{
+  min-height:100vh; background:var(--navy);
+  color:var(--white); font-family:var(--fd);
+  -webkit-font-smoothing:antialiased;
+}
+body{
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:20px;
+  background:
+    radial-gradient(ellipse 60% 60% at 50% 0%, rgba(201,168,76,0.06) 0%, transparent 60%),
+    var(--navy);
+}
+
+/* ── Card ── */
+.card{
+  width:100%; max-width:400px;
+  background:rgba(255,255,255,0.035);
+  border:1px solid var(--gold-border);
+  border-radius:20px;
+  padding:36px 32px;
+  box-shadow:0 24px 80px rgba(0,0,0,0.5);
+}
+
+/* ── Logo ── */
+.logo-wrap{text-align:center;margin-bottom:28px;}
+.brand{
+  font-family:var(--fh); font-size:32px;
+  font-weight:800; color:var(--gold);
+  letter-spacing:5px;
+  text-shadow:0 0 30px rgba(201,168,76,0.35);
+}
+.brand-tm{font-size:14px;vertical-align:super;opacity:0.7;}
+.brand-sub{
+  font-size:10px; letter-spacing:2px;
+  color:rgba(255,255,255,0.3); text-transform:uppercase;
+  margin-top:4px;
+}
+
+/* ── Tabs ── */
+.tabs{
+  display:flex; gap:0; margin-bottom:24px;
+  border:1px solid var(--gold-border); border-radius:10px;
+  overflow:hidden;
+}
+.tab{
+  flex:1; padding:9px; text-align:center;
+  font-size:12px; font-weight:600; letter-spacing:0.5px;
+  color:rgba(255,255,255,0.35); cursor:pointer;
+  background:transparent; border:none;
+  transition:all 0.2s;
+}
+.tab.active{
+  background:var(--gold-dim); color:var(--gold);
+  border-bottom:2px solid var(--gold);
+}
+
+/* ── Form ── */
+.field{margin-bottom:16px;}
+.field label{
+  display:block; font-size:11px; font-weight:600;
+  letter-spacing:1px; color:rgba(255,255,255,0.4);
+  text-transform:uppercase; margin-bottom:7px;
+}
+.inp-wrap{position:relative;}
+.inp{
+  width:100%; padding:13px 16px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px; color:var(--white);
+  font-family:var(--fd); font-size:14px;
+  outline:none; transition:border 0.2s;
+}
+.inp:focus{border-color:var(--gold);}
+.inp::placeholder{color:rgba(255,255,255,0.2);}
+.eye-btn{
+  position:absolute; right:12px; top:50%;
+  transform:translateY(-50%);
+  background:none; border:none; cursor:pointer;
+  font-size:16px; color:rgba(255,255,255,0.3);
+}
+
+/* ── Forgot ── */
+.forgot{
+  text-align:right; margin-top:-10px; margin-bottom:16px;
+}
+.forgot a{
+  font-size:11px; color:rgba(201,168,76,0.6);
+  cursor:pointer; text-decoration:none;
+}
+.forgot a:hover{color:var(--gold);}
+
+/* ── Buttons ── */
+.btn-primary{
+  width:100%; padding:14px;
+  background:linear-gradient(135deg,#C9A84C,#A8862A);
+  border:none; border-radius:10px;
+  color:#000; font-family:var(--fd);
+  font-size:14px; font-weight:700;
+  letter-spacing:0.5px; cursor:pointer;
+  transition:opacity 0.2s; margin-bottom:12px;
+}
+.btn-primary:hover{opacity:0.9;}
+.btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+
+.divider{
+  display:flex; align-items:center; gap:10px;
+  margin-bottom:12px;
+}
+.divider-line{flex:1;height:1px;background:rgba(255,255,255,0.08);}
+.divider-text{font-size:11px;color:rgba(255,255,255,0.25);}
+
+.btn-google{
+  width:100%; padding:13px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:10px; color:var(--white);
+  font-family:var(--fd); font-size:13px;
+  font-weight:600; cursor:pointer;
+  display:flex; align-items:center;
+  justify-content:center; gap:10px;
+  transition:all 0.2s;
+}
+.btn-google:hover{background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.2);}
+.btn-google:disabled{opacity:0.5;cursor:not-allowed;}
+
+/* ── Messages ── */
+.err-msg{
+  display:none; background:rgba(255,77,109,0.1);
+  border:1px solid rgba(255,77,109,0.3);
+  border-radius:8px; padding:10px 14px;
+  font-size:12px; color:#FF4D6D;
+  margin-bottom:14px; text-align:center;
+}
+.suc-msg{
+  display:none; background:rgba(0,214,143,0.1);
+  border:1px solid rgba(0,214,143,0.3);
+  border-radius:8px; padding:10px 14px;
+  font-size:12px; color:var(--green);
+  margin-bottom:14px; text-align:center;
+}
+
+/* ── Role hint ── */
+.role-hint{
+  margin-top:20px; padding:14px;
+  background:var(--gold-dim);
+  border:1px solid var(--gold-border);
+  border-radius:10px;
+}
+.role-hint-title{
+  font-size:10px; font-weight:700;
+  letter-spacing:2px; color:var(--gold);
+  text-transform:uppercase; margin-bottom:8px;
+}
+.role-item{
+  display:flex; align-items:center; gap:8px;
+  font-size:11px; color:rgba(255,255,255,0.4);
+  padding:3px 0;
+}
+.role-dot{
+  width:6px; height:6px; border-radius:50%;
+  flex-shrink:0;
+}
+
+/* ── Footer ── */
+.footer{
+  margin-top:20px; text-align:center;
+  font-size:10px; letter-spacing:1px;
+  color:rgba(255,255,255,0.15); text-transform:uppercase;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- Logo -->
+  <div class="logo-wrap">
+    <div class="brand">GAIOS<span class="brand-tm">™</span></div>
+    <div class="brand-sub">Genesys Additive 3D Creation</div>
+  </div>
+
+  <!-- Messages -->
+  <div class="err-msg" id="errMsg"></div>
+  <div class="suc-msg" id="sucMsg"></div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('email')">📧 Email</button>
+    <button class="tab" onclick="switchTab('google')">🔵 Google</button>
+  </div>
+
+  <!-- Email Tab -->
+  <div id="tabEmail">
+    <div class="field">
+      <label>Email Address</label>
+      <input class="inp" type="email" id="emailInp"
+             placeholder="aapka@email.com"
+             onkeypress="if(event.key==='Enter')document.getElementById('passInp').focus()">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <div class="inp-wrap">
+        <input class="inp" type="password" id="passInp"
+               placeholder="••••••••"
+               onkeypress="if(event.key==='Enter')loginEmail()"
+               style="padding-right:44px;">
+        <button class="eye-btn" id="eyeBtn" onclick="togglePass()">👁</button>
+      </div>
+    </div>
+    <div class="forgot">
+      <a onclick="forgotPassword()">Password bhool gaye?</a>
+    </div>
+    <button class="btn-primary" id="loginBtn" onclick="loginEmail()">
+      Login करें
+    </button>
+  </div>
+
+  <!-- Google Tab -->
+  <div id="tabGoogle" style="display:none;">
+    <div style="text-align:center;padding:20px 0 24px;color:rgba(255,255,255,0.35);font-size:13px;line-height:1.6;">
+      Google account से login करें।<br>
+      Customer account automatically बन जाएगा।
+    </div>
+  </div>
+
+  <!-- Google Button — always visible -->
+  <div class="divider" id="dividerLine">
+    <div class="divider-line"></div>
+    <span class="divider-text">YA</span>
+    <div class="divider-line"></div>
+  </div>
+  <button class="btn-google" id="googleBtn" onclick="loginGoogle()">
+    <svg width="18" height="18" viewBox="0 0 18 18">
+      <path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/>
+      <path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/>
+      <path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z"/>
+      <path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z"/>
+    </svg>
+    Google se Login karein
+  </button>
+
+  <!-- Role Hint -->
+  <div class="role-hint">
+    <div class="role-hint-title">Login Access</div>
+    <div class="role-item">
+      <div class="role-dot" style="background:#C9A84C;"></div>
+      Admin — Gopal ji (company email)
+    </div>
+    <div class="role-item">
+      <div class="role-dot" style="background:#4D9FFF;"></div>
+      Production — Muskan ji (company email)
+    </div>
+    <div class="role-item">
+      <div class="role-dot" style="background:#00D68F;"></div>
+      Scan Point — Partner email
+    </div>
+    <div class="role-item">
+      <div class="role-dot" style="background:#7A8FA6;"></div>
+      Customer — Google ya Email
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  © 2026 Genesys Additive 3D Creation Pvt. Ltd. · Pali, Rajasthan
+</div>
+
+<script>
+// Tab switcher
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='email')||(i===1&&tab==='google')));
+  document.getElementById('tabEmail').style.display  = tab==='email'  ? 'block' : 'none';
+  document.getElementById('tabGoogle').style.display = tab==='google' ? 'block' : 'none';
+  document.getElementById('dividerLine').style.display = tab==='email' ? 'flex' : 'none';
+}
+</script>
+
+</body>
+</html>
