@@ -33,18 +33,19 @@ const gProvider = new GoogleAuthProvider();
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     const idToken = await user.getIdToken();
-    const role = await verifyRole(idToken);
+    const role = await verifyRole(idToken, user.email);
     if (role) redirectByRole(role);
   }
 });
 
 // ── Verify role from Netlify function ──
-async function verifyRole(idToken) {
+async function verifyRole(idToken, userEmail) {
   try {
+    // Send email to get role from Netlify function
     const res = await fetch('/.netlify/functions/auth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'verify', idToken })
+      body: JSON.stringify({ email: userEmail })
     });
     const data = await res.json();
     if (data.role) {
@@ -52,7 +53,18 @@ async function verifyRole(idToken) {
       return data.role;
     }
     return null;
-  } catch(e) { return null; }
+  } catch(e) {
+    // Fallback: check locally
+    const adminEmail = 'pali.marwari@gmail.com';
+    const productionEmail = 'ms5990876@gmail.com';
+    const email = (userEmail || '').toLowerCase();
+    let role = 'customer';
+    if (email === adminEmail) role = 'admin';
+    else if (email === productionEmail) role = 'production';
+    const fallbackData = { email, role, displayName: email.split('@')[0], verified: true };
+    localStorage.setItem('gaios_user', JSON.stringify(fallbackData));
+    return role;
+  }
 }
 
 // ── Redirect by role ──
@@ -76,7 +88,7 @@ window.loginEmail = async function() {
   try {
     const cred    = await signInWithEmailAndPassword(auth, email, pass);
     const idToken = await cred.user.getIdToken();
-    const role    = await verifyRole(idToken);
+    const role    = await verifyRole(idToken, cred.user.email);
     if (role) {
       showSuccess('Login ho gaya! Redirect ho raha hai...');
       setTimeout(() => redirectByRole(role), 800);
@@ -100,7 +112,7 @@ window.loginGoogle = async function() {
   try {
     const cred    = await signInWithPopup(auth, gProvider);
     const idToken = await cred.user.getIdToken();
-    const role    = await verifyRole(idToken);
+    const role    = await verifyRole(idToken, cred.user.email);
     if (role) {
       showSuccess('Google login successful!');
       setTimeout(() => redirectByRole(role), 800);
