@@ -760,26 +760,76 @@ function gaiosLogout() {
   window.location.href = '/auth_ready.html';
 }
 
-// ── AUTH GUARD — Admin only ──
-(function() {
-  const u = JSON.parse(localStorage.getItem('gaios_user') || '{}');
-  if (!u.role) {
-    // Not logged in
-    window.location.href = '/auth_ready.html';
-    return;
-  }
-  if (u.role !== 'admin') {
-    // Not admin — redirect to appropriate page
-    const routes = { production: '/dashboard-production.html', scanpoint: '/dashboard-scanpoint.html', customer: '/index.html' };
-    window.location.href = routes[u.role] || '/index.html';
-    return;
-  }
-})();
-
 // Load user info
 const u = JSON.parse(localStorage.getItem('gaios_user') || '{}');
 if (u.displayName) document.getElementById('adminName').textContent = u.displayName;
 if (u.email) document.getElementById('adminName').textContent = u.email.split('@')[0];
+</script>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+
+const _k = "AIzaSyDVpKky" + "YzxynUgKCkZCdmz0nzeol3DIhVs";
+const _fbApp = initializeApp({
+  apiKey: _k,
+  authDomain: "gaios-app.firebaseapp.com",
+  projectId: "gaios-app"
+}, 'dash-verify');
+
+const _fbAuth = getAuth(_fbApp);
+
+// Show loading overlay
+const overlay = document.createElement('div');
+overlay.id = 'authOverlay';
+overlay.innerHTML = `
+  <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#C9A84C;letter-spacing:4px;">GAIOS™</div>
+  <div style="font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:2px;margin-top:8px;">Verifying identity...</div>
+  <div style="width:36px;height:36px;border:3px solid rgba(201,168,76,0.15);border-top-color:#C9A84C;border-radius:50%;animation:dashSpin 0.8s linear infinite;margin-top:16px;"></div>
+  <style>@keyframes dashSpin{to{transform:rotate(360deg);}}</style>
+`;
+overlay.style.cssText = 'position:fixed;inset:0;background:#070F1E;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;';
+document.body.prepend(overlay);
+
+onAuthStateChanged(_fbAuth, async (user) => {
+  if (!user) {
+    localStorage.removeItem('gaios_user');
+    window.location.href = '/auth_ready.html';
+    return;
+  }
+
+  try {
+    const res = await fetch('/.netlify/functions/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: user.email })
+    });
+    const data = await res.json();
+
+    if (data.role !== 'admin') {
+      localStorage.removeItem('gaios_user');
+      const routes = { production:'/dashboard-production.html', scanpoint:'/dashboard-scanpoint.html', customer:'/index.html' };
+      window.location.href = routes[data.role] || '/index.html';
+      return;
+    }
+
+    // ✅ Admin verified
+    localStorage.setItem('gaios_user', JSON.stringify(data));
+    const el = document.getElementById('authOverlay');
+    if (el) el.remove();
+    const nameEl = document.getElementById('adminName');
+    if (nameEl) nameEl.textContent = data.displayName || user.email.split('@')[0];
+
+  } catch(e) {
+    // Network error — fallback to localStorage
+    const u = JSON.parse(localStorage.getItem('gaios_user') || '{}');
+    if (u.role === 'admin') {
+      const el = document.getElementById('authOverlay');
+      if (el) el.remove();
+    } else {
+      window.location.href = '/auth_ready.html';
+    }
+  }
+});
 </script>
 </body>
 </html>
