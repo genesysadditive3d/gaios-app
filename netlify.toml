@@ -2,12 +2,16 @@
   publish = "."
 
 [[redirects]]
-  from = "/*"
+  from = "/index"
   to = "/index.html"
   status = 200
-  conditions = {Role = ["admin", "production", "scanpoint", "customer"]}
 
-[[headers]]
-  for = "/*.html"
-  [headers.values]
-    Cache-Control = "no-cache"
+[[redirects]]
+  from = "/dashboard-admin"
+  to = "/dashboard-admin.html"
+  status = 200
+
+[[redirects]]
+  from = "/auth"
+  to = "/auth_ready.html"
+  status = 200
