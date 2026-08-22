@@ -28,6 +28,14 @@ body{background:var(--navy);color:var(--off-white);font-family:var(--fd);min-hei
 .logo-row{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:3px;}
 .logo-img{width:34px;height:34px;object-fit:contain;border-radius:50%;border:1px solid var(--gold-border);}
 .brand-name{font-family:var(--fh);font-size:26px;font-weight:800;color:var(--gold);letter-spacing:4px;text-shadow:0 0 30px rgba(201,168,76,0.4);}
+.admin-btn{
+  display:none;position:absolute;top:10px;right:12px;
+  background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.3);
+  color:var(--gold);font-size:10px;font-weight:700;letter-spacing:1px;
+  padding:5px 10px;border-radius:6px;cursor:pointer;text-decoration:none;
+  z-index:300;
+}
+.admin-btn:hover{background:rgba(201,168,76,0.2);}
 .brand-v{font-size:9px;font-weight:700;background:var(--gold);color:var(--navy);padding:1px 5px;border-radius:4px;margin-left:3px;letter-spacing:1px;vertical-align:middle;}
 .brand-sub{font-size:9px;color:rgba(201,168,76,0.6);letter-spacing:2.5px;margin-bottom:6px;}
 .reg-bar{display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin-bottom:6px;}
@@ -217,7 +225,8 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
 </head>
 <body>
 <div class="toast" id="toast"></div>
-<div class="header">
+<div class="header" style="position:relative;">
+  <a class="admin-btn" id="adminBtn" href="/dashboard-admin.html">👑 Admin</a>
   <div class="lang-toggle">
     <button class="lang-btn active" onclick="setLang('hi')" id="btn-hi">हि</button>
     <button class="lang-btn" onclick="setLang('en')" id="btn-en">EN</button>
@@ -599,6 +608,17 @@ function showTab(t) {
 
 // ══ TOAST ══
 function toast(m,d){var t=document.getElementById('toast');t.textContent=m;t.style.display='block';setTimeout(function(){t.style.display='none';},d||3000);}
+
+// ══ ADMIN BUTTON — show only for admin ══
+(function() {
+  try {
+    var u = JSON.parse(localStorage.getItem('gaios_user') || '{}');
+    if (u.role === 'admin' || u.role === 'production') {
+      var btn = document.getElementById('adminBtn');
+      if (btn) btn.style.display = 'block';
+    }
+  } catch(e) {}
+})();
 
 // ══ ROBOT SPEAK — GLOBAL SCOPE ══
 function robotSpeakBrowser(text) {
