@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAIOS™ Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#070F1E; --navy2:#0C1830; --navy3:#111D35;
+  --gold:#C9A84C; --gold-dim:rgba(201,168,76,0.12);
+  --gold-border:rgba(201,168,76,0.25);
+  --white:#fff; --off:#E8EDF4; --gray:#7A8FA6;
+  --green:#00D68F; --red:#FF4D6D; --blue:#4D9FFF;
+  --orange:#FF9500;
+  --fd:'Space Grotesk',sans-serif;
+  --fh:'Syne',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--navy);color:var(--off);font-family:var(--fd);min-height:100vh;display:flex;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:240px;min-height:100vh;
+  background:var(--navy2);
+  border-right:1px solid var(--gold-border);
+  display:flex;flex-direction:column;
+  position:fixed;left:0;top:0;bottom:0;
+  z-index:100;
+}
+.sidebar-logo{
+  padding:20px 20px 16px;
+  border-bottom:1px solid var(--gold-border);
+}
+.logo-text{font-family:var(--fh);font-size:22px;font-weight:800;color:var(--gold);letter-spacing:3px;}
+.logo-sub{font-size:9px;letter-spacing:2px;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-top:2px;}
+.role-badge{
+  display:inline-block;margin-top:8px;
+  background:rgba(201,168,76,0.15);border:1px solid var(--gold-border);
+  color:var(--gold);font-size:9px;font-weight:700;
+  padding:3px 8px;border-radius:4px;letter-spacing:1px;text-transform:uppercase;
+}
+
+.nav-section{padding:16px 12px 8px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,0.25);text-transform:uppercase;}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 16px;margin:2px 8px;
+  border-radius:8px;cursor:pointer;
+  font-size:13px;font-weight:500;color:rgba(255,255,255,0.55);
+  transition:all 0.2s;
+}
+.nav-item:hover{background:var(--gold-dim);color:var(--gold);}
+.nav-item.active{background:var(--gold-dim);color:var(--gold);border-left:2px solid var(--gold);}
+.nav-icon{font-size:16px;width:20px;text-align:center;}
+
+.sidebar-footer{
+  margin-top:auto;padding:16px;
+  border-top:1px solid var(--gold-border);
+}
+.user-info{display:flex;align-items:center;gap:10px;}
+.user-avatar{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--gold-dim);border:1px solid var(--gold-border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;
+}
+.user-name{font-size:12px;font-weight:600;color:var(--off);}
+.user-role{font-size:10px;color:var(--gray);}
+.logout-btn{
+  margin-top:10px;width:100%;padding:8px;
+  background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.2);
+  color:#FF4D6D;border-radius:6px;cursor:pointer;
+  font-size:11px;font-weight:600;letter-spacing:0.5px;
+}
+
+/* ── MAIN CONTENT ── */
+.main{margin-left:240px;flex:1;padding:24px;}
+
+/* Header */
+.page-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:24px;
+}
+.page-title{font-family:var(--fh);font-size:24px;font-weight:800;color:var(--white);}
+.page-sub{font-size:12px;color:var(--gray);margin-top:3px;}
+.header-actions{display:flex;gap:10px;align-items:center;}
+.btn{
+  padding:8px 16px;border-radius:8px;
+  font-size:12px;font-weight:600;cursor:pointer;border:none;
+}
+.btn-gold{background:linear-gradient(135deg,#C9A84C,#A8862A);color:#000;}
+.btn-outline{background:transparent;border:1px solid var(--gold-border);color:var(--gold);}
+
+/* Stats Grid */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.stat-card{
+  background:var(--navy2);border:1px solid var(--gold-border);
+  border-radius:12px;padding:20px;
+  position:relative;overflow:hidden;
+}
+.stat-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+}
+.stat-card.gold::before{background:linear-gradient(90deg,var(--gold),transparent);}
+.stat-card.green::before{background:linear-gradient(90deg,var(--green),transparent);}
+.stat-card.blue::before{background:linear-gradient(90deg,var(--blue),transparent);}
+.stat-card.orange::before{background:linear-gradient(90deg,var(--orange),transparent);}
+
+.stat-label{font-size:10px;letter-spacing:1.5px;color:var(--gray);text-transform:uppercase;margin-bottom:8px;}
+.stat-value{font-family:var(--fh);font-size:28px;font-weight:800;color:var(--white);line-height:1;}
+.stat-sub{font-size:11px;color:var(--gray);margin-top:6px;}
+.stat-change{font-size:11px;font-weight:600;}
+.stat-change.up{color:var(--green);}
+.stat-change.down{color:var(--red);}
+.stat-icon{position:absolute;right:16px;top:16px;font-size:28px;opacity:0.3;}
+
+/* Section grid */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.grid-3{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:24px;}
+
+/* Cards */
+.card{
+  background:var(--navy2);border:1px solid var(--gold-border);
+  border-radius:12px;overflow:hidden;
+}
+.card-header{
+  padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.05);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.card-title{font-size:13px;font-weight:700;color:var(--white);letter-spacing:0.3px;}
+.card-body{padding:20px;}
+
+/* Table */
+.table{width:100%;border-collapse:collapse;}
+.table th{
+  font-size:10px;letter-spacing:1.5px;color:var(--gray);
+  text-transform:uppercase;padding:8px 12px;
+  border-bottom:1px solid rgba(255,255,255,0.05);text-align:left;
+}
+.table td{
+  padding:12px 12px;font-size:12px;color:var(--off);
+  border-bottom:1px solid rgba(255,255,255,0.03);
+}
+.table tr:hover td{background:rgba(255,255,255,0.02);}
+.table tr:last-child td{border-bottom:none;}
+
+/* Status badges */
+.badge{
+  display:inline-block;padding:3px 8px;border-radius:4px;
+  font-size:10px;font-weight:600;letter-spacing:0.5px;
+}
+.badge-green{background:rgba(0,214,143,0.1);color:var(--green);border:1px solid rgba(0,214,143,0.2);}
+.badge-orange{background:rgba(255,149,0,0.1);color:var(--orange);border:1px solid rgba(255,149,0,0.2);}
+.badge-blue{background:rgba(77,159,255,0.1);color:var(--blue);border:1px solid rgba(77,159,255,0.2);}
+.badge-red{background:rgba(255,77,109,0.1);color:var(--red);border:1px solid rgba(255,77,109,0.2);}
+.badge-gold{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border);}
+
+/* Scan Point cards */
+.sp-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.sp-card{
+  background:var(--navy3);border:1px solid rgba(255,255,255,0.06);
+  border-radius:8px;padding:12px;
+}
+.sp-city{font-size:12px;font-weight:700;color:var(--white);}
+.sp-orders{font-size:11px;color:var(--gray);margin-top:2px;}
+.sp-bar{height:3px;background:rgba(255,255,255,0.06);border-radius:2px;margin-top:8px;}
+.sp-fill{height:100%;background:var(--gold);border-radius:2px;}
+.sp-status{display:flex;align-items:center;gap:4px;margin-top:6px;}
+.sp-dot{width:5px;height:5px;border-radius:50%;}
+
+/* Revenue chart placeholder */
+.chart-placeholder{
+  height:140px;
+  background:linear-gradient(135deg,rgba(201,168,76,0.03),rgba(77,159,255,0.03));
+  border-radius:8px;border:1px dashed rgba(255,255,255,0.06);
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,0.2);font-size:12px;
+}
+
+/* Vertical pills */
+.vertical-list{display:flex;flex-direction:column;gap:8px;}
+.v-row{display:flex;align-items:center;justify-content:space-between;}
+.v-name{font-size:12px;color:var(--off);}
+.v-bar-wrap{flex:1;margin:0 12px;height:4px;background:rgba(255,255,255,0.06);border-radius:2px;}
+.v-bar{height:100%;background:var(--gold);border-radius:2px;}
+.v-pct{font-size:11px;color:var(--gray);width:30px;text-align:right;}
+
+/* Alert items */
+.alert-list{display:flex;flex-direction:column;gap:8px;}
+.alert-item{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:10px 12px;background:var(--navy3);border-radius:8px;
+  border-left:3px solid;
+}
+.alert-item.warn{border-color:var(--orange);}
+.alert-item.info{border-color:var(--blue);}
+.alert-item.success{border-color:var(--green);}
+.alert-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+.alert-text{font-size:11px;color:rgba(255,255,255,0.6);line-height:1.5;}
+.alert-text strong{color:var(--off);display:block;}
+
+/* Live indicator */
+.live-dot{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:10px;color:var(--green);font-weight:600;
+}
+.live-dot::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--green);display:block;
+  animation:pulse 1.5s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+
+/* Page sections */
+.section{display:none;}
+.section.active{display:block;}
+
+/* Responsive */
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .main{margin-left:0;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .grid-2,.grid-3{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">GAIOS™</div>
+    <div class="logo-sub">Genesys Additive 3D Creation</div>
+    <span class="role-badge">👑 Admin</span>
+  </div>
+
+  <div class="nav-section">Main</div>
+  <div class="nav-item active" onclick="showSection('overview')">
+    <span class="nav-icon">📊</span> Overview
+  </div>
+  <div class="nav-item" onclick="showSection('orders')">
+    <span class="nav-icon">📦</span> All Orders
+  </div>
+  <div class="nav-item" onclick="showSection('revenue')">
+    <span class="nav-icon">💰</span> Revenue
+  </div>
+
+  <div class="nav-section">Operations</div>
+  <div class="nav-item" onclick="showSection('scanpoints')">
+    <span class="nav-icon">📡</span> Scan Points
+  </div>
+  <div class="nav-item" onclick="showSection('production')">
+    <span class="nav-icon">🖨️</span> Production
+  </div>
+  <div class="nav-item" onclick="showSection('users')">
+    <span class="nav-icon">👥</span> Users
+  </div>
+
+  <div class="nav-section">Settings</div>
+  <div class="nav-item" onclick="showSection('pricing')">
+    <span class="nav-icon">🏷️</span> Pricing
+  </div>
+  <div class="nav-item" onclick="showSection('settings')">
+    <span class="nav-icon">⚙️</span> Settings
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-avatar">👑</div>
+      <div>
+        <div class="user-name" id="adminName">Gopal Sharma</div>
+        <div class="user-role">Administrator</div>
+      </div>
+    </div>
+    <button class="logout-btn" onclick="gaiosLogout()">🚪 Logout</button>
+  </div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+
+  <!-- ── OVERVIEW ── -->
+  <div class="section active" id="sec-overview">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Dashboard Overview</div>
+        <div class="page-sub">Genesys Additive 3D Creation · Pali, Rajasthan &nbsp;·&nbsp; <span class="live-dot">LIVE</span></div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline">📥 Export Report</button>
+        <button class="btn btn-gold">+ New Order</button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card gold">
+        <div class="stat-icon">💰</div>
+        <div class="stat-label">Today's Revenue</div>
+        <div class="stat-value">₹0</div>
+        <div class="stat-sub">Printer commissioning pending</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-icon">📦</div>
+        <div class="stat-label">Total Orders</div>
+        <div class="stat-value">0</div>
+        <div class="stat-sub">Pre-launch phase</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-icon">📡</div>
+        <div class="stat-label">Scan Points</div>
+        <div class="stat-value">10</div>
+        <div class="stat-sub">Planned · Day 1 launch</div>
+      </div>
+      <div class="stat-card orange">
+        <div class="stat-icon">👥</div>
+        <div class="stat-label">Registered Users</div>
+        <div class="stat-value" id="userCount">1</div>
+        <div class="stat-sub">Growing...</div>
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <!-- Recent Orders -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">📦 Recent Orders</span>
+          <span class="badge badge-orange">Pre-Launch</span>
+        </div>
+        <div class="card-body">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Vertical</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="5" style="text-align:center;color:rgba(255,255,255,0.2);padding:32px;">
+                  🖨️ Printer commissioning के बाद orders आएंगे
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Alerts -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">🔔 Alerts</span>
+        </div>
+        <div class="card-body">
+          <div class="alert-list">
+            <div class="alert-item warn">
+              <span class="alert-icon">⚠️</span>
+              <div class="alert-text">
+                <strong>Printer Pending</strong>
+                Mimaki 3DUJ-553 commissioning awaited
+              </div>
+            </div>
+            <div class="alert-item info">
+              <span class="alert-icon">ℹ️</span>
+              <div class="alert-text">
+                <strong>iSTART QRate</strong>
+                Re-evaluation target: Gold (70%+)
+              </div>
+            </div>
+            <div class="alert-item info">
+              <span class="alert-icon">📋</span>
+              <div class="alert-text">
+                <strong>Incubation Letter</strong>
+                Perveen ji से letter pending
+              </div>
+            </div>
+            <div class="alert-item success">
+              <span class="alert-icon">✅</span>
+              <div class="alert-text">
+                <strong>RIPS 2024 MoU Signed</strong>
+                Govt. of Rajasthan · Rs.6 Cr
+              </div>
+            </div>
+            <div class="alert-item success">
+              <span class="alert-icon">✅</span>
+              <div class="alert-text">
+                <strong>GAIOS™ Login Live</strong>
+                Firebase Auth successfully deployed
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scan Points + Verticals -->
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">📡 Scan Points — Pan India</span>
+          <span class="badge badge-blue">10 Planned</span>
+        </div>
+        <div class="card-body">
+          <div class="sp-grid">
+            <div class="sp-card">
+              <div class="sp-city">🏙️ Delhi</div>
+              <div class="sp-orders">0 orders · Planned</div>
+              <div class="sp-bar"><div class="sp-fill" style="width:5%"></div></div>
+              <div class="sp-status"><div class="sp-dot" style="background:var(--orange)"></div><span style="font-size:10px;color:var(--orange);">Pending</span></div>
+            </div>
+            <div class="sp-card">
+              <div class="sp-city">🏙️ Mumbai</div>
+              <div class="sp-orders">0 orders · Planned</div>
+              <div class="sp-bar"><div class="sp-fill" style="width:5%"></div></div>
+              <div class="sp-status"><div class="sp-dot" style="background:var(--orange)"></div><span style="font-size:10px;color:var(--orange);">Pending</span></div>
+            </div>
+            <div class="sp-card">
+              <div class="sp-city">🏙️ Bengaluru</div>
+              <div class="sp-orders">0 orders · Planned</div>
+              <div class="sp-bar"><div class="sp-fill" style="width:5%"></div></div>
+              <div class="sp-status"><div class="sp-dot" style="background:var(--orange)"></div><span style="font-size:10px;color:var(--orange);">Pending</span></div>
+            </div>
+            <div class="sp-card">
+              <div class="sp-city">🏙️ Jaipur</div>
+              <div class="sp-orders">0 orders · Planned</div>
+              <div class="sp-bar"><div class="sp-fill" style="width:5%"></div></div>
+              <div class="sp-status"><div class="sp-dot" style="background:var(--orange)"></div><span style="font-size:10px;color:var(--orange);">Pending</span></div>
+            </div>
+            <div class="sp-card">
+              <div class="sp-city">🏙️ Hyderabad</div>
+              <div class="sp-orders">0 orders · Planned</div>
+              <div class="sp-bar"><div class="sp-fill" style="width:5%"></div></div>
+              <div class="sp-status"><div class="sp-dot" style="background:var(--orange)"></div><span style="font-size:10px;color:var(--orange);">Pending</span></div>
+            </div>
+            <div class="sp-card">
+              <div class="sp-city">🏙️ Pune</div>
+              <div class="sp-orders">0 orders · Planned</div>
+              <div class="sp-bar"><div class="sp-fill" style="width:5%"></div></div>
+              <div class="sp-status"><div class="sp-dot" style="background:var(--orange)"></div><span style="font-size:10px;color:var(--orange);">Pending</span></div>
+            </div>
+            <div class="sp-card">
+              <div class="sp-city">🏙️ Ahmedabad</div>
+              <div class="sp-orders">0 orders · Planned</div>
+              <div class="sp-bar"><div class="sp-fill" style="width:5%"></div></div>
+              <div class="sp-status"><div class="sp-dot" style="background:var(--orange)"></div><span style="font-size:10px;color:var(--orange);">Pending</span></div>
+            </div>
+            <div class="sp-card">
+              <div class="sp-city">🏙️ Kolkata</div>
+              <div class="sp-orders">0 orders · Planned</div>
+              <div class="sp-bar"><div class="sp-fill" style="width:5%"></div></div>
+              <div class="sp-status"><div class="sp-dot" style="background:var(--orange)"></div><span style="font-size:10px;color:var(--orange);">Pending</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">🎯 Verticals Pipeline</span>
+        </div>
+        <div class="card-body">
+          <div class="vertical-list">
+            <div class="v-row">
+              <span class="v-name">🪆 Figurines/BFOREVER™</span>
+              <div class="v-bar-wrap"><div class="v-bar" style="width:85%"></div></div>
+              <span class="v-pct">P1</span>
+            </div>
+            <div class="v-row">
+              <span class="v-name">🏛️ Heritage</span>
+              <div class="v-bar-wrap"><div class="v-bar" style="width:75%"></div></div>
+              <span class="v-pct">P1</span>
+            </div>
+            <div class="v-row">
+              <span class="v-name">🏗️ Real Estate</span>
+              <div class="v-bar-wrap"><div class="v-bar" style="width:70%"></div></div>
+              <span class="v-pct">P1</span>
+            </div>
+            <div class="v-row">
+              <span class="v-name">🌍 Tourism</span>
+              <div class="v-bar-wrap"><div class="v-bar" style="width:65%"></div></div>
+              <span class="v-pct">P1</span>
+            </div>
+            <div class="v-row">
+              <span class="v-name">🎓 STEM</span>
+              <div class="v-bar-wrap"><div class="v-bar" style="width:60%"></div></div>
+              <span class="v-pct">P1</span>
+            </div>
+            <div class="v-row">
+              <span class="v-name">🏥 Medical</span>
+              <div class="v-bar-wrap"><div class="v-bar" style="width:40%;background:var(--blue)"></div></div>
+              <span class="v-pct">P2</span>
+            </div>
+            <div class="v-row">
+              <span class="v-name">🎖️ Defence</span>
+              <div class="v-bar-wrap"><div class="v-bar" style="width:30%;background:var(--blue)"></div></div>
+              <span class="v-pct">P2</span>
+            </div>
+            <div class="v-row">
+              <span class="v-name">✈️ Drone/LiDAR</span>
+              <div class="v-bar-wrap"><div class="v-bar" style="width:25%;background:var(--blue)"></div></div>
+              <span class="v-pct">P2</span>
+            </div>
+          </div>
+          <div style="margin-top:12px;font-size:10px;color:rgba(255,255,255,0.25);">
+            P1 = Phase 1 · P2 = Phase 2
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ORDERS ── -->
+  <div class="section" id="sec-orders">
+    <div class="page-header">
+      <div><div class="page-title">📦 All Orders</div><div class="page-sub">Pan-India order management</div></div>
+      <button class="btn btn-gold">+ Manual Order</button>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Order List</span>
+        <div style="display:flex;gap:8px;">
+          <select style="background:var(--navy3);border:1px solid var(--gold-border);color:var(--off);padding:5px 10px;border-radius:6px;font-size:11px;">
+            <option>All Verticals</option>
+            <option>Figurines</option>
+            <option>Heritage</option>
+            <option>Medical</option>
+          </select>
+          <select style="background:var(--navy3);border:1px solid var(--gold-border);color:var(--off);padding:5px 10px;border-radius:6px;font-size:11px;">
+            <option>All Status</option>
+            <option>Processing</option>
+            <option>Approved</option>
+            <option>Delivered</option>
+          </select>
+        </div>
+      </div>
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Order ID</th><th>Customer</th><th>Scan Point</th>
+              <th>Vertical</th><th>Size</th><th>Amount</th>
+              <th>Status</th><th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="8" style="text-align:center;color:rgba(255,255,255,0.2);padding:48px;">
+                🖨️ Printer commissioning के बाद orders यहाँ दिखेंगे
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── REVENUE ── -->
+  <div class="section" id="sec-revenue">
+    <div class="page-header">
+      <div><div class="page-title">💰 Revenue</div><div class="page-sub">Financial overview</div></div>
+      <button class="btn btn-outline">📊 Export</button>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card gold"><div class="stat-label">Total Revenue</div><div class="stat-value">₹0</div><div class="stat-sub">Pre-launch</div></div>
+      <div class="stat-card green"><div class="stat-label">Y1 Target</div><div class="stat-value">₹6 Cr</div><div class="stat-sub">RIPS 2024 MoU projection</div></div>
+      <div class="stat-card blue"><div class="stat-label">Avg Order Value</div><div class="stat-value">~₹8K</div><div class="stat-sub">Estimated</div></div>
+      <div class="stat-card orange"><div class="stat-label">Break-even</div><div class="stat-value">TBD</div><div class="stat-sub">After printer commissioning</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Revenue Chart</span></div>
+      <div class="card-body">
+        <div class="chart-placeholder">📈 Revenue data printer commissioning के बाद populate होगा</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SCAN POINTS ── -->
+  <div class="section" id="sec-scanpoints">
+    <div class="page-header">
+      <div><div class="page-title">📡 Scan Points</div><div class="page-sub">10 Pan-India partner locations</div></div>
+      <button class="btn btn-gold">+ Add Partner</button>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr><th>City</th><th>Partner</th><th>Contact</th><th>Orders</th><th>Commission</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Delhi</td><td>TBD</td><td>—</td><td>0</td><td>₹0</td><td><span class="badge badge-orange">Pending</span></td></tr>
+            <tr><td>Mumbai</td><td>TBD</td><td>—</td><td>0</td><td>₹0</td><td><span class="badge badge-orange">Pending</span></td></tr>
+            <tr><td>Bengaluru</td><td>TBD</td><td>—</td><td>0</td><td>₹0</td><td><span class="badge badge-orange">Pending</span></td></tr>
+            <tr><td>Hyderabad</td><td>TBD</td><td>—</td><td>0</td><td>₹0</td><td><span class="badge badge-orange">Pending</span></td></tr>
+            <tr><td>Pune</td><td>TBD</td><td>—</td><td>0</td><td>₹0</td><td><span class="badge badge-orange">Pending</span></td></tr>
+            <tr><td>Ahmedabad</td><td>TBD</td><td>—</td><td>0</td><td>₹0</td><td><span class="badge badge-orange">Pending</span></td></tr>
+            <tr><td>Surat</td><td>TBD</td><td>—</td><td>0</td><td>₹0</td><td><span class="badge badge-orange">Pending</span></td></tr>
+            <tr><td>Jaipur</td><td>TBD</td><td>—</td><td>0</td><td>₹0</td><td><span class="badge badge-orange">Pending</span></td></tr>
+            <tr><td>Ludhiana</td><td>TBD</td><td>—</td><td>0</td><td>₹0</td><td><span class="badge badge-orange">Pending</span></td></tr>
+            <tr><td>Kolkata</td><td>TBD</td><td>—</td><td>0</td><td>₹0</td><td><span class="badge badge-orange">Pending</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PRODUCTION ── -->
+  <div class="section" id="sec-production">
+    <div class="page-header">
+      <div><div class="page-title">🖨️ Production</div><div class="page-sub">Mimaki 3DUJ-553 · Pali Hub</div></div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card gold"><div class="stat-label">Printer Status</div><div class="stat-value" style="font-size:20px;">Pending</div><div class="stat-sub">Commissioning awaited</div></div>
+      <div class="stat-card green"><div class="stat-label">Print Queue</div><div class="stat-value">0</div><div class="stat-sub">Jobs waiting</div></div>
+      <div class="stat-card blue"><div class="stat-label">QC Pass Rate</div><div class="stat-value">—</div><div class="stat-sub">No data yet</div></div>
+      <div class="stat-card orange"><div class="stat-label">Avg Print Time</div><div class="stat-value">—</div><div class="stat-sub">To be measured</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Production Queue</span></div>
+      <div class="card-body" style="text-align:center;padding:48px;color:rgba(255,255,255,0.2);">
+        🖨️ Mimaki printer commissioning के बाद production queue यहाँ दिखेगी
+      </div>
+    </div>
+  </div>
+
+  <!-- ── USERS ── -->
+  <div class="section" id="sec-users">
+    <div class="page-header">
+      <div><div class="page-title">👥 Users</div><div class="page-sub">All registered users</div></div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Orders</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Gopal Sharma</td>
+              <td>pali.marwari@gmail.com</td>
+              <td><span class="badge badge-gold">Admin</span></td>
+              <td>22 Aug 2026</td>
+              <td>0</td>
+              <td><span class="badge badge-green">Active</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PRICING ── -->
+  <div class="section" id="sec-pricing">
+    <div class="page-header">
+      <div><div class="page-title">🏷️ Pricing</div><div class="page-sub">BFOREVER™ figurine pricing</div></div>
+      <button class="btn btn-gold">✏️ Edit Prices</button>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <table class="table">
+          <thead><tr><th>Size</th><th>Price</th><th>Competitor Price</th><th>Our Advantage</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>7 cm</td><td>₹3,000</td><td>~₹3,500</td><td>~14% lower</td><td><span class="badge badge-orange">Tentative</span></td></tr>
+            <tr><td>10 cm</td><td>₹5,000</td><td>~₹6,000</td><td>~17% lower</td><td><span class="badge badge-orange">Tentative</span></td></tr>
+            <tr><td>12.5 cm</td><td>₹7,000</td><td>~₹8,500</td><td>~18% lower</td><td><span class="badge badge-orange">Tentative</span></td></tr>
+            <tr><td>15 cm</td><td>₹10,000</td><td>~₹12,500</td><td>~20% lower</td><td><span class="badge badge-orange">Tentative</span></td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:12px;font-size:11px;color:rgba(255,255,255,0.25);">
+          ⚠️ Prices are tentative — to be finalized after actual production cost measurement
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SETTINGS ── -->
+  <div class="section" id="sec-settings">
+    <div class="page-header">
+      <div><div class="page-title">⚙️ Settings</div><div class="page-sub">System configuration</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Company Info</span></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:12px;">
+          <div><div style="font-size:10px;color:var(--gray);margin-bottom:4px;">Company Name</div><div style="font-size:13px;">Genesys Additive 3D Creation Pvt. Ltd.</div></div>
+          <div><div style="font-size:10px;color:var(--gray);margin-bottom:4px;">CIN</div><div style="font-size:13px;">U32909RJ2026PTC115570</div></div>
+          <div><div style="font-size:10px;color:var(--gray);margin-bottom:4px;">DPIIT</div><div style="font-size:13px;">DIPP274037</div></div>
+          <div><div style="font-size:10px;color:var(--gray);margin-bottom:4px;">GSTIN</div><div style="font-size:13px;">08AANCG1745Q1ZW</div></div>
+          <div><div style="font-size:10px;color:var(--gray);margin-bottom:4px;">Patent</div><div style="font-size:13px;">IN202611090765</div></div>
+          <div><div style="font-size:10px;color:var(--gray);margin-bottom:4px;">RIPS MoU</div><div style="font-size:13px;">MoU/2026-27/37148</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Role Management</span></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:12px;">
+          <div><div style="font-size:10px;color:var(--gray);margin-bottom:4px;">Admin Email</div><div style="font-size:13px;">pali.marwari@gmail.com</div></div>
+          <div><div style="font-size:10px;color:var(--gray);margin-bottom:4px;">Production Email</div><div style="font-size:13px;">ms5990876@gmail.com</div></div>
+          <div style="margin-top:8px;padding:12px;background:var(--navy3);border-radius:8px;">
+            <div style="font-size:10px;color:var(--gray);margin-bottom:6px;">Grant Status</div>
+            <div style="font-size:12px;color:var(--green);">✅ iDEX OP202608113999 — Under Evaluation</div>
+            <div style="font-size:12px;color:var(--green);margin-top:4px;">✅ IHFC-252212 — Submitted</div>
+            <div style="font-size:12px;color:var(--orange);margin-top:4px;">⏳ iSTART QRate — Re-eval pending</div>
+            <div style="font-size:12px;color:var(--orange);margin-top:4px;">⏳ NIDHI PRAYAS — Incubation letter pending</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+function gaiosLogout() {
+  localStorage.removeItem('gaios_user');
+  window.location.href = '/auth_ready.html';
+}
+
+// Load user info
+const u = JSON.parse(localStorage.getItem('gaios_user') || '{}');
+if (u.displayName) document.getElementById('adminName').textContent = u.displayName;
+</script>
+</body>
+</html>
