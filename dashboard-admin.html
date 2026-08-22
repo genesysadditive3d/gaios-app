@@ -230,7 +230,7 @@ body{background:var(--navy);color:var(--off);font-family:var(--fd);min-height:10
 <div class="sidebar">
   <div class="sidebar-logo">
     <div class="logo-text">GAIOS™</div>
-    <div class="logo-sub">Genesys Additive 3D Creation</div>
+    <div class="logo-sub">Genesys Additive 3D Creation Pvt. Ltd.</div>
     <span class="role-badge">👑 Admin</span>
   </div>
 
@@ -284,7 +284,7 @@ body{background:var(--navy);color:var(--off);font-family:var(--fd);min-height:10
     <div class="page-header">
       <div>
         <div class="page-title">Dashboard Overview</div>
-        <div class="page-sub">Genesys Additive 3D Creation · Pali, Rajasthan &nbsp;·&nbsp; <span class="live-dot">LIVE</span></div>
+        <div class="page-sub">Genesys Additive 3D Creation Pvt. Ltd. · Pali, Rajasthan &nbsp;·&nbsp; <span class="live-dot">LIVE</span></div>
       </div>
       <div class="header-actions">
         <button class="btn btn-outline">📥 Export Report</button>
@@ -724,9 +724,26 @@ function gaiosLogout() {
   window.location.href = '/auth_ready.html';
 }
 
+// ── AUTH GUARD — Admin only ──
+(function() {
+  const u = JSON.parse(localStorage.getItem('gaios_user') || '{}');
+  if (!u.role) {
+    // Not logged in
+    window.location.href = '/auth_ready.html';
+    return;
+  }
+  if (u.role !== 'admin') {
+    // Not admin — redirect to appropriate page
+    const routes = { production: '/dashboard-production.html', scanpoint: '/dashboard-scanpoint.html', customer: '/index.html' };
+    window.location.href = routes[u.role] || '/index.html';
+    return;
+  }
+})();
+
 // Load user info
 const u = JSON.parse(localStorage.getItem('gaios_user') || '{}');
 if (u.displayName) document.getElementById('adminName').textContent = u.displayName;
+if (u.email) document.getElementById('adminName').textContent = u.email.split('@')[0];
 </script>
 </body>
 </html>
