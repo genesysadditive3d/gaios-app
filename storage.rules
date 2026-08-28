@@ -1,0 +1,52 @@
+// GAIOS v7.0 Storage Security Rules
+// Paste this into Firebase Console → Storage → Rules → Publish.
+// Uses cross-service Firestore lookups (firestore.get) to check role — this
+// requires the project to be on the Blaze plan (Storage itself already does).
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function myRole() {
+      return isSignedIn()
+        ? firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role
+        : null;
+    }
+    function isProdStaff() { return myRole() in ['admin', 'production', 'qc']; }
+
+    // Self-service customer orders: customers/{uid}/orders/{orderId}/...
+    match /customers/{uid}/orders/{orderId}/source-photos/{file} {
+      allow read: if isSignedIn() && (request.auth.uid == uid || isProdStaff());
+      allow write: if isSignedIn() && request.auth.uid == uid
+                   && request.resource.size < 20 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+    match /customers/{uid}/orders/{orderId}/3d-preview/{file} {
+      allow read: if isSignedIn() && (request.auth.uid == uid || isProdStaff());
+      allow write: if isProdStaff();
+    }
+    match /customers/{uid}/orders/{orderId}/final/{file} {
+      allow read: if isSignedIn() && (request.auth.uid == uid || isProdStaff());
+      allow write: if isProdStaff();
+    }
+
+    // Walk-in orders created by a Scan Point on behalf of a customer who
+    // has no GAIOS account: scanpoints/{spUid}/orders/{orderId}/...
+    match /scanpoints/{spUid}/orders/{orderId}/source-photos/{file} {
+      allow read: if isSignedIn() && (request.auth.uid == spUid || isProdStaff());
+      allow write: if isSignedIn() && request.auth.uid == spUid
+                   && request.resource.size < 20 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+    match /scanpoints/{spUid}/orders/{orderId}/3d-preview/{file} {
+      allow read: if isSignedIn() && (request.auth.uid == spUid || isProdStaff());
+      allow write: if isProdStaff();
+    }
+    match /scanpoints/{spUid}/orders/{orderId}/final/{file} {
+      allow read: if isSignedIn() && (request.auth.uid == spUid || isProdStaff());
+      allow write: if isProdStaff();
+    }
+  }
+}

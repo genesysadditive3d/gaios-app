@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAIOS™ — Login</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;font-family:'Segoe UI',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;color:#fff}
+.login-box{background:#12121a;border:1px solid #FFD700;border-radius:16px;padding:40px 36px;width:100%;max-width:420px;box-shadow:0 0 40px rgba(255,215,0,0.1)}
+.logo{text-align:center;margin-bottom:28px}
+.logo-row{display:flex;align-items:center;justify-content:center;gap:10px}
+.logo-img{height:44px;width:auto;object-fit:contain}
+.logo h1{font-size:2.2rem;font-weight:900;color:#FFD700;letter-spacing:2px}
+.logo p{font-size:.75rem;color:#888;letter-spacing:1px}
+.tabs{display:flex;margin-bottom:24px;border-radius:8px;overflow:hidden}
+.tab{flex:1;padding:10px;text-align:center;cursor:pointer;background:#1a1a2e;color:#888;font-size:.85rem;border:none;transition:all .3s}
+.tab.active{background:#FFD700;color:#000;font-weight:700}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:.75rem;color:#FFD700;margin-bottom:6px;letter-spacing:1px}
+.field input{width:100%;padding:12px 16px;background:#1a1a2e;border:1px solid #333;border-radius:8px;color:#fff;font-size:.95rem;outline:none;transition:border .3s}
+.field input:focus{border-color:#FFD700}
+.pw-wrap{position:relative}
+.pw-wrap input{padding-right:44px}
+.pw-eye{position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;color:#888;font-size:1rem;background:none;border:none}
+.forgot{text-align:right;margin-top:-12px;margin-bottom:18px}
+.forgot a{font-size:.78rem;color:#FFD700;text-decoration:none}
+.btn-main{width:100%;padding:13px;background:#FFD700;color:#000;font-size:1rem;font-weight:700;border:none;border-radius:8px;cursor:pointer}
+.divider{text-align:center;color:#555;margin:16px 0;font-size:.85rem}
+.btn-google{width:100%;padding:12px;background:#1a1a2e;color:#fff;border:1px solid #444;border-radius:8px;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;gap:10px}
+.msg{margin-top:14px;text-align:center;font-size:.85rem;min-height:20px}
+.msg.error{color:#ff4444}
+.msg.success{color:#44ff88}
+.powered{text-align:center;margin-top:20px;font-size:.7rem;color:#444}
+</style>
+</head>
+<body>
+<div class="login-box">
+  <div class="logo">
+    <div class="logo-row">
+      <img src="logo.jpg" alt="GAIOS logo" class="logo-img">
+      <h1>GAIOS™</h1>
+    </div>
+    <p>GENESYS ADDITIVE 3D CREATION</p>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('email')">✉️ Email</button>
+    <button class="tab" onclick="switchTab('google')">🔵 Google</button>
+  </div>
+  <div id="email-section">
+    <div class="field">
+      <label>EMAIL ADDRESS</label>
+      <input type="email" id="email" placeholder="aapka@email.com">
+    </div>
+    <div class="field">
+      <label>PASSWORD</label>
+      <div class="pw-wrap">
+        <input type="password" id="password" placeholder="••••••••">
+        <button class="pw-eye" onclick="togglePw()">👁️</button>
+      </div>
+    </div>
+    <div class="forgot"><a href="#" onclick="forgotPassword()">Password bhool gaye?</a></div>
+    <button class="btn-main" onclick="emailLogin()">Login करें</button>
+  </div>
+  <div class="divider">YA</div>
+  <button class="btn-google" onclick="googleLogin()">
+    <img src="https://www.google.com/favicon.ico" width="18"> Google se Login karein
+  </button>
+  <div class="msg" id="msg"></div>
+  <div class="powered">⚡ GAIOS™ v7.0</div>
+</div>
+<script type="module">
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { auth, db } from "./js/firebase-config.js";
+
+const provider = new GoogleAuthProvider();
+
+// Admin emails list — yahan apne sab admin emails daalo
+const ADMIN_EMAILS = [
+  'pali.marwari@gmail.com',
+  'genesysadditive@gmail.com',
+  'info@genesysadditive3dcreation.com'
+];
+
+const PRODUCTION_EMAILS = [
+  'ms5990876@gmail.com'
+];
+
+function showMsg(text, type='error'){
+  const m = document.getElementById('msg');
+  m.textContent = text;
+  m.className = 'msg ' + type;
+}
+
+// Role determine karo — Firestore se, warna email se fallback
+async function getUserRole(user){
+  try {
+    const snap = await getDoc(doc(db, 'users', user.uid));
+    if(snap.exists() && snap.data().role){
+      return snap.data().role;
+    }
+  } catch(e){}
+  // Email-based fallback
+  const email = (user.email || '').toLowerCase();
+  if(ADMIN_EMAILS.includes(email)) return 'admin';
+  if(PRODUCTION_EMAILS.includes(email)) return 'production';
+  return 'customer';
+}
+
+// Role Firestore mein save karo (first time ya missing)
+async function ensureRoleInFirestore(user, role){
+  try {
+    const ref = doc(db, 'users', user.uid);
+    const snap = await getDoc(ref);
+    if(!snap.exists() || !snap.data().role){
+      await setDoc(ref, {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || '',
+        role: role,
+        createdAt: new Date().toISOString()
+      }, { merge: true });
+    }
+  } catch(e){ console.warn('Firestore save failed:', e); }
+}
+
+async function routeByRole(user){
+  const role = await getUserRole(user);
+  await ensureRoleInFirestore(user, role);
+
+  // localStorage mein save karo — dashboard auth guard ke liye
+  localStorage.setItem('gaios_user', JSON.stringify({
+    uid: user.uid,
+    email: user.email,
+    displayName: user.displayName || user.email.split('@')[0],
+    role: role
+  }));
+
+  const routes = {
+    admin: '/dashboard-admin.html',
+    production: '/dashboard-production.html',
+    scanpoint: '/dashboard-scanpoint.html',
+    qc: '/dashboard-qc.html',
+    customer: '/dashboard-customer.html'
+  };
+  window.location.href = routes[role] || '/dashboard-customer.html';
+}
+
+// Already logged in hai to redirect karo — lekin sirf agar page fresh load ho
+let authChecked = false;
+onAuthStateChanged(auth, user => {
+  if(authChecked) return; // emailLogin/googleLogin ne already handle kiya
+  if(user && !window._loggingIn){
+    authChecked = true;
+    showMsg('Auto-login ho raha hai...', 'success');
+    routeByRole(user);
+  }
+});
+
+window.emailLogin = async function(){
+  const email = document.getElementById('email').value.trim();
+  const pass = document.getElementById('password').value;
+  if(!email || !pass){ showMsg('Email aur password dono bharo'); return; }
+  window._loggingIn = true;
+  authChecked = true;
+  showMsg('Login ho raha hai...', 'success');
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, pass);
+    await routeByRole(cred.user);
+  } catch(e){
+    showMsg('Login failed: ' + (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential' ? 'Galat email ya password' : e.message));
+  } finally { window._loggingIn = false; }
+};
+
+window.googleLogin = async function(){
+  window._loggingIn = true;
+  authChecked = true;
+  try {
+    const cred = await signInWithPopup(auth, provider);
+    await routeByRole(cred.user);
+  } catch(e){
+    showMsg('Google login failed: ' + e.message);
+  } finally { window._loggingIn = false; }
+};
+
+window.forgotPassword = async function(){
+  const email = document.getElementById('email').value.trim();
+  if(!email){ showMsg('Pehle email bharo'); return; }
+  try {
+    await sendPasswordResetEmail(auth, email);
+    showMsg('Reset email bhej diya!', 'success');
+  } catch(e){ showMsg(e.message); }
+};
+
+window.togglePw = function(){
+  const inp = document.getElementById('password');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+};
+
+window.switchTab = function(tab){
+  document.querySelectorAll('.tab').forEach((t, i) =>
+    t.classList.toggle('active', (tab==='email'&&i===0)||(tab==='google'&&i===1))
+  );
+};
+</script>
+</body>
+</html>

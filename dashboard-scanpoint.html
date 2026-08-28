@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAIOS™ Scan Point Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/dashboard.css">
+<style>
+.photo-thumbs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;}
+.photo-thumb{width:56px;height:56px;border-radius:8px;object-fit:cover;border:1px solid var(--gold-border);}
+.upload-drop{
+  display:block;background:rgba(201,168,76,0.08);border:2px dashed var(--gold-border);
+  border-radius:12px;padding:20px;text-align:center;cursor:pointer;color:var(--gold);font-size:13px;
+}
+.size-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin:14px 0;}
+.size-card{background:var(--navy3);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;}
+.size-card.selected{border-color:var(--gold);background:var(--gold-dim);}
+.size-card .sz-label{font-weight:700;font-size:12px;color:var(--white);}
+.size-card .sz-price{font-size:14px;font-weight:800;color:var(--gold);margin-top:4px;}
+</style>
+</head>
+<body style="visibility:hidden;">
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-row">
+      <img src="logo.jpg" alt="GAIOS logo" class="logo-img-sidebar">
+      <div class="logo-text">GAIOS™</div>
+    </div>
+    <div class="logo-sub">Scan Point Partner Portal</div>
+    <span class="role-badge">📡 Scan Point</span>
+  </div>
+  <div class="nav-section">Main</div>
+  <div class="nav-item active" onclick="showSection('orders')"><span class="nav-icon">📦</span> My Uploads</div>
+  <div class="nav-item" onclick="showSection('new-order')"><span class="nav-icon">➕</span> New Walk-in Order</div>
+  <div class="nav-item" onclick="showSection('commission')"><span class="nav-icon">💰</span> Commission</div>
+
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-avatar">📡</div>
+      <div>
+        <div class="user-name" id="spName">—</div>
+        <div class="user-role">Scan Point Partner</div>
+      </div>
+    </div>
+    <button class="logout-btn" onclick="gaiosLogout()">🚪 Logout</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ── MY UPLOADS ── -->
+  <div class="section active" id="sec-orders">
+    <div class="page-header">
+      <div><div class="page-title">📦 My Walk-in Orders</div><div class="page-sub">Orders you've created for walk-in customers &nbsp;·&nbsp; <span class="live-dot">LIVE</span></div></div>
+      <button class="btn btn-gold" onclick="showSection('new-order')">➕ New Order</button>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <table class="table">
+          <thead><tr><th>Order ID</th><th>Customer</th><th>Size</th><th>Amount</th><th>Commission</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody id="ordersBody"><tr><td colspan="7" class="empty-state">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── NEW ORDER ── -->
+  <div class="section" id="sec-new-order">
+    <div class="page-header">
+      <div><div class="page-title">➕ New Walk-in Order</div><div class="page-sub">Scan the customer's photo here and create their order</div></div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">Customer Name</label>
+          <input class="form-input" id="wName" placeholder="Customer ka naam">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Customer Mobile</label>
+          <input class="form-input" id="wPhone" placeholder="+91 XXXXXXXXXX">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Photos</label>
+          <label class="upload-drop" for="wPhotos">📸 Click to choose photos</label>
+          <input type="file" id="wPhotos" accept="image/*" multiple style="display:none;" onchange="onPhotosSelected(event)">
+          <div class="photo-thumbs" id="wPhotoGrid"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Size</label>
+          <div class="size-grid" id="sizeGrid"><div class="empty-state">Loading pricing…</div></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Payment collected?</label>
+          <select class="form-select" id="wPaymentStatus">
+            <option value="none">Not yet — pay later</option>
+            <option value="paid">Cash collected now</option>
+          </select>
+        </div>
+        <button class="btn btn-gold" style="width:100%;padding:14px;" id="submitBtn" onclick="submitWalkInOrder()">🚀 Create Order</button>
+        <div id="submitMsg" style="margin-top:10px;font-size:12px;text-align:center;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── COMMISSION ── -->
+  <div class="section" id="sec-commission">
+    <div class="page-header">
+      <div><div class="page-title">💰 Commission</div><div class="page-sub">10% of paid order value</div></div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card gold"><div class="stat-label">Total Orders</div><div class="stat-value" id="cTotalOrders">0</div><div class="stat-sub">All time</div></div>
+      <div class="stat-card green"><div class="stat-label">Paid Orders</div><div class="stat-value" id="cPaidOrders">0</div><div class="stat-sub">Commission-eligible</div></div>
+      <div class="stat-card blue"><div class="stat-label">Order Value (Paid)</div><div class="stat-value" id="cOrderValue">₹0</div><div class="stat-sub">Sum of paid orders</div></div>
+      <div class="stat-card orange"><div class="stat-label">Your Commission</div><div class="stat-value" id="cCommission">₹0</div><div class="stat-sub">10% of paid order value</div></div>
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+import { db, storage } from "./js/firebase-config.js";
+import { requireRole } from "./js/auth-guard.js";
+import { getPricing, generateOrderId, statusMeta } from "./js/order-utils.js";
+import {
+  collection, query, where, onSnapshot, doc, setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+const COMMISSION_RATE = 0.10; // TODO: make admin-configurable once partner commission terms vary per city.
+
+let CURRENT_USER = null;
+let pricing = {};
+let selectedSize = null;
+let selectedFiles = [];
+let myOrders = [];
+
+window.showSection = function(name){
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  document.querySelectorAll('.nav-item')[['orders','new-order','commission'].indexOf(name)]?.classList.add('active');
+};
+
+function inr(n){ return '₹' + (Number(n)||0).toLocaleString('en-IN'); }
+
+window.onPhotosSelected = function(e){
+  selectedFiles = Array.from(e.target.files).slice(0, 6);
+  const grid = document.getElementById('wPhotoGrid');
+  grid.innerHTML = '';
+  selectedFiles.forEach(f => {
+    const img = document.createElement('img');
+    img.className = 'photo-thumb';
+    img.src = URL.createObjectURL(f);
+    grid.appendChild(img);
+  });
+};
+
+function renderSizeGrid(){
+  const grid = document.getElementById('sizeGrid');
+  const keys = Object.keys(pricing);
+  if(!keys.length){ grid.innerHTML = '<div class="empty-state">Pricing not set up yet</div>'; return; }
+  if(!selectedSize) selectedSize = keys[0];
+  grid.innerHTML = keys.map(k => `
+    <div class="size-card ${k===selectedSize?'selected':''}" onclick="selectSize('${k}')">
+      <div class="sz-label">${pricing[k].label}</div>
+      <div class="sz-price">${inr(pricing[k].price)}</div>
+    </div>`).join('');
+}
+window.selectSize = function(key){ selectedSize = key; renderSizeGrid(); };
+
+window.submitWalkInOrder = async function(){
+  const msg = document.getElementById('submitMsg');
+  const name = document.getElementById('wName').value.trim();
+  const phone = document.getElementById('wPhone').value.trim();
+  if(!name || !phone){ msg.textContent = '⚠️ Naam aur mobile number bharein.'; msg.style.color = '#FF4D6D'; return; }
+  if(!selectedFiles.length){ msg.textContent = '⚠️ Photo choose karein.'; msg.style.color = '#FF4D6D'; return; }
+  if(!selectedSize){ msg.textContent = '⚠️ Size select karein.'; msg.style.color = '#FF4D6D'; return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  msg.style.color = 'var(--gold)';
+  msg.textContent = '⏳ Uploading...';
+
+  try {
+    const orderId = generateOrderId();
+    const spUid = CURRENT_USER.uid;
+    const photoPaths = [];
+    for(let i = 0; i < selectedFiles.length; i++){
+      const f = selectedFiles[i];
+      const path = `scanpoints/${spUid}/orders/${orderId}/source-photos/${Date.now()}_${i}_${f.name}`;
+      await uploadBytes(ref(storage, path), f);
+      photoPaths.push(path);
+    }
+
+    const paymentChoice = document.getElementById('wPaymentStatus').value;
+    const now = new Date().toISOString();
+    await setDoc(doc(db, 'orders', orderId), {
+      customerId: null,
+      customerName: name,
+      phone,
+      createdByScanPoint: spUid,
+      scanPointName: CURRENT_USER.displayName,
+      vertical: 'BFOREVER Figurine',
+      size: pricing[selectedSize].label,
+      price: pricing[selectedSize].price,
+      status: paymentChoice === 'paid' ? 'paid' : 'payment_pending',
+      payment: paymentChoice === 'paid' ? { status: 'paid', method: 'cash' } : { status: 'none' },
+      photos: photoPaths,
+      preview3d: [],
+      finalFiles: [],
+      createdAt: now,
+      updatedAt: now,
+      timeline: [
+        { status: 'created', at: now, by: 'scanpoint' },
+        { status: paymentChoice === 'paid' ? 'paid' : 'payment_pending', at: now, by: 'scanpoint' }
+      ]
+    });
+
+    msg.style.color = 'var(--green)';
+    msg.textContent = '✅ Order created!';
+    selectedFiles = [];
+    document.getElementById('wPhotoGrid').innerHTML = '';
+    document.getElementById('wPhotos').value = '';
+    document.getElementById('wName').value = '';
+    document.getElementById('wPhone').value = '';
+    setTimeout(() => { showSection('orders'); msg.textContent = ''; }, 1200);
+  } catch(err){
+    msg.style.color = '#FF4D6D';
+    msg.textContent = '❌ Error: ' + err.message;
+  } finally { btn.disabled = false; }
+};
+
+function renderOrders(){
+  const body = document.getElementById('ordersBody');
+  if(!myOrders.length){ body.innerHTML = '<tr><td colspan="7" class="empty-state">Koi order nahi hai — "New Order" se shuru karein</td></tr>'; return; }
+  const sorted = [...myOrders].sort((a,b) => (b.createdAt||'').localeCompare(a.createdAt||''));
+  body.innerHTML = sorted.map(o => {
+    const m = statusMeta(o.status);
+    const commission = (o.payment && o.payment.status === 'paid') ? inr(Math.round(o.price * COMMISSION_RATE)) : '—';
+    return `<tr>
+      <td>${o.id}</td><td>${o.customerName||'—'}</td><td>${o.size||'—'}</td><td>${inr(o.price)}</td>
+      <td>${commission}</td>
+      <td><span class="badge" style="background:${m.color}22;color:${m.color};border:1px solid ${m.color}44;">${m.icon} ${m.label}</span></td>
+      <td>${o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-IN') : '—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderCommission(){
+  document.getElementById('cTotalOrders').textContent = myOrders.length;
+  const paid = myOrders.filter(o => o.payment && o.payment.status === 'paid');
+  const orderValue = paid.reduce((s,o) => s + (Number(o.price)||0), 0);
+  document.getElementById('cPaidOrders').textContent = paid.length;
+  document.getElementById('cOrderValue').textContent = inr(orderValue);
+  document.getElementById('cCommission').textContent = inr(Math.round(orderValue * COMMISSION_RATE));
+}
+
+requireRole(['scanpoint'], (userData) => {
+  CURRENT_USER = userData;
+  document.getElementById('spName').textContent = userData.displayName;
+
+  getPricing().then(p => { pricing = p; renderSizeGrid(); });
+
+  const q = query(collection(db, 'orders'), where('createdByScanPoint', '==', userData.uid));
+  onSnapshot(q, snap => {
+    myOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderOrders();
+    renderCommission();
+  });
+});
+</script>
+</body>
+</html>

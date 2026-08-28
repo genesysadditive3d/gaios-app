@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAIOS™ Customer Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/dashboard.css">
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<style>
+.order-card{
+  background:var(--navy2);border:1px solid var(--gold-border);border-radius:12px;
+  padding:16px 18px;margin-bottom:14px;
+}
+.order-card-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+.order-id{font-family:var(--fh);font-size:15px;font-weight:800;color:var(--gold);}
+.order-meta{font-size:11px;color:var(--gray);margin-top:2px;}
+.order-price{font-family:var(--fh);font-size:18px;font-weight:800;color:var(--white);}
+.photo-thumbs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;}
+.photo-thumb{width:56px;height:56px;border-radius:8px;object-fit:cover;border:1px solid var(--gold-border);}
+.timeline{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0;}
+.timeline-step{
+  font-size:9.5px;padding:4px 8px;border-radius:12px;background:rgba(255,255,255,0.04);
+  color:rgba(255,255,255,0.3);border:1px solid rgba(255,255,255,0.06);white-space:nowrap;
+}
+.timeline-step.done{background:rgba(0,214,143,0.1);color:var(--green);border-color:rgba(0,214,143,0.25);}
+.timeline-step.current{background:var(--gold-dim);color:var(--gold);border-color:var(--gold-border);font-weight:700;}
+.order-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.preview-box{margin:12px 0;background:var(--navy3);border-radius:10px;overflow:hidden;border:1px solid var(--gold-border);}
+model-viewer{width:100%;height:280px;background:var(--navy3);}
+.pay-panel{background:var(--navy3);border-radius:10px;padding:16px;margin-top:12px;text-align:center;}
+.qr-box{background:#fff;padding:12px;border-radius:10px;display:inline-block;margin:10px 0;}
+.upload-drop{
+  display:block;background:rgba(201,168,76,0.08);border:2px dashed var(--gold-border);
+  border-radius:12px;padding:24px;text-align:center;cursor:pointer;color:var(--gold);font-size:13px;
+}
+.size-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin:14px 0;}
+.size-card{
+  background:var(--navy3);border:1px solid rgba(255,255,255,0.08);border-radius:10px;
+  padding:14px 10px;text-align:center;cursor:pointer;transition:all 0.15s;
+}
+.size-card.selected{border-color:var(--gold);background:var(--gold-dim);}
+.size-card .sz-label{font-weight:700;font-size:13px;color:var(--white);}
+.size-card .sz-price{font-size:15px;font-weight:800;color:var(--gold);margin-top:4px;}
+.dl-group{margin-top:10px;}
+.dl-group-title{font-size:10px;letter-spacing:1px;color:var(--gray);text-transform:uppercase;margin-bottom:6px;}
+.dl-link{
+  display:inline-flex;align-items:center;gap:6px;background:var(--gold-dim);border:1px solid var(--gold-border);
+  color:var(--gold);font-size:11px;padding:6px 10px;border-radius:6px;text-decoration:none;margin:0 6px 6px 0;
+}
+</style>
+</head>
+<body style="visibility:hidden;">
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-row">
+      <img src="logo.jpg" alt="GAIOS logo" class="logo-img-sidebar">
+      <div class="logo-text">GAIOS™</div>
+    </div>
+    <div class="logo-sub">BFOREVER™ Customer Portal</div>
+    <span class="role-badge">🙋 Customer</span>
+  </div>
+
+  <div class="nav-section">My Account</div>
+  <div class="nav-item active" onclick="showSection('orders')"><span class="nav-icon">📦</span> My Orders</div>
+  <div class="nav-item" onclick="showSection('new-order')"><span class="nav-icon">➕</span> New Order</div>
+  <div class="nav-item" onclick="showSection('downloads')"><span class="nav-icon">📁</span> Downloads</div>
+
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-avatar">🙋</div>
+      <div>
+        <div class="user-name" id="custName">—</div>
+        <div class="user-role">Customer</div>
+      </div>
+    </div>
+    <button class="logout-btn" onclick="gaiosLogout()">🚪 Logout</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ── MY ORDERS ── -->
+  <div class="section active" id="sec-orders">
+    <div class="page-header">
+      <div>
+        <div class="page-title">My Orders</div>
+        <div class="page-sub">Track, approve and pay for your BFOREVER™ figurines &nbsp;·&nbsp; <span class="live-dot">LIVE</span></div>
+      </div>
+      <button class="btn btn-gold" onclick="showSection('new-order')">➕ New Order</button>
+    </div>
+    <div id="ordersList"><div class="empty-state">Loading your orders…</div></div>
+  </div>
+
+  <!-- ── NEW ORDER ── -->
+  <div class="section" id="sec-new-order">
+    <div class="page-header">
+      <div><div class="page-title">➕ Place a New Order</div><div class="page-sub">BFOREVER™ — turn your photo into a 3D printed figurine</div></div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">Your Photos (upload 2–4 clear photos for the best result)</label>
+          <label class="upload-drop" for="photoInput">📸 Click to choose photos, or drag & drop here</label>
+          <input type="file" id="photoInput" accept="image/*" multiple style="display:none;" onchange="onPhotosSelected(event)">
+          <div class="photo-thumbs" id="photoPreviewGrid"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Choose Size</label>
+          <div class="size-grid" id="sizeGrid"><div class="empty-state">Loading pricing…</div></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Your Name</label>
+          <input class="form-input" id="custFormName" placeholder="Poora naam">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mobile Number</label>
+          <input class="form-input" id="custFormPhone" placeholder="+91 XXXXXXXXXX">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Special Instructions (optional)</label>
+          <textarea class="form-textarea" id="custFormNotes" placeholder="Koi khaas requirement..."></textarea>
+        </div>
+
+        <button class="btn btn-gold" style="width:100%;padding:14px;font-size:14px;" id="submitOrderBtn" onclick="submitOrder()">🚀 Place Order</button>
+        <div id="orderSubmitMsg" style="margin-top:10px;font-size:12px;text-align:center;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DOWNLOADS ── -->
+  <div class="section" id="sec-downloads">
+    <div class="page-header">
+      <div><div class="page-title">📁 Downloads</div><div class="page-sub">Your files, organized by order</div></div>
+    </div>
+    <div id="downloadsList"><div class="empty-state">Loading…</div></div>
+  </div>
+
+</div>
+
+<div class="mobile-nav">
+  <div class="mobile-nav-item active" onclick="showSection('orders')"><span class="icon">📦</span>Orders</div>
+  <div class="mobile-nav-item" onclick="showSection('new-order')"><span class="icon">➕</span>New</div>
+  <div class="mobile-nav-item" onclick="showSection('downloads')"><span class="icon">📁</span>Files</div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script type="module">
+import { db, storage } from "./js/firebase-config.js";
+import { requireRole } from "./js/auth-guard.js";
+import { getPricing, getPaymentConfig, generateOrderId, statusMeta, buildUpiLink, STATUS_FLOW, logLearningEvent } from "./js/order-utils.js";
+import {
+  collection, query, where, onSnapshot, doc, setDoc, updateDoc, arrayUnion
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  ref, uploadBytes, getDownloadURL, listAll
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+let CURRENT_USER = null;
+let pricing = {};
+let paymentConfig = null;
+let selectedSize = null;
+let selectedFiles = [];
+let myOrders = [];
+let prevStatuses = {};
+let firstLoad = true;
+
+// ── Nav ──
+window.showSection = function(name){
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.mobile-nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  document.querySelectorAll('.nav-item')[['orders','new-order','downloads'].indexOf(name)]?.classList.add('active');
+  document.querySelectorAll('.mobile-nav-item')[['orders','new-order','downloads'].indexOf(name)]?.classList.add('active');
+  if(name === 'downloads') renderDownloads();
+};
+
+function toast(text){
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = text;
+  wrap.appendChild(el);
+  setTimeout(() => el.remove(), 6000);
+  if('Notification' in window && Notification.permission === 'granted'){
+    try { new Notification('GAIOS™', { body: text }); } catch(e){}
+  }
+}
+
+function inr(n){ return '₹' + (Number(n)||0).toLocaleString('en-IN'); }
+
+// ── Photo upload ──
+window.onPhotosSelected = function(e){
+  selectedFiles = Array.from(e.target.files).slice(0, 6);
+  const grid = document.getElementById('photoPreviewGrid');
+  grid.innerHTML = '';
+  selectedFiles.forEach(f => {
+    const img = document.createElement('img');
+    img.className = 'photo-thumb';
+    img.src = URL.createObjectURL(f);
+    grid.appendChild(img);
+  });
+};
+
+// ── Pricing / size selector ──
+function renderSizeGrid(){
+  const grid = document.getElementById('sizeGrid');
+  const keys = Object.keys(pricing);
+  if(!keys.length){ grid.innerHTML = '<div class="empty-state">Pricing not set up yet</div>'; return; }
+  if(!selectedSize) selectedSize = keys[0];
+  grid.innerHTML = keys.map(k => `
+    <div class="size-card ${k===selectedSize?'selected':''}" onclick="selectSize('${k}')">
+      <div class="sz-label">${pricing[k].label}</div>
+      <div class="sz-price">${inr(pricing[k].price)}</div>
+    </div>`).join('');
+}
+window.selectSize = function(key){
+  selectedSize = key;
+  renderSizeGrid();
+};
+
+// ── Create order ──
+window.submitOrder = async function(){
+  const msg = document.getElementById('orderSubmitMsg');
+  if(!selectedFiles.length){ msg.textContent = '⚠️ Kam se kam 1 photo choose karein.'; msg.style.color = '#FF4D6D'; return; }
+  if(!selectedSize){ msg.textContent = '⚠️ Size select karein.'; msg.style.color = '#FF4D6D'; return; }
+  const name = document.getElementById('custFormName').value.trim();
+  const phone = document.getElementById('custFormPhone').value.trim();
+  if(!name || !phone){ msg.textContent = '⚠️ Naam aur mobile number zaroori hai.'; msg.style.color = '#FF4D6D'; return; }
+
+  const btn = document.getElementById('submitOrderBtn');
+  btn.disabled = true;
+  msg.style.color = 'var(--gold)';
+  msg.textContent = '⏳ Photos upload ho rahi hain...';
+
+  try {
+    const orderId = generateOrderId();
+    const uid = CURRENT_USER.uid;
+    const photoPaths = [];
+    for(let i = 0; i < selectedFiles.length; i++){
+      const f = selectedFiles[i];
+      const path = `customers/${uid}/orders/${orderId}/source-photos/${Date.now()}_${i}_${f.name}`;
+      await uploadBytes(ref(storage, path), f);
+      photoPaths.push(path);
+    }
+
+    msg.textContent = '⏳ Order create ho raha hai...';
+    const now = new Date().toISOString();
+    await setDoc(doc(db, 'orders', orderId), {
+      customerId: uid,
+      customerName: name,
+      phone,
+      vertical: 'BFOREVER Figurine',
+      size: pricing[selectedSize].label,
+      price: pricing[selectedSize].price,
+      notes: document.getElementById('custFormNotes').value.trim(),
+      status: 'payment_pending',
+      payment: { status: 'none' },
+      photos: photoPaths,
+      preview3d: [],
+      finalFiles: [],
+      createdAt: now,
+      updatedAt: now,
+      timeline: [
+        { status: 'created', at: now, by: 'customer' },
+        { status: 'payment_pending', at: now, by: 'system' }
+      ]
+    });
+
+    msg.style.color = 'var(--green)';
+    msg.textContent = '✅ Order place ho gaya! Payment section mein jaakar pay karein.';
+    selectedFiles = [];
+    document.getElementById('photoPreviewGrid').innerHTML = '';
+    document.getElementById('photoInput').value = '';
+    setTimeout(() => { showSection('orders'); msg.textContent = ''; }, 1200);
+  } catch(err){
+    msg.style.color = '#FF4D6D';
+    msg.textContent = '❌ Error: ' + err.message;
+  } finally {
+    btn.disabled = false;
+  }
+};
+
+// ── Order list rendering ──
+function displayStatus(o){
+  if(o.status === 'payment_pending' && o.payment && o.payment.status === 'submitted') return 'payment_submitted';
+  return o.status;
+}
+
+function timelineHtml(order){
+  const curIdx = STATUS_FLOW.indexOf(order.status);
+  return STATUS_FLOW.map((s, i) => {
+    const m = statusMeta(s);
+    const cls = i < curIdx ? 'done' : (i === curIdx ? 'current' : '');
+    return `<span class="timeline-step ${cls}">${m.icon} ${m.label}</span>`;
+  }).join('');
+}
+
+async function renderPaymentPanel(order, container){
+  if(order.payment && order.payment.status === 'submitted'){
+    container.innerHTML = `<div class="pay-panel">🔎 Payment submitted (UTR: ${order.payment.utr || '—'}) — awaiting confirmation. We'll update this automatically.</div>`;
+    return;
+  }
+  if(!paymentConfig || !paymentConfig.upiVpa){
+    container.innerHTML = `<div class="pay-panel">💳 Payment setup pending on our side — please call <strong>+91-6350132497</strong> to pay and confirm your order.</div>`;
+    return;
+  }
+  const upiLink = buildUpiLink(paymentConfig.upiVpa, paymentConfig.upiPayeeName || 'GAIOS', order.price, order.id);
+  container.innerHTML = `
+    <div class="pay-panel">
+      <div style="font-size:13px;color:var(--gold);font-weight:700;margin-bottom:6px;">Pay ${inr(order.price)} via UPI</div>
+      <div class="qr-box"><canvas id="qr-${order.id}"></canvas></div>
+      <div><a href="${upiLink}" class="dl-link">📱 Open in UPI App</a></div>
+      <div style="margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+        <input class="form-input" style="max-width:180px;" id="utr-${order.id}" placeholder="UTR / Reference No.">
+        <button class="btn btn-green" onclick="submitUtr('${order.id}')">✅ I've Paid</button>
+      </div>
+      <div style="margin-top:14px;border-top:1px solid rgba(255,255,255,0.08);padding-top:12px;">
+        <button class="btn btn-outline" onclick="payWithRazorpay('${order.id}', ${order.price})">💳 Pay with Razorpay</button>
+      </div>
+    </div>`;
+  if(window.QRCode){
+    QRCode.toCanvas(document.getElementById(`qr-${order.id}`), upiLink, { width: 180, margin: 1 }, () => {});
+  }
+}
+
+window.submitUtr = async function(orderId){
+  const utr = document.getElementById(`utr-${orderId}`).value.trim();
+  if(!utr){ alert('UTR / reference number daalein.'); return; }
+  await updateDoc(doc(db, 'orders', orderId), {
+    payment: { status: 'submitted', method: 'upi', utr, submittedAt: new Date().toISOString() },
+    timeline: arrayUnion({ status: 'payment_submitted', at: new Date().toISOString(), by: 'customer' })
+  });
+};
+
+window.payWithRazorpay = async function(orderId, amount){
+  try {
+    const res = await fetch('/api/razorpay-order', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount, orderId })
+    });
+    const data = await res.json();
+    if(!res.ok || data.error){
+      alert('Razorpay abhi setup nahi hua hai — kripya UPI se pay karein ya call karein.');
+      return;
+    }
+    const rzp = new Razorpay({
+      key: data.keyId,
+      amount: data.amount,
+      currency: data.currency,
+      order_id: data.razorpayOrderId,
+      name: 'GAIOS™ / BFOREVER™',
+      description: 'Order ' + orderId,
+      handler: async function(response){
+        await fetch('/api/razorpay-verify', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...response, gaiosOrderId: orderId })
+        });
+        toast('✅ Payment verified — thank you!');
+      }
+    });
+    rzp.open();
+  } catch(err){
+    alert('Razorpay error: ' + err.message);
+  }
+};
+
+window.approveOrder = async function(orderId){
+  if(!confirm('Confirm 3D preview aapko pasand hai aur print ke liye ready hai?')) return;
+  await updateDoc(doc(db, 'orders', orderId), {
+    status: 'queued',
+    timeline: arrayUnion({ status: 'queued', at: new Date().toISOString(), by: 'customer-approved' })
+  });
+};
+
+window.rejectOrder = async function(orderId){
+  const reason = prompt('Kya theek nahi laga? (reason batayein)');
+  if(reason === null) return;
+  await updateDoc(doc(db, 'orders', orderId), {
+    status: 'customer_rejected',
+    timeline: arrayUnion({ status: 'customer_rejected', at: new Date().toISOString(), by: 'customer', note: reason })
+  });
+};
+
+// ── Rating (feeds the learning_data pipeline) ──
+function ratedOrderIds(){
+  try { return JSON.parse(localStorage.getItem('gaios_rated_orders') || '[]'); } catch(e){ return []; }
+}
+function isRated(orderId){ return ratedOrderIds().includes(orderId); }
+function markRated(orderId){
+  const ids = ratedOrderIds();
+  if(!ids.includes(orderId)){ ids.push(orderId); localStorage.setItem('gaios_rated_orders', JSON.stringify(ids)); }
+}
+
+let pendingStars = {};
+window.pickStars = function(orderId, n){
+  pendingStars[orderId] = n;
+  const wrap = document.getElementById(`stars-${orderId}`);
+  if(!wrap) return;
+  wrap.querySelectorAll('span').forEach(s => {
+    s.textContent = Number(s.dataset.n) <= n ? '★' : '☆';
+    s.style.color = Number(s.dataset.n) <= n ? 'var(--gold)' : 'inherit';
+  });
+};
+
+window.submitRating = async function(orderId){
+  const stars = pendingStars[orderId];
+  if(!stars){ alert('Kripya stars select karein.'); return; }
+  const comment = document.getElementById(`ratecomment-${orderId}`).value.trim();
+  await logLearningEvent('customer_rating', {
+    orderId,
+    customerId: CURRENT_USER.uid,
+    stars,
+    comment
+  });
+  markRated(orderId);
+  toast('🙏 Shukriya! Aapka feedback mil gaya.');
+  renderOrders();
+};
+
+window.downloadInvoice = function(orderId){
+  const order = myOrders.find(o => o.id === orderId);
+  if(!order) return;
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF();
+  pdf.setFontSize(18); pdf.setTextColor(201,168,76);
+  pdf.text('GAIOS™ / BFOREVER™', 14, 20);
+  pdf.setFontSize(10); pdf.setTextColor(80,80,80);
+  pdf.text('Genesys Additive 3D Creation Pvt. Ltd.', 14, 27);
+  pdf.text('Shop No. 03, Opp. Central Co-op Bank, Main Bapunagar Road, Pali, Rajasthan 306401', 14, 32);
+  pdf.text('GSTIN: 08AANCG1745Q1ZW  |  CIN: U32909RJ2026PTC115570', 14, 37);
+  pdf.setDrawColor(201,168,76); pdf.line(14, 42, 196, 42);
+  pdf.setFontSize(13); pdf.setTextColor(20,20,20);
+  pdf.text('INVOICE', 14, 52);
+  pdf.setFontSize(10);
+  pdf.text(`Order ID: ${order.id}`, 14, 60);
+  pdf.text(`Date: ${order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-IN') : '—'}`, 14, 66);
+  pdf.text(`Customer: ${order.customerName || '—'}`, 14, 72);
+  pdf.text(`Phone: ${order.phone || '—'}`, 14, 78);
+  pdf.line(14, 84, 196, 84);
+  pdf.text('Description', 14, 92);
+  pdf.text('Amount', 170, 92);
+  pdf.text(`BFOREVER™ Figurine — ${order.size || ''}`, 14, 100);
+  pdf.text(inr(order.price), 170, 100);
+  pdf.line(14, 106, 196, 106);
+  pdf.setFontSize(12); pdf.setTextColor(201,168,76);
+  pdf.text(`Total: ${inr(order.price)}`, 140, 116);
+  pdf.setFontSize(9); pdf.setTextColor(120,120,120);
+  pdf.text(`Payment status: ${order.payment ? order.payment.status : 'pending'}`, 14, 116);
+  pdf.text('Thank you for choosing BFOREVER™ — where your moments live forever.', 14, 130);
+  pdf.save(`GAIOS-Invoice-${order.id}.pdf`);
+};
+
+async function orderCardHtml(order){
+  const dispStatus = displayStatus(order);
+  const m = statusMeta(dispStatus);
+  let previewHtml = '';
+  if(['customer_review','queued','printing','post_processing','ready','shipped','delivered'].includes(order.status) && order.preview3d && order.preview3d.length){
+    try {
+      const url = await getDownloadURL(ref(storage, order.preview3d[0]));
+      if(/\.(glb|gltf)$/i.test(order.preview3d[0])){
+        previewHtml = `<div class="preview-box"><model-viewer src="/api/proxy-download?url=${encodeURIComponent(url)}" camera-controls auto-rotate exposure="1"></model-viewer></div>`;
+      } else {
+        previewHtml = `<div class="preview-box"><img src="${url}" style="width:100%;max-height:280px;object-fit:contain;"></div>`;
+      }
+    } catch(e){ /* file not readable yet */ }
+  }
+
+  let actionsHtml = '';
+  if(order.status === 'customer_review'){
+    actionsHtml = `<div class="order-actions">
+      <button class="btn btn-green" onclick="approveOrder('${order.id}')">👍 Approve — Proceed to Print</button>
+      <button class="btn btn-red" onclick="rejectOrder('${order.id}')">✋ Request Changes</button>
+    </div>`;
+  }
+
+  let ratingHtml = '';
+  if(order.status === 'delivered' && !isRated(order.id)){
+    ratingHtml = `
+      <div class="pay-panel" id="rate-${order.id}">
+        <div style="font-size:13px;color:var(--gold);font-weight:700;margin-bottom:8px;">⭐ Kaisa laga aapko yeh figurine?</div>
+        <div style="font-size:22px;letter-spacing:4px;margin-bottom:10px;" id="stars-${order.id}">
+          ${[1,2,3,4,5].map(n => `<span style="cursor:pointer;" data-n="${n}" onclick="pickStars('${order.id}',${n})">☆</span>`).join('')}
+        </div>
+        <textarea class="form-textarea" id="ratecomment-${order.id}" placeholder="Koi comment? (optional)" style="max-width:340px;"></textarea>
+        <div style="margin-top:8px;"><button class="btn btn-gold" onclick="submitRating('${order.id}')">Submit Rating</button></div>
+      </div>`;
+  }
+
+  const payPanelId = `pay-${order.id}`;
+  const needsPayment = order.status === 'payment_pending';
+
+  return `
+    <div class="order-card">
+      <div class="order-card-top">
+        <div>
+          <div class="order-id">${order.id}</div>
+          <div class="order-meta">${order.size || ''} · ${order.vertical || ''} · ${order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-IN') : ''}</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="order-price">${inr(order.price)}</div>
+          <span class="badge" style="background:${m.color}22;color:${m.color};border:1px solid ${m.color}44;">${m.icon} ${m.label}</span>
+        </div>
+      </div>
+      <div class="timeline">${timelineHtml(order)}</div>
+      ${previewHtml}
+      ${actionsHtml}
+      ${ratingHtml}
+      ${needsPayment ? `<div id="${payPanelId}"></div>` : ''}
+      <div class="order-actions">
+        <button class="btn btn-outline" onclick="downloadInvoice('${order.id}')">🧾 Invoice PDF</button>
+      </div>
+    </div>`;
+}
+
+async function renderOrders(){
+  const list = document.getElementById('ordersList');
+  if(!myOrders.length){ list.innerHTML = '<div class="empty-state">Koi order nahi mila. "New Order" par click karke pehla order place karein.</div>'; return; }
+  const sorted = [...myOrders].sort((a,b) => (b.createdAt||'').localeCompare(a.createdAt||''));
+  const htmls = await Promise.all(sorted.map(orderCardHtml));
+  list.innerHTML = htmls.join('');
+  sorted.forEach(order => {
+    if(order.status === 'payment_pending'){
+      const panel = document.getElementById(`pay-${order.id}`);
+      if(panel) renderPaymentPanel(order, panel);
+    }
+  });
+}
+
+async function renderDownloads(){
+  const list = document.getElementById('downloadsList');
+  if(!myOrders.length){ list.innerHTML = '<div class="empty-state">Abhi koi order nahi hai.</div>'; return; }
+  list.innerHTML = myOrders.map(o => `<div class="order-card"><div class="order-id">${o.id}</div><div id="files-${o.id}" style="margin-top:10px;">Loading files…</div></div>`).join('');
+  for(const order of myOrders){
+    const el = document.getElementById(`files-${order.id}`);
+    if(!el) continue;
+    let html = '';
+    for(const [folder, label] of [['source-photos','📸 Source Photos'],['3d-preview','🎯 3D Preview Files'],['final','📦 Final Files']]){
+      try {
+        const folderRef = ref(storage, `customers/${CURRENT_USER.uid}/orders/${order.id}/${folder}`);
+        const res = await listAll(folderRef);
+        if(res.items.length){
+          const links = await Promise.all(res.items.map(async item => {
+            const url = await getDownloadURL(item);
+            return `<a class="dl-link" href="${url}" target="_blank">⬇️ ${item.name.replace(/^\d+_\d+_/, '')}</a>`;
+          }));
+          html += `<div class="dl-group"><div class="dl-group-title">${label}</div>${links.join('')}</div>`;
+        }
+      } catch(e){ /* folder empty or not yet permitted */ }
+    }
+    html += `<div class="dl-group"><button class="btn btn-outline" onclick="downloadInvoice('${order.id}')">🧾 Invoice PDF</button></div>`;
+    el.innerHTML = html || '<div class="empty-state">No files uploaded yet</div>';
+  }
+}
+
+function checkStatusChanges(newOrders){
+  if(!firstLoad){
+    newOrders.forEach(o => {
+      const prev = prevStatuses[o.id];
+      if(prev && prev !== o.status){
+        const m = statusMeta(o.status);
+        toast(`${o.id}: ${m.icon} ${m.label}`);
+      }
+    });
+  }
+  firstLoad = false;
+  prevStatuses = {};
+  newOrders.forEach(o => { prevStatuses[o.id] = o.status; });
+}
+
+// ── Boot ──
+requireRole(['customer'], (userData) => {
+  CURRENT_USER = userData;
+  document.getElementById('custName').textContent = userData.displayName;
+
+  if('Notification' in window && Notification.permission === 'default'){
+    Notification.requestPermission().catch(() => {});
+  }
+
+  getPricing().then(p => { pricing = p; renderSizeGrid(); });
+  getPaymentConfig().then(cfg => { paymentConfig = cfg; });
+
+  const q = query(collection(db, 'orders'), where('customerId', '==', userData.uid));
+  onSnapshot(q, snap => {
+    myOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    checkStatusChanges(myOrders);
+    renderOrders();
+    if(document.getElementById('sec-downloads').classList.contains('active')) renderDownloads();
+  });
+});
+</script>
+</body>
+</html>

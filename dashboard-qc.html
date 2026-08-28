@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAIOS™ QC Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/dashboard.css">
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+<style>
+.qc-card{background:var(--navy2);border:1px solid var(--gold-border);border-radius:12px;padding:16px;margin-bottom:14px;}
+.qc-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+.qc-id{font-family:var(--fh);font-size:15px;font-weight:800;color:var(--gold);}
+.qc-meta{font-size:11px;color:var(--gray);margin-top:2px;}
+.photo-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;}
+.photo-row img{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--gold-border);}
+.preview-box{margin:12px 0;background:var(--navy3);border-radius:10px;overflow:hidden;border:1px solid var(--gold-border);}
+model-viewer{width:100%;height:300px;background:var(--navy3);}
+.qc-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.tab-row{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+.tab-btn{padding:8px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;background:var(--navy2);border:1px solid var(--gold-border);color:var(--gray);}
+.tab-btn.active{background:var(--gold-dim);color:var(--gold);border-color:var(--gold);}
+.progress-note{font-size:11px;color:var(--gold);margin-top:8px;}
+</style>
+</head>
+<body style="visibility:hidden;">
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-row">
+      <img src="logo.jpg" alt="GAIOS logo" class="logo-img-sidebar">
+      <div class="logo-text">GAIOS™</div>
+    </div>
+    <div class="logo-sub">Quality Control</div>
+    <span class="role-badge">🔍 QC</span>
+  </div>
+  <div class="nav-section">Main</div>
+  <div class="nav-item active"><span class="nav-icon">🔍</span> Review Queue</div>
+
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-avatar">🔍</div>
+      <div><div class="user-name" id="qcName">—</div><div class="user-role">QC Employee</div></div>
+    </div>
+    <button class="logout-btn" onclick="gaiosLogout()">🚪 Logout</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-header">
+    <div><div class="page-title">🔍 3D Model QC Review</div><div class="page-sub">Generate, review, approve or reject AI-generated figurine models &nbsp;·&nbsp; <span class="live-dot">LIVE</span></div></div>
+  </div>
+
+  <div class="tab-row">
+    <div class="tab-btn active" data-tab="needs-gen" onclick="switchTab('needs-gen')">🎯 Needs Generation (<span id="cnt-needs-gen">0</span>)</div>
+    <div class="tab-btn" data-tab="review" onclick="switchTab('review')">🔍 Review Queue (<span id="cnt-review">0</span>)</div>
+    <div class="tab-btn" data-tab="attention" onclick="switchTab('attention')">⚠️ Needs Attention (<span id="cnt-attention">0</span>)</div>
+  </div>
+
+  <div id="qcList"><div class="empty-state">Loading…</div></div>
+</div>
+
+<script type="module">
+import { db, storage } from "./js/firebase-config.js";
+import { requireRole } from "./js/auth-guard.js";
+import { statusMeta, logLearningEvent } from "./js/order-utils.js";
+import {
+  collection, onSnapshot, doc, updateDoc, arrayUnion
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { ref, getDownloadURL, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+let allOrders = [];
+let currentTab = 'needs-gen';
+let CURRENT_QC = null;
+const genInProgress = {};
+
+window.switchTab = function(tab){
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  renderList();
+};
+
+function tabOrders(){
+  if(currentTab === 'needs-gen') return allOrders.filter(o => o.status === 'paid');
+  if(currentTab === 'review') return allOrders.filter(o => o.status === 'qc_review');
+  return allOrders.filter(o => ['qc_rejected','customer_rejected'].includes(o.status));
+}
+
+function updateCounts(){
+  document.getElementById('cnt-needs-gen').textContent = allOrders.filter(o => o.status === 'paid').length;
+  document.getElementById('cnt-review').textContent = allOrders.filter(o => o.status === 'qc_review').length;
+  document.getElementById('cnt-attention').textContent = allOrders.filter(o => ['qc_rejected','customer_rejected'].includes(o.status)).length;
+}
+
+async function photoUrls(order){
+  if(!order.photos || !order.photos.length) return [];
+  const urls = [];
+  for(const p of order.photos.slice(0, 4)){
+    try { urls.push(await getDownloadURL(ref(storage, p))); } catch(e){ /* skip */ }
+  }
+  return urls;
+}
+
+async function previewUrl(order){
+  if(!order.preview3d || !order.preview3d.length) return null;
+  try { return await getDownloadURL(ref(storage, order.preview3d[0])); } catch(e){ return null; }
+}
+
+async function cardHtml(order){
+  const m = statusMeta(order.status);
+  const photos = await photoUrls(order);
+  const photoHtml = photos.length ? `<div class="photo-row">${photos.map(u => `<img src="${u}">`).join('')}</div>` : '<div class="progress-note">No source photos found</div>';
+
+  let bodyExtra = '';
+  if(currentTab === 'needs-gen'){
+    bodyExtra = `<div class="qc-actions">
+      <button class="btn btn-gold" id="genbtn-${order.id}" onclick="generatePreview('${order.id}')">🚀 Generate 3D Preview</button>
+    </div>
+    <div class="progress-note" id="genstatus-${order.id}"></div>`;
+  } else if(currentTab === 'review'){
+    const purl = await previewUrl(order);
+    const previewHtml = purl
+      ? (/\.(glb|gltf)$/i.test(order.preview3d[0])
+          ? `<div class="preview-box"><model-viewer src="/api/proxy-download?url=${encodeURIComponent(purl)}" camera-controls auto-rotate exposure="1"></model-viewer></div>`
+          : `<div class="preview-box"><img src="${purl}" style="width:100%;max-height:300px;object-fit:contain;"></div>`)
+      : '<div class="progress-note">Preview file not readable</div>';
+    bodyExtra = `${previewHtml}
+      <div class="form-group" style="max-width:220px;">
+        <label class="form-label">Model Quality Score</label>
+        <select class="form-select" id="score-${order.id}">
+          <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+          <option value="4">⭐⭐⭐⭐ Good</option>
+          <option value="3" selected>⭐⭐⭐ Acceptable</option>
+          <option value="2">⭐⭐ Poor</option>
+          <option value="1">⭐ Bad</option>
+        </select>
+      </div>
+      <div class="qc-actions">
+        <button class="btn btn-green" onclick="approveModel('${order.id}')">👍 Approve → Send to Customer</button>
+        <button class="btn btn-red" onclick="rejectModel('${order.id}')">👎 Reject — Needs Redo</button>
+      </div>`;
+  } else {
+    bodyExtra = `<div class="qc-actions">
+      <button class="btn btn-outline" onclick="generatePreview('${order.id}')">🔁 Regenerate 3D Preview</button>
+    </div>
+    <div class="progress-note" id="genstatus-${order.id}"></div>`;
+    if(order.timeline && order.timeline.length){
+      const last = order.timeline[order.timeline.length-1];
+      if(last.note) bodyExtra += `<div class="progress-note">Note: ${last.note}</div>`;
+    }
+  }
+
+  return `
+    <div class="qc-card">
+      <div class="qc-top">
+        <div><div class="qc-id">${order.id}</div><div class="qc-meta">${order.customerName||'—'} · ${order.size||''} · ${order.vertical||''}</div></div>
+        <span class="badge" style="background:${m.color}22;color:${m.color};border:1px solid ${m.color}44;">${m.icon} ${m.label}</span>
+      </div>
+      ${photoHtml}
+      ${bodyExtra}
+    </div>`;
+}
+
+async function renderList(){
+  updateCounts();
+  const list = tabOrders().sort((a,b) => (a.createdAt||'').localeCompare(b.createdAt||''));
+  const el = document.getElementById('qcList');
+  if(!list.length){ el.innerHTML = '<div class="empty-state">Nothing here right now</div>'; return; }
+  const htmls = await Promise.all(list.map(cardHtml));
+  el.innerHTML = htmls.join('');
+}
+
+function guessExtFromContentType(ct){
+  if(!ct) return 'bin';
+  if(ct.includes('gltf-binary') || ct.includes('model/gltf')) return 'glb';
+  if(ct.includes('png')) return 'png';
+  if(ct.includes('jpeg')) return 'jpg';
+  return 'bin';
+}
+
+window.generatePreview = async function(orderId){
+  if(genInProgress[orderId]) return;
+  genInProgress[orderId] = true;
+  const order = allOrders.find(o => o.id === orderId);
+  const btn = document.getElementById(`genbtn-${orderId}`);
+  const statusEl = document.getElementById(`genstatus-${orderId}`);
+  if(btn) btn.disabled = true;
+
+  try {
+    if(!order.photos || !order.photos.length) throw new Error('No source photo on this order');
+    if(statusEl) statusEl.textContent = '⏳ Fetching source photo…';
+    const photoUrl = await getDownloadURL(ref(storage, order.photos[0]));
+    const photoBlob = await (await fetch('/api/proxy-download?url=' + encodeURIComponent(photoUrl))).blob();
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(photoBlob);
+    });
+
+    if(statusEl) statusEl.textContent = '⏳ Starting AI 3D generation…';
+    const startRes = await fetch('/api/photo3d', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ imageBase64: base64, imageType: photoBlob.type || 'image/jpeg' })
+    });
+    const startData = await startRes.json();
+    if(!startData.predictionId) throw new Error(startData.error || 'Failed to start generation');
+
+    let output = null;
+    for(let i = 0; i < 40; i++){
+      await new Promise(r => setTimeout(r, 5000));
+      if(statusEl) statusEl.textContent = `⏳ Generating… ${(i+1)*5}s`;
+      const pollRes = await fetch('/api/photo3d', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ predictionId: startData.predictionId })
+      });
+      const pollData = await pollRes.json();
+      if(pollData.status === 'succeeded' && pollData.output){
+        output = Array.isArray(pollData.output) ? pollData.output[0] : pollData.output;
+        break;
+      }
+      if(pollData.status === 'failed') throw new Error('Generation failed on Replicate');
+    }
+    if(!output) throw new Error('Timed out waiting for 3D model');
+
+    if(statusEl) statusEl.textContent = '⏳ Saving to order folder…';
+    const modelBlob = await (await fetch('/api/proxy-download?url=' + encodeURIComponent(output))).blob();
+    const ext = output.match(/\.(glb|gltf|png|jpg|jpeg)(\?|$)/i)?.[1] || guessExtFromContentType(modelBlob.type);
+    const basePath = order.customerId
+      ? `customers/${order.customerId}/orders/${order.id}`
+      : `scanpoints/${order.createdByScanPoint}/orders/${order.id}`;
+    const storagePath = `${basePath}/3d-preview/model_${Date.now()}.${ext}`;
+    await uploadBytes(ref(storage, storagePath), modelBlob);
+
+    await updateDoc(doc(db, 'orders', orderId), {
+      preview3d: [storagePath],
+      status: 'qc_review',
+      updatedAt: new Date().toISOString(),
+      timeline: arrayUnion({ status: 'qc_review', at: new Date().toISOString(), by: 'qc-generated' })
+    });
+
+    if(statusEl) statusEl.textContent = '✅ Done — moved to Review Queue';
+  } catch(err){
+    if(statusEl) statusEl.textContent = '❌ ' + err.message;
+  } finally {
+    genInProgress[orderId] = false;
+    if(btn) btn.disabled = false;
+  }
+};
+
+function currentScore(orderId){
+  const el = document.getElementById(`score-${orderId}`);
+  return el ? Number(el.value) : null;
+}
+
+window.approveModel = async function(orderId){
+  const order = allOrders.find(o => o.id === orderId);
+  const score = currentScore(orderId);
+  await updateDoc(doc(db, 'orders', orderId), {
+    status: 'customer_review',
+    updatedAt: new Date().toISOString(),
+    timeline: arrayUnion({ status: 'customer_review', at: new Date().toISOString(), by: 'qc-approved' })
+  });
+  logLearningEvent('qc_feedback', {
+    orderId,
+    decision: 'approved',
+    qualityScore: score,
+    notes: '',
+    sourcePhotos: order?.photos || [],
+    outputModel: order?.preview3d?.[0] || null,
+    reviewedBy: CURRENT_QC
+  });
+};
+
+window.rejectModel = async function(orderId){
+  const reason = prompt('Reject karne ka reason likhein:');
+  if(reason === null) return;
+  const order = allOrders.find(o => o.id === orderId);
+  const score = currentScore(orderId);
+  await updateDoc(doc(db, 'orders', orderId), {
+    status: 'qc_rejected',
+    updatedAt: new Date().toISOString(),
+    timeline: arrayUnion({ status: 'qc_rejected', at: new Date().toISOString(), by: 'qc', note: reason })
+  });
+  logLearningEvent('qc_feedback', {
+    orderId,
+    decision: 'rejected',
+    qualityScore: score,
+    notes: reason,
+    sourcePhotos: order?.photos || [],
+    outputModel: order?.preview3d?.[0] || null,
+    reviewedBy: CURRENT_QC
+  });
+};
+
+requireRole(['qc'], (userData) => {
+  CURRENT_QC = userData.displayName || userData.email;
+  document.getElementById('qcName').textContent = userData.displayName;
+  onSnapshot(collection(db, 'orders'), snap => {
+    allOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderList();
+  });
+});
+</script>
+</body>
+</html>

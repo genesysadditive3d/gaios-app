@@ -1,0 +1,86 @@
+// GAIOS v7.0 Firestore Security Rules
+// Paste this into Firebase Console → Firestore Database → Rules → Publish.
+// (Not deployed automatically — no Firebase CLI/login available in this environment.)
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function myRole() {
+      return isSignedIn()
+        ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role
+        : null;
+    }
+    function isAdmin() { return myRole() == 'admin'; }
+    // Internal team — trusted with full visibility across all orders/users.
+    function isInternalStaff() { return myRole() in ['admin', 'production', 'qc']; }
+    // External partner — must stay scoped to only the orders *they* created,
+    // never the whole collection (they can see other customers' data otherwise).
+    function isScanpoint() { return myRole() == 'scanpoint'; }
+
+    // ── users/{uid} ──────────────────────────────────────────────
+    match /users/{uid} {
+      allow read: if isSignedIn() && (request.auth.uid == uid || isInternalStaff());
+      allow create: if isSignedIn() && request.auth.uid == uid;
+      // Self-update allowed, but a user can never change their own role.
+      allow update: if isSignedIn() && request.auth.uid == uid
+                    && request.resource.data.role == resource.data.role;
+      // Only admin can change any user's role.
+      allow update: if isAdmin();
+    }
+
+    // ── orders/{orderId} ─────────────────────────────────────────
+    match /orders/{orderId} {
+      allow read: if isInternalStaff()
+                  || (isSignedIn() && resource.data.customerId == request.auth.uid)
+                  || (isSignedIn() && isScanpoint() && resource.data.createdByScanPoint == request.auth.uid);
+      allow create: if isSignedIn() &&
+                    (request.resource.data.customerId == request.auth.uid ||
+                     (isScanpoint() && request.resource.data.createdByScanPoint == request.auth.uid));
+      // Customer may submit payment proof, and may approve/reject their own
+      // order's 3D preview (only while it's actually awaiting their decision,
+      // and only into the two allowed next states) — nothing else.
+      allow update: if isSignedIn() && resource.data.customerId == request.auth.uid
+                    && (
+                      request.resource.data.diff(resource.data).affectedKeys().hasOnly(['payment', 'timeline'])
+                      || (
+                        resource.data.status == 'customer_review'
+                        && request.resource.data.status in ['queued', 'customer_rejected']
+                        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'timeline'])
+                      )
+                    );
+      // A Scan Point may fully manage only the walk-in orders it created
+      // (e.g. recording a cash payment) — never someone else's order.
+      allow update: if isSignedIn() && isScanpoint() && resource.data.createdByScanPoint == request.auth.uid;
+      // Internal team can update anything.
+      allow update: if isInternalStaff();
+    }
+
+    // ── scanpoints/{id} — admin's partner directory ───────────────
+    match /scanpoints/{id} {
+      allow read: if isInternalStaff();
+      allow write: if isAdmin();
+    }
+
+    // ── config/{pricing|payment} — public read (needed to render prices/QR
+    //    before login), admin-only write ──────────────────────────
+    match /config/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ── learning_data/{id} — training data feed for the future local
+    //    ML pipeline (QC decisions, print outcomes, customer ratings).
+    //    Write-only for whoever generated the event, append-only for
+    //    everyone (no edits/deletes outside admin) so it stays a clean log.
+    match /learning_data/{id} {
+      allow read: if isInternalStaff();
+      allow create: if isInternalStaff()
+                    || (isSignedIn() && request.resource.data.type == 'customer_rating'
+                        && request.resource.data.customerId == request.auth.uid);
+      allow update, delete: if isAdmin();
+    }
+  }
+}

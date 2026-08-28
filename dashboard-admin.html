@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAIOS™ Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/dashboard.css">
+<style>
+/* Page-specific additions not in the shared css/dashboard.css design system. */
+
+/* Scan Point cards */
+.sp-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.sp-card{
+  background:var(--navy3);border:1px solid rgba(255,255,255,0.06);
+  border-radius:8px;padding:12px;
+}
+.sp-city{font-size:12px;font-weight:700;color:var(--white);}
+.sp-orders{font-size:11px;color:var(--gray);margin-top:2px;}
+.sp-bar{height:3px;background:rgba(255,255,255,0.06);border-radius:2px;margin-top:8px;}
+.sp-fill{height:100%;background:var(--gold);border-radius:2px;}
+.sp-status{display:flex;align-items:center;gap:4px;margin-top:6px;}
+.sp-dot{width:5px;height:5px;border-radius:50%;}
+
+/* Revenue chart placeholder */
+.chart-placeholder{
+  height:140px;
+  background:linear-gradient(135deg,rgba(201,168,76,0.03),rgba(77,159,255,0.03));
+  border-radius:8px;border:1px dashed rgba(255,255,255,0.06);
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,0.2);font-size:12px;
+}
+
+/* Vertical pills */
+.vertical-list{display:flex;flex-direction:column;gap:8px;}
+.v-row{display:flex;align-items:center;justify-content:space-between;}
+.v-name{font-size:12px;color:var(--off);}
+.v-bar-wrap{flex:1;margin:0 12px;height:4px;background:rgba(255,255,255,0.06);border-radius:2px;}
+.v-bar{height:100%;background:var(--gold);border-radius:2px;}
+.v-pct{font-size:11px;color:var(--gray);width:30px;text-align:right;}
+
+/* Alert items */
+.alert-list{display:flex;flex-direction:column;gap:8px;}
+.alert-item{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:10px 12px;background:var(--navy3);border-radius:8px;
+  border-left:3px solid;
+}
+.alert-item.warn{border-color:var(--orange);}
+.alert-item.info{border-color:var(--blue);}
+.alert-item.success{border-color:var(--green);}
+.alert-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+.alert-text{font-size:11px;color:rgba(255,255,255,0.6);line-height:1.5;}
+.alert-text strong{color:var(--off);display:block;}
+
+.role-select{
+  background:var(--navy3);border:1px solid var(--gold-border);color:var(--off);
+  padding:5px 8px;border-radius:6px;font-size:11px;
+}
+.pricing-input{
+  width:90px;background:var(--navy3);border:1px solid var(--gold-border);color:var(--white);
+  padding:6px 8px;border-radius:6px;font-size:12px;
+}
+</style>
+</head>
+<body style="visibility:hidden;">
+
+<!-- ══ SIDEBAR ══ -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-row">
+      <img src="logo.jpg" alt="GAIOS logo" class="logo-img-sidebar">
+      <div class="logo-text">GAIOS™</div>
+    </div>
+    <div class="logo-sub">Genesys Additive 3D Creation Pvt. Ltd.</div>
+    <span class="role-badge">👑 Admin</span>
+  </div>
+
+  <div class="nav-section">Main</div>
+  <div class="nav-item active" onclick="showSection('overview')">
+    <span class="nav-icon">📊</span> Overview
+  </div>
+  <div class="nav-item" onclick="window.open('/index.html','_blank')">
+    <span class="nav-icon">🎨</span> 3D Studio
+  </div>
+  <div class="nav-item" onclick="showSection('orders')">
+    <span class="nav-icon">📦</span> All Orders
+  </div>
+  <div class="nav-item" onclick="showSection('revenue')">
+    <span class="nav-icon">💰</span> Revenue
+  </div>
+
+  <div class="nav-section">Operations</div>
+  <div class="nav-item" onclick="showSection('scanpoints')">
+    <span class="nav-icon">📡</span> Scan Points
+  </div>
+  <div class="nav-item" onclick="showSection('production')">
+    <span class="nav-icon">🖨️</span> Production
+  </div>
+  <div class="nav-item" onclick="showSection('users')">
+    <span class="nav-icon">👥</span> Users
+  </div>
+
+  <div class="nav-section">Settings</div>
+  <div class="nav-item" onclick="showSection('pricing')">
+    <span class="nav-icon">🏷️</span> Pricing
+  </div>
+  <div class="nav-item" onclick="showSection('learning')">
+    <span class="nav-icon">🧠</span> Learning Data
+  </div>
+  <div class="nav-item" onclick="showSection('settings')">
+    <span class="nav-icon">⚙️</span> Settings
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-avatar">👑</div>
+      <div>
+        <div class="user-name" id="adminName">Gopal Sharma</div>
+        <div class="user-role">Administrator</div>
+      </div>
+    </div>
+    <button class="logout-btn" onclick="gaiosLogout()">🚪 Logout</button>
+  </div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+
+  <!-- ── OVERVIEW ── -->
+  <div class="section active" id="sec-overview">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Dashboard Overview</div>
+        <div class="page-sub">Genesys Additive 3D Creation Pvt. Ltd. · Pali, Rajasthan &nbsp;·&nbsp; <span class="live-dot">LIVE</span></div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline">📥 Export Report</button>
+        <button class="btn btn-gold">+ New Order</button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card gold">
+        <div class="stat-icon">💰</div>
+        <div class="stat-label">Total Revenue</div>
+        <div class="stat-value" id="statRevenue">₹0</div>
+        <div class="stat-sub" id="statRevenueSub">Paid orders</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-icon">📦</div>
+        <div class="stat-label">Total Orders</div>
+        <div class="stat-value" id="statOrders">0</div>
+        <div class="stat-sub" id="statOrdersSub">Loading…</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-icon">📡</div>
+        <div class="stat-label">Scan Points</div>
+        <div class="stat-value" id="statScanpoints">0</div>
+        <div class="stat-sub">Active partner locations</div>
+      </div>
+      <div class="stat-card orange">
+        <div class="stat-icon">👥</div>
+        <div class="stat-label">Registered Users</div>
+        <div class="stat-value" id="userCount">0</div>
+        <div class="stat-sub">Growing...</div>
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <!-- Recent Orders -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">📦 Recent Orders</span>
+          <span class="badge badge-gold live-dot">LIVE</span>
+        </div>
+        <div class="card-body">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Vertical</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="recentOrdersBody">
+              <tr><td colspan="5" class="empty-state">Loading orders…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-header">
+          <span class="card-title">⚡ Quick Actions</span>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+          <a href="/index.html" target="_blank" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--navy3);border-radius:8px;text-decoration:none;border:1px solid rgba(201,168,76,0.15);">
+            <span style="font-size:20px;">🎨</span>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:var(--gold);">3D Studio</div>
+              <div style="font-size:10px;color:rgba(255,255,255,0.3);">Photo → 3D Model generate करें</div>
+            </div>
+            <span style="margin-left:auto;color:rgba(201,168,76,0.4);font-size:14px;">→</span>
+          </a>
+          <a href="/auth.html" target="_blank" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--navy3);border-radius:8px;text-decoration:none;border:1px solid rgba(255,255,255,0.06);">
+            <span style="font-size:20px;">🔐</span>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:var(--off);">Login Page</div>
+              <div style="font-size:10px;color:rgba(255,255,255,0.3);">Customer login page देखें</div>
+            </div>
+            <span style="margin-left:auto;color:rgba(255,255,255,0.2);font-size:14px;">→</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Alerts -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">🔔 Alerts</span>
+        </div>
+        <div class="card-body">
+          <div class="alert-list">
+            <div class="alert-item warn">
+              <span class="alert-icon">⚠️</span>
+              <div class="alert-text">
+                <strong>Printer Pending</strong>
+                Mimaki 3DUJ-553 commissioning awaited
+              </div>
+            </div>
+            <div class="alert-item info">
+              <span class="alert-icon">ℹ️</span>
+              <div class="alert-text">
+                <strong>iSTART QRate</strong>
+                Re-evaluation target: Gold (70%+)
+              </div>
+            </div>
+            <div class="alert-item info">
+              <span class="alert-icon">📋</span>
+              <div class="alert-text">
+                <strong>Incubation Letter</strong>
+                Perveen ji से letter pending
+              </div>
+            </div>
+            <div class="alert-item success">
+              <span class="alert-icon">✅</span>
+              <div class="alert-text">
+                <strong>RIPS 2024 MoU Signed</strong>
+                Govt. of Rajasthan · Rs.6 Cr
+              </div>
+            </div>
+            <div class="alert-item success">
+              <span class="alert-icon">✅</span>
+              <div class="alert-text">
+                <strong>GAIOS™ Login Live</strong>
+                Firebase Auth successfully deployed
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scan Points + Verticals -->
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">📡 Scan Points — Pan India</span>
+          <span class="badge badge-blue">10 Planned</span>
+        </div>
+        <div class="card-body">
+          <div class="sp-grid">
+            <div class="sp-card">
+              <div class="sp-city">🏙️ Delhi</div>
+              <div class="sp-orders">0 orders · Planned</div>
+              <div class="sp-bar"><div class="sp-fill" style="width:5%"></div></div>
+              <div class="sp-status"><div class="sp-dot" style="background:var(--orange)"></div><span style="font-size:10px;color:var(--orange);">Pending</span></div>
+            </div>
+            <div class="sp-card">
+              <div class="sp-city">🏙️ Mumbai</div>
+              <div class="sp-orders">0 orders · Planned</div>
+              <div class="sp-bar"><div class="sp-fill" style="width:5%"></div></div>
+              <div class="sp-status"><div class="sp-dot" style="background:var(--orange)"></div><span style="font-size:10px;color:var(--orange);">Pending</span></div>
+            </div>
+            <div class="sp-card">
+              <div class="sp-city">🏙️ Bengaluru</div>
+              <div class="sp-orders">0 orders · Planned</div>
+              <div class="sp-bar"><div class="sp-fill" style="width:5%"></div></div>
+              <div class="sp-status"><div class="sp-dot" style="background:var(--orange)"></div><span style="font-size:10px;color:var(--orange);">Pending</span></div>
+            </div>
+            <div class="sp-card">
+              <div class="sp-city">🏙️ Jaipur</div>
+              <div class="sp-orders">0 orders · Planned</div>
+              <div class="sp-bar"><div class="sp-fill" style="width:5%"></div></div>
+              <div class="sp-status"><div class="sp-dot" style="background:var(--orange)"></div><span style="font-size:10px;color:var(--orange);">Pending</span></div>
+            </div>
+            <div class="sp-card">
+              <div class="sp-city">🏙️ Hyderabad</div>
+              <div class="sp-orders">0 orders · Planned</div>
+              <div class="sp-bar"><div class="sp-fill" style="width:5%"></div></div>
+              <div class="sp-status"><div class="sp-dot" style="background:var(--orange)"></div><span style="font-size:10px;color:var(--orange);">Pending</span></div>
+            </div>
+            <div class="sp-card">
+              <div class="sp-city">🏙️ Pune</div>
+              <div class="sp-orders">0 orders · Planned</div>
+              <div class="sp-bar"><div class="sp-fill" style="width:5%"></div></div>
+              <div class="sp-status"><div class="sp-dot" style="background:var(--orange)"></div><span style="font-size:10px;color:var(--orange);">Pending</span></div>
+            </div>
+            <div class="sp-card">
+              <div class="sp-city">🏙️ Ahmedabad</div>
+              <div class="sp-orders">0 orders · Planned</div>
+              <div class="sp-bar"><div class="sp-fill" style="width:5%"></div></div>
+              <div class="sp-status"><div class="sp-dot" style="background:var(--orange)"></div><span style="font-size:10px;color:var(--orange);">Pending</span></div>
+            </div>
+            <div class="sp-card">
+              <div class="sp-city">🏙️ Kolkata</div>
+              <div class="sp-orders">0 orders · Planned</div>
+              <div class="sp-bar"><div class="sp-fill" style="width:5%"></div></div>
+              <div class="sp-status"><div class="sp-dot" style="background:var(--orange)"></div><span style="font-size:10px;color:var(--orange);">Pending</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">🎯 Verticals Pipeline</span>
+        </div>
+        <div class="card-body">
+          <div class="vertical-list">
+            <div class="v-row">
+              <span class="v-name">🪆 Figurines/BFOREVER™</span>
+              <div class="v-bar-wrap"><div class="v-bar" style="width:85%"></div></div>
+              <span class="v-pct">P1</span>
+            </div>
+            <div class="v-row">
+              <span class="v-name">🏛️ Heritage</span>
+              <div class="v-bar-wrap"><div class="v-bar" style="width:75%"></div></div>
+              <span class="v-pct">P1</span>
+            </div>
+            <div class="v-row">
+              <span class="v-name">🏗️ Real Estate</span>
+              <div class="v-bar-wrap"><div class="v-bar" style="width:70%"></div></div>
+              <span class="v-pct">P1</span>
+            </div>
+            <div class="v-row">
+              <span class="v-name">🌍 Tourism</span>
+              <div class="v-bar-wrap"><div class="v-bar" style="width:65%"></div></div>
+              <span class="v-pct">P1</span>
+            </div>
+            <div class="v-row">
+              <span class="v-name">🎓 STEM</span>
+              <div class="v-bar-wrap"><div class="v-bar" style="width:60%"></div></div>
+              <span class="v-pct">P1</span>
+            </div>
+            <div class="v-row">
+              <span class="v-name">🏥 Medical</span>
+              <div class="v-bar-wrap"><div class="v-bar" style="width:40%;background:var(--blue)"></div></div>
+              <span class="v-pct">P2</span>
+            </div>
+            <div class="v-row">
+              <span class="v-name">🎖️ Defence</span>
+              <div class="v-bar-wrap"><div class="v-bar" style="width:30%;background:var(--blue)"></div></div>
+              <span class="v-pct">P2</span>
+            </div>
+            <div class="v-row">
+              <span class="v-name">✈️ Drone/LiDAR</span>
+              <div class="v-bar-wrap"><div class="v-bar" style="width:25%;background:var(--blue)"></div></div>
+              <span class="v-pct">P2</span>
+            </div>
+          </div>
+          <div style="margin-top:12px;font-size:10px;color:rgba(255,255,255,0.25);">
+            P1 = Phase 1 · P2 = Phase 2
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ORDERS ── -->
+  <div class="section" id="sec-orders">
+    <div class="page-header">
+      <div><div class="page-title">📦 All Orders</div><div class="page-sub">Pan-India order management</div></div>
+      <button class="btn btn-gold">+ Manual Order</button>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Order List</span>
+        <div style="display:flex;gap:8px;">
+          <select class="role-select" id="orderVerticalFilter" onchange="renderAllOrders()">
+            <option value="">All Verticals</option>
+          </select>
+          <select class="role-select" id="orderStatusFilter" onchange="renderAllOrders()">
+            <option value="">All Status</option>
+          </select>
+        </div>
+      </div>
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Order ID</th><th>Customer</th><th>Scan Point</th>
+              <th>Vertical</th><th>Size</th><th>Amount</th>
+              <th>Status</th><th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="allOrdersBody">
+            <tr><td colspan="8" class="empty-state">Loading orders…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── REVENUE ── -->
+  <div class="section" id="sec-revenue">
+    <div class="page-header">
+      <div><div class="page-title">💰 Revenue</div><div class="page-sub">Financial overview</div></div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card gold"><div class="stat-label">Total Revenue</div><div class="stat-value" id="revTotal">₹0</div><div class="stat-sub">Paid orders only</div></div>
+      <div class="stat-card green"><div class="stat-label">Y1 Target</div><div class="stat-value">₹6 Cr</div><div class="stat-sub">RIPS 2024 MoU projection</div></div>
+      <div class="stat-card blue"><div class="stat-label">Avg Order Value</div><div class="stat-value" id="revAvg">₹0</div><div class="stat-sub">Across paid orders</div></div>
+      <div class="stat-card orange"><div class="stat-label">Pending Verification</div><div class="stat-value" id="revPending">₹0</div><div class="stat-sub">Awaiting payment confirmation</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Revenue by Status</span></div>
+      <div class="card-body" id="revenueByStatus">
+        <div class="empty-state">Loading…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SCAN POINTS ── -->
+  <div class="section" id="sec-scanpoints">
+    <div class="page-header">
+      <div><div class="page-title">📡 Scan Points</div><div class="page-sub">Pan-India partner locations</div></div>
+      <button class="btn btn-gold" onclick="addScanPoint()">+ Add Partner</button>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr><th>City</th><th>Partner</th><th>Contact</th><th>Orders</th><th>Commission</th><th>Status</th></tr>
+          </thead>
+          <tbody id="scanpointsBody">
+            <tr><td colspan="6" class="empty-state">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PRODUCTION ── -->
+  <div class="section" id="sec-production">
+    <div class="page-header">
+      <div><div class="page-title">🖨️ Production</div><div class="page-sub">Mimaki 3DUJ-553 · Pali Hub</div></div>
+      <a class="btn btn-outline" href="/dashboard-production.html" target="_blank">Open Production Dashboard →</a>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card gold"><div class="stat-label">Queued</div><div class="stat-value" id="prodQueued">0</div><div class="stat-sub">Waiting to print</div></div>
+      <div class="stat-card green"><div class="stat-label">Printing</div><div class="stat-value" id="prodPrinting">0</div><div class="stat-sub">In progress</div></div>
+      <div class="stat-card blue"><div class="stat-label">QC Review</div><div class="stat-value" id="prodQc">0</div><div class="stat-sub">Awaiting QC decision</div></div>
+      <div class="stat-card orange"><div class="stat-label">Shipped</div><div class="stat-value" id="prodShipped">0</div><div class="stat-sub">Out for delivery</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Production Queue</span></div>
+      <div class="card-body">
+        <table class="table">
+          <thead><tr><th>Order ID</th><th>Customer</th><th>Size</th><th>Status</th><th>Updated</th></tr></thead>
+          <tbody id="productionQueueBody"><tr><td colspan="5" class="empty-state">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── USERS ── -->
+  <div class="section" id="sec-users">
+    <div class="page-header">
+      <div><div class="page-title">👥 Users</div><div class="page-sub">All registered users — change role to grant dashboard access</div></div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr>
+          </thead>
+          <tbody id="usersBody">
+            <tr><td colspan="4" class="empty-state">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PRICING ── -->
+  <div class="section" id="sec-pricing">
+    <div class="page-header">
+      <div><div class="page-title">🏷️ Pricing</div><div class="page-sub">BFOREVER™ figurine pricing — editable, takes effect immediately on the customer dashboard</div></div>
+      <button class="btn btn-gold" id="savePricingBtn" onclick="savePricingClick()">💾 Save Prices</button>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <table class="table">
+          <thead><tr><th>Size Key</th><th>Label</th><th>Price (₹)</th></tr></thead>
+          <tbody id="pricingBody">
+            <tr><td colspan="3" class="empty-state">Loading…</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:12px;font-size:11px;color:rgba(255,255,255,0.25);" id="pricingSavedMsg"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LEARNING DATA ── -->
+  <div class="section" id="sec-learning">
+    <div class="page-header">
+      <div><div class="page-title">🧠 Learning Data</div><div class="page-sub">Feed for the future local ML/learning engine (DGX Spark) — stored in Firestore under <code>learning_data</code></div></div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card gold"><div class="stat-label">QC Feedback Events</div><div class="stat-value" id="lrnQc">0</div><div class="stat-sub">Approve/reject + quality score</div></div>
+      <div class="stat-card green"><div class="stat-label">Print Outcomes</div><div class="stat-value" id="lrnPrint">0</div><div class="stat-sub">Success/failure logs</div></div>
+      <div class="stat-card blue"><div class="stat-label">Customer Ratings</div><div class="stat-value" id="lrnRating">0</div><div class="stat-sub">Avg <span id="lrnRatingAvg">—</span> / 5</div></div>
+      <div class="stat-card orange"><div class="stat-label">Order Snapshots</div><div class="stat-value" id="lrnSnapshot">0</div><div class="stat-sub">Full input→output records</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Recent Events</span></div>
+      <div class="card-body">
+        <table class="table">
+          <thead><tr><th>Type</th><th>Order</th><th>Detail</th><th>When</th></tr></thead>
+          <tbody id="learningBody"><tr><td colspan="4" class="empty-state">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SETTINGS ── -->
+  <div class="section" id="sec-settings">
+    <div class="page-header">
+      <div><div class="page-title">⚙️ Settings</div><div class="page-sub">System configuration</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Company Info</span></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:12px;">
+          <div><div style="font-size:10px;color:var(--gray);margin-bottom:4px;">Company Name</div><div style="font-size:13px;">Genesys Additive 3D Creation Pvt. Ltd.</div></div>
+          <div><div style="font-size:10px;color:var(--gray);margin-bottom:4px;">CIN</div><div style="font-size:13px;">U32909RJ2026PTC115570</div></div>
+          <div><div style="font-size:10px;color:var(--gray);margin-bottom:4px;">DPIIT</div><div style="font-size:13px;">DIPP274037</div></div>
+          <div><div style="font-size:10px;color:var(--gray);margin-bottom:4px;">GSTIN</div><div style="font-size:13px;">08AANCG1745Q1ZW</div></div>
+          <div><div style="font-size:10px;color:var(--gray);margin-bottom:4px;">Patent</div><div style="font-size:13px;">IN202611090765</div></div>
+          <div><div style="font-size:10px;color:var(--gray);margin-bottom:4px;">RIPS MoU</div><div style="font-size:13px;">MoU/2026-27/37148</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Role Management</span></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:12px;">
+          <div><div style="font-size:10px;color:var(--gray);margin-bottom:4px;">Admin Email</div><div style="font-size:13px;">pali.marwari@gmail.com</div></div>
+          <div><div style="font-size:10px;color:var(--gray);margin-bottom:4px;">Production Email</div><div style="font-size:13px;">ms5990876@gmail.com</div></div>
+          <div style="margin-top:8px;padding:12px;background:var(--navy3);border-radius:8px;">
+            <div style="font-size:10px;color:var(--gray);margin-bottom:6px;">Grant Status</div>
+            <div style="font-size:12px;color:var(--green);">✅ iDEX OP202608113999 — Under Evaluation</div>
+            <div style="font-size:12px;color:var(--green);margin-top:4px;">✅ IHFC-252212 — Submitted</div>
+            <div style="font-size:12px;color:var(--orange);margin-top:4px;">⏳ iSTART QRate — Re-eval pending</div>
+            <div style="font-size:12px;color:var(--orange);margin-top:4px;">⏳ NIDHI PRAYAS — Incubation letter pending</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><span class="card-title">💳 Payment Settings</span></div>
+        <div class="card-body">
+          <p style="font-size:11px;color:var(--gray);margin-bottom:14px;line-height:1.5;">
+            Fill this in once you have real bank/UPI details — the customer dashboard's QR code reads live from here, no code changes needed. Razorpay itself still needs <code>RAZORPAY_KEY_ID</code> / <code>RAZORPAY_KEY_SECRET</code> set in Vercel before the Razorpay button will work.
+          </p>
+          <div class="form-group">
+            <label class="form-label">UPI ID (VPA)</label>
+            <input class="form-input" id="cfgUpiVpa" placeholder="yourbusiness@okicici">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Payee Name (shown to customer)</label>
+            <input class="form-input" id="cfgUpiPayee" placeholder="Genesys Additive 3D Creation">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Razorpay Key ID (public key only — never the secret)</label>
+            <input class="form-input" id="cfgRzpKeyId" placeholder="rzp_live_...">
+          </div>
+          <button class="btn btn-gold" onclick="savePaymentSettingsClick()">💾 Save Payment Settings</button>
+          <div style="margin-top:8px;font-size:11px;color:var(--gray);" id="paymentSavedMsg"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">🔎 Payments Awaiting Verification</span>
+          <span class="badge badge-orange" id="verifyCount">0</span>
+        </div>
+        <div class="card-body">
+          <table class="table">
+            <thead><tr><th>Order</th><th>Amount</th><th>UTR</th><th></th></tr></thead>
+            <tbody id="verifyPaymentsBody">
+              <tr><td colspan="4" class="empty-state">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+import { db } from "./js/firebase-config.js";
+import { requireRole } from "./js/auth-guard.js";
+import { getPricing, savePricing, getPaymentConfig, savePaymentConfig, statusMeta } from "./js/order-utils.js";
+import {
+  collection, onSnapshot, doc, updateDoc, addDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+let allOrders = [];
+let allUsers = [];
+let allScanpoints = [];
+let currentPricing = {};
+let allLearningEvents = [];
+
+window.showSection = function(name){
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+};
+
+function inr(n){ return '₹' + (Number(n)||0).toLocaleString('en-IN'); }
+function badgeFor(status){
+  const m = statusMeta(status);
+  return `<span class="badge" style="background:${m.color}22;color:${m.color};border:1px solid ${m.color}44;">${m.icon} ${m.label}</span>`;
+}
+
+// ── ORDERS ──
+function renderRecentOrders(){
+  const body = document.getElementById('recentOrdersBody');
+  const recent = [...allOrders].sort((a,b) => (b.createdAt||'').localeCompare(a.createdAt||'')).slice(0, 8);
+  if(!recent.length){ body.innerHTML = '<tr><td colspan="5" class="empty-state">No orders yet</td></tr>'; return; }
+  body.innerHTML = recent.map(o => `
+    <tr>
+      <td>${o.id}</td>
+      <td>${o.customerName || '—'}</td>
+      <td>${o.vertical || 'Figurine'}</td>
+      <td>${inr(o.price)}</td>
+      <td>${badgeFor(o.status)}</td>
+    </tr>`).join('');
+}
+
+window.renderAllOrders = function(){
+  const body = document.getElementById('allOrdersBody');
+  const vFilter = document.getElementById('orderVerticalFilter').value;
+  const sFilter = document.getElementById('orderStatusFilter').value;
+  let list = [...allOrders];
+  if(vFilter) list = list.filter(o => o.vertical === vFilter);
+  if(sFilter) list = list.filter(o => o.status === sFilter);
+  list.sort((a,b) => (b.createdAt||'').localeCompare(a.createdAt||''));
+  if(!list.length){ body.innerHTML = '<tr><td colspan="8" class="empty-state">No orders match</td></tr>'; return; }
+  body.innerHTML = list.map(o => `
+    <tr>
+      <td>${o.id}</td>
+      <td>${o.customerName || '—'}</td>
+      <td>${o.scanPointName || (o.createdByScanPoint ? 'Scan Point' : 'Direct')}</td>
+      <td>${o.vertical || 'Figurine'}</td>
+      <td>${o.size || '—'}</td>
+      <td>${inr(o.price)}</td>
+      <td>${badgeFor(o.status)}</td>
+      <td>${o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-IN') : '—'}</td>
+    </tr>`).join('');
+}
+
+function populateOrderFilters(){
+  const verticals = [...new Set(allOrders.map(o => o.vertical).filter(Boolean))];
+  const statuses = [...new Set(allOrders.map(o => o.status).filter(Boolean))];
+  const vSel = document.getElementById('orderVerticalFilter');
+  const sSel = document.getElementById('orderStatusFilter');
+  const vCur = vSel.value, sCur = sSel.value;
+  vSel.innerHTML = '<option value="">All Verticals</option>' + verticals.map(v => `<option ${v===vCur?'selected':''}>${v}</option>`).join('');
+  sSel.innerHTML = '<option value="">All Status</option>' + statuses.map(s => `<option value="${s}" ${s===sCur?'selected':''}>${statusMeta(s).label}</option>`).join('');
+}
+
+function renderRevenue(){
+  const paid = allOrders.filter(o => o.status !== 'created' && o.payment && o.payment.status === 'paid');
+  const total = paid.reduce((sum,o) => sum + (Number(o.price)||0), 0);
+  const pendingVerify = allOrders.filter(o => o.payment && o.payment.status === 'submitted');
+  const pendingTotal = pendingVerify.reduce((sum,o) => sum + (Number(o.price)||0), 0);
+  document.getElementById('statRevenue').textContent = inr(total);
+  document.getElementById('statRevenueSub').textContent = paid.length + ' paid orders';
+  document.getElementById('revTotal').textContent = inr(total);
+  document.getElementById('revAvg').textContent = paid.length ? inr(Math.round(total/paid.length)) : '₹0';
+  document.getElementById('revPending').textContent = inr(pendingTotal);
+
+  const byStatus = {};
+  allOrders.forEach(o => { byStatus[o.status] = (byStatus[o.status]||0) + 1; });
+  const rows = Object.entries(byStatus).map(([status,count]) => {
+    const m = statusMeta(status);
+    return `<div class="v-row"><span class="v-name">${m.icon} ${m.label}</span><div class="v-bar-wrap"><div class="v-bar" style="width:${Math.min(100, count*10)}%;background:${m.color}"></div></div><span class="v-pct">${count}</span></div>`;
+  }).join('');
+  document.getElementById('revenueByStatus').innerHTML = rows ? `<div class="vertical-list">${rows}</div>` : '<div class="empty-state">No orders yet</div>';
+}
+
+function renderProduction(){
+  const counts = { queued:0, printing:0, qc_review:0, shipped:0 };
+  allOrders.forEach(o => {
+    if(o.status === 'queued') counts.queued++;
+    if(o.status === 'printing' || o.status === 'post_processing') counts.printing++;
+    if(o.status === 'qc_review') counts.qc_review++;
+    if(o.status === 'shipped' || o.status === 'delivered') counts.shipped++;
+  });
+  document.getElementById('prodQueued').textContent = counts.queued;
+  document.getElementById('prodPrinting').textContent = counts.printing;
+  document.getElementById('prodQc').textContent = counts.qc_review;
+  document.getElementById('prodShipped').textContent = counts.shipped;
+
+  const inQueue = allOrders.filter(o => ['queued','printing','post_processing'].includes(o.status))
+    .sort((a,b) => (a.createdAt||'').localeCompare(b.createdAt||''));
+  const body = document.getElementById('productionQueueBody');
+  body.innerHTML = inQueue.length ? inQueue.map(o => `
+    <tr><td>${o.id}</td><td>${o.customerName||'—'}</td><td>${o.size||'—'}</td><td>${badgeFor(o.status)}</td>
+    <td>${o.updatedAt ? new Date(o.updatedAt).toLocaleString('en-IN') : '—'}</td></tr>`).join('')
+    : '<tr><td colspan="5" class="empty-state">Nothing in the print queue right now</td></tr>';
+}
+
+function renderVerifyPayments(){
+  const pending = allOrders.filter(o => o.payment && o.payment.status === 'submitted');
+  document.getElementById('verifyCount').textContent = pending.length;
+  const body = document.getElementById('verifyPaymentsBody');
+  body.innerHTML = pending.length ? pending.map(o => `
+    <tr>
+      <td>${o.id}</td>
+      <td>${inr(o.price)}</td>
+      <td>${o.payment.utr || '—'}</td>
+      <td><button class="btn btn-green" style="padding:4px 10px;font-size:11px;" onclick="markOrderPaid('${o.id}')">✅ Confirm</button></td>
+    </tr>`).join('') : '<tr><td colspan="4" class="empty-state">Nothing pending</td></tr>';
+}
+
+window.markOrderPaid = async function(orderId){
+  await updateDoc(doc(db, 'orders', orderId), {
+    status: 'paid',
+    'payment.status': 'paid'
+  });
+};
+
+// ── SCAN POINTS ──
+function renderScanpoints(){
+  const body = document.getElementById('scanpointsBody');
+  const orderCountByScanpoint = {};
+  allOrders.forEach(o => { if(o.scanPointId) orderCountByScanpoint[o.scanPointId] = (orderCountByScanpoint[o.scanPointId]||0)+1; });
+  document.getElementById('statScanpoints').textContent = allScanpoints.length;
+  if(!allScanpoints.length){ body.innerHTML = '<tr><td colspan="6" class="empty-state">No scan points added yet — click "+ Add Partner"</td></tr>'; return; }
+  body.innerHTML = allScanpoints.map(sp => `
+    <tr>
+      <td>${sp.city||'—'}</td><td>${sp.partnerName||'—'}</td><td>${sp.contact||'—'}</td>
+      <td>${orderCountByScanpoint[sp.id]||0}</td><td>${inr(sp.commissionEarned||0)}</td>
+      <td><span class="badge ${sp.active ? 'badge-green' : 'badge-orange'}">${sp.active ? 'Active' : 'Pending'}</span></td>
+    </tr>`).join('');
+}
+
+window.addScanPoint = async function(){
+  const city = prompt('City name?');
+  if(!city) return;
+  const partnerName = prompt('Partner / shop name?') || 'TBD';
+  const contact = prompt('Contact phone/email?') || '—';
+  await addDoc(collection(db, 'scanpoints'), { city, partnerName, contact, active: true, commissionEarned: 0, createdAt: new Date().toISOString() });
+};
+
+// ── USERS ──
+const ROLE_OPTIONS = ['customer','scanpoint','qc','production','admin'];
+function renderUsers(){
+  const body = document.getElementById('usersBody');
+  document.getElementById('userCount').textContent = allUsers.length;
+  if(!allUsers.length){ body.innerHTML = '<tr><td colspan="4" class="empty-state">No users yet</td></tr>'; return; }
+  body.innerHTML = allUsers.map(u => `
+    <tr>
+      <td>${u.displayName || '—'}</td>
+      <td>${u.email || '—'}</td>
+      <td>
+        <select class="role-select" onchange="changeUserRole('${u.id}', this.value)">
+          ${ROLE_OPTIONS.map(r => `<option value="${r}" ${r===u.role?'selected':''}>${r}</option>`).join('')}
+        </select>
+      </td>
+      <td>${u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-IN') : '—'}</td>
+    </tr>`).join('');
+}
+
+window.changeUserRole = async function(uid, role){
+  await updateDoc(doc(db, 'users', uid), { role });
+};
+
+// ── PRICING ──
+function renderPricing(){
+  const body = document.getElementById('pricingBody');
+  const keys = Object.keys(currentPricing);
+  body.innerHTML = keys.map(k => `
+    <tr>
+      <td>${k}</td>
+      <td><input class="form-input" data-key="${k}" data-field="label" value="${currentPricing[k].label}"></td>
+      <td><input class="pricing-input" type="number" data-key="${k}" data-field="price" value="${currentPricing[k].price}"></td>
+    </tr>`).join('');
+}
+
+window.savePricingClick = async function(){
+  const rows = document.querySelectorAll('#pricingBody tr');
+  const updated = {};
+  rows.forEach(tr => {
+    const labelInput = tr.querySelector('[data-field="label"]');
+    const priceInput = tr.querySelector('[data-field="price"]');
+    if(!labelInput) return;
+    const key = labelInput.dataset.key;
+    updated[key] = { label: labelInput.value, price: Number(priceInput.value) || 0 };
+  });
+  await savePricing(updated);
+  currentPricing = updated;
+  document.getElementById('pricingSavedMsg').textContent = '✅ Saved — live on the customer dashboard now.';
+  setTimeout(() => { document.getElementById('pricingSavedMsg').textContent = ''; }, 4000);
+};
+
+// ── PAYMENT SETTINGS ──
+async function loadPaymentSettings(){
+  const cfg = await getPaymentConfig();
+  if(cfg){
+    document.getElementById('cfgUpiVpa').value = cfg.upiVpa || '';
+    document.getElementById('cfgUpiPayee').value = cfg.upiPayeeName || '';
+    document.getElementById('cfgRzpKeyId').value = cfg.razorpayKeyId || '';
+  }
+}
+window.savePaymentSettingsClick = async function(){
+  await savePaymentConfig({
+    upiVpa: document.getElementById('cfgUpiVpa').value.trim(),
+    upiPayeeName: document.getElementById('cfgUpiPayee').value.trim(),
+    razorpayKeyId: document.getElementById('cfgRzpKeyId').value.trim()
+  });
+  document.getElementById('paymentSavedMsg').textContent = '✅ Saved — customer dashboard reads this live.';
+  setTimeout(() => { document.getElementById('paymentSavedMsg').textContent = ''; }, 4000);
+};
+
+// ── LEARNING DATA ──
+function renderLearning(){
+  const qc = allLearningEvents.filter(e => e.type === 'qc_feedback');
+  const print = allLearningEvents.filter(e => e.type === 'print_outcome');
+  const ratings = allLearningEvents.filter(e => e.type === 'customer_rating');
+  const snapshots = allLearningEvents.filter(e => e.type === 'order_snapshot');
+  document.getElementById('lrnQc').textContent = qc.length;
+  document.getElementById('lrnPrint').textContent = print.length;
+  document.getElementById('lrnRating').textContent = ratings.length;
+  document.getElementById('lrnSnapshot').textContent = snapshots.length;
+  const avg = ratings.length ? (ratings.reduce((s,r) => s + (Number(r.stars)||0), 0) / ratings.length).toFixed(1) : '—';
+  document.getElementById('lrnRatingAvg').textContent = avg;
+
+  const body = document.getElementById('learningBody');
+  const recent = [...allLearningEvents].sort((a,b) => (b.loggedAt||'').localeCompare(a.loggedAt||'')).slice(0, 30);
+  if(!recent.length){ body.innerHTML = '<tr><td colspan="4" class="empty-state">No events logged yet</td></tr>'; return; }
+  const detailFor = (e) => {
+    if(e.type === 'qc_feedback') return `${e.decision} · score ${e.qualityScore ?? '—'}${e.notes ? ' · ' + e.notes : ''}`;
+    if(e.type === 'print_outcome') return `${e.outcome}${e.stage ? ' @ ' + e.stage : ''}${e.notes ? ' · ' + e.notes : ''}`;
+    if(e.type === 'customer_rating') return `${'⭐'.repeat(e.stars||0)}${e.comment ? ' · ' + e.comment : ''}`;
+    if(e.type === 'order_snapshot') return `${(e.photos||[]).length} photos, ${(e.preview3d||[]).length} preview file(s)`;
+    return '—';
+  };
+  body.innerHTML = recent.map(e => `
+    <tr>
+      <td><span class="badge badge-gold">${e.type}</span></td>
+      <td>${e.orderId || '—'}</td>
+      <td style="max-width:360px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${detailFor(e)}</td>
+      <td>${e.loggedAt ? new Date(e.loggedAt).toLocaleString('en-IN') : '—'}</td>
+    </tr>`).join('');
+}
+
+// ── BOOT ──
+requireRole(['admin'], (userData) => {
+  document.getElementById('adminName').textContent = userData.displayName;
+
+  onSnapshot(collection(db, 'orders'), snap => {
+    allOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    document.getElementById('statOrders').textContent = allOrders.length;
+    document.getElementById('statOrdersSub').textContent = allOrders.length ? 'Updated live' : 'No orders yet';
+    populateOrderFilters();
+    renderRecentOrders();
+    renderAllOrders();
+    renderRevenue();
+    renderProduction();
+    renderVerifyPayments();
+    renderScanpoints();
+  });
+
+  onSnapshot(collection(db, 'users'), snap => {
+    allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderUsers();
+  });
+
+  onSnapshot(collection(db, 'scanpoints'), snap => {
+    allScanpoints = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderScanpoints();
+  });
+
+  onSnapshot(collection(db, 'learning_data'), snap => {
+    allLearningEvents = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderLearning();
+  });
+
+  getPricing().then(p => { currentPricing = p; renderPricing(); });
+  loadPaymentSettings();
+});
+</script>
+</body>
+</html>
