@@ -1,768 +1,609 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="hi" data-lang="hi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>GAIOS™ v7.0 — Genesys AI Orchestration System</title>
 <link rel="icon" type="image/jpeg" href="logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 <style>
-  :root {
-    --navy: #0A1628;
-    --gold: #C9A84C;
-    --gold-light: #E8C97A;
-    --gold-dim: rgba(201,168,76,0.15);
-    --white: #FFFFFF;
-    --gray: #8899AA;
-    --green: #00C853;
-    --red: #FF4444;
-    --card-bg: rgba(255,255,255,0.04);
-    --border: rgba(201,168,76,0.25);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--navy);
-    color: var(--white);
-    font-family: 'Segoe UI', Arial, sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-  .header {
-    background: linear-gradient(135deg, #060E1C 0%, #0A1628 60%, #0D1F3A 100%);
-    border-bottom: 2px solid var(--gold);
-    padding: 14px 16px 10px;
-    text-align: center;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-  }
-  .logo-row {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 10px;
-    margin-bottom: 4px;
-  }
-  .logo-img { height: 44px; width: auto; object-fit: contain; }
-  .brand-name {
-    font-size: 26px;
-    font-weight: 900;
-    color: var(--gold);
-    letter-spacing: 3px;
-    text-shadow: 0 0 20px rgba(201,168,76,0.5);
-  }
-  .brand-sub {
-    font-size: 10px;
-    color: rgba(201,168,76,0.7);
-    letter-spacing: 2px;
-    margin-bottom: 6px;
-  }
-  .reg-bar {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 6px;
-    margin-bottom: 6px;
-  }
-  .reg-tag {
-    background: rgba(201,168,76,0.1);
-    border: 1px solid rgba(201,168,76,0.3);
-    color: var(--gold);
-    font-size: 8.5px;
-    padding: 2px 7px;
-    border-radius: 10px;
-    letter-spacing: 0.5px;
-  }
-  .status-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-size: 11px;
-  }
-  .status-dot {
-    width: 8px; height: 8px;
-    background: var(--green);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,200,83,0.4); }
-    50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(0,200,83,0); }
-  }
-  .status-text { color: var(--green); font-weight: 600; }
-  .nav-tabs {
-    display: flex;
-    background: rgba(0,0,0,0.3);
-    border-bottom: 1px solid var(--border);
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .nav-tabs::-webkit-scrollbar { display: none; }
-  .nav-tab {
-    flex: none;
-    padding: 10px 16px;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--gray);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    white-space: nowrap;
-    transition: all 0.2s;
-    letter-spacing: 0.5px;
-  }
-  .nav-tab.active {
-    color: var(--gold);
-    border-bottom-color: var(--gold);
-    background: rgba(201,168,76,0.08);
-  }
-  .section { display: none; padding: 14px; }
-  .section.active { display: block; }
-  .console-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px;
-    margin-bottom: 12px;
-  }
-  .console-title {
-    color: var(--gold);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .chat-area {
-    background: rgba(0,0,0,0.3);
-    border-radius: 8px;
-    min-height: 180px;
-    max-height: 280px;
-    overflow-y: auto;
-    padding: 10px;
-    margin-bottom: 10px;
-    font-size: 13px;
-    line-height: 1.5;
-  }
-  .msg-ai {
-    color: var(--gold-light);
-    margin-bottom: 8px;
-    padding: 8px 10px;
-    background: rgba(201,168,76,0.08);
-    border-radius: 8px;
-    border-left: 3px solid var(--gold);
-  }
-  .msg-user {
-    color: #cce;
-    margin-bottom: 8px;
-    padding: 8px 10px;
-    background: rgba(100,120,255,0.08);
-    border-radius: 8px;
-    border-left: 3px solid #6677ee;
-    text-align: right;
-  }
-  .input-row { display: flex; gap: 8px; align-items: center; }
-  .ai-input {
-    flex: 1;
-    background: rgba(255,255,255,0.07);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--white);
-    font-size: 13px;
-    padding: 10px 12px;
-    outline: none;
-  }
-  .ai-input:focus { border-color: var(--gold); }
-  .ai-input::placeholder { color: var(--gray); }
-  .btn {
-    background: var(--gold);
-    color: var(--navy);
-    border: none;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.5px;
-  }
-  .btn:hover { background: var(--gold-light); transform: translateY(-1px); }
-  .btn:active { transform: translateY(0); }
-  .btn-voice {
-    background: rgba(201,168,76,0.15);
-    color: var(--gold);
-    border: 1px solid var(--border);
-  }
-  .btn-voice.listening {
-    background: rgba(255,50,50,0.2);
-    color: #ff6666;
-    border-color: #ff6666;
-    animation: pulse-red 1s infinite;
-  }
-  @keyframes pulse-red {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(255,50,50,0.4); }
-    50% { box-shadow: 0 0 0 8px rgba(255,50,50,0); }
-  }
-  .quick-cmds { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-  .quick-cmd {
-    background: rgba(201,168,76,0.1);
-    border: 1px solid rgba(201,168,76,0.2);
-    color: var(--gold);
-    font-size: 10px;
-    padding: 4px 10px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .quick-cmd:hover { background: rgba(201,168,76,0.25); }
-  .vertical-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-  .vertical-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px;
-    transition: all 0.2s;
-    cursor: pointer;
-  }
-  .vertical-card:hover {
-    border-color: var(--gold);
-    background: var(--gold-dim);
-    transform: translateY(-2px);
-  }
-  .v-icon { font-size: 22px; margin-bottom: 6px; }
-  .v-title { font-size: 11px; font-weight: 700; color: var(--gold); margin-bottom: 3px; }
-  .v-desc { font-size: 9.5px; color: var(--gray); line-height: 1.4; }
-  .form-group { margin-bottom: 12px; }
-  .form-label {
-    display: block;
-    font-size: 11px;
-    color: var(--gold);
-    font-weight: 600;
-    margin-bottom: 5px;
-    letter-spacing: 0.5px;
-  }
-  .form-input, .form-select, .form-textarea {
-    width: 100%;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--white);
-    font-size: 13px;
-    padding: 10px 12px;
-    outline: none;
-    font-family: inherit;
-  }
-  .form-input:focus, .form-select:focus, .form-textarea:focus {
-    border-color: var(--gold);
-    background: rgba(255,255,255,0.09);
-  }
-  .form-textarea { min-height: 80px; resize: vertical; }
-  .form-select option { background: var(--navy); }
-  .success-msg {
-    display: none;
-    background: rgba(0,200,83,0.15);
-    border: 1px solid var(--green);
-    border-radius: 8px;
-    padding: 12px;
-    text-align: center;
-    color: var(--green);
-    font-weight: 600;
-    margin-top: 10px;
-  }
-  .info-section { margin-bottom: 16px; }
-  .info-head {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--gold);
-    letter-spacing: 1.5px;
-    margin-bottom: 8px;
-    padding-bottom: 4px;
-    border-bottom: 1px solid var(--border);
-  }
-  .info-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 6px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    font-size: 11.5px;
-  }
-  .info-key { color: var(--gray); flex: 0 0 42%; }
-  .info-val { color: var(--white); flex: 0 0 56%; text-align: right; font-weight: 500; }
-  .grant-item {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px;
-    margin-bottom: 8px;
-  }
-  .grant-name { font-size: 11.5px; font-weight: 700; color: var(--gold); margin-bottom: 2px; }
-  .grant-detail { font-size: 10px; color: var(--gray); }
-  .grant-status {
-    display: inline-block;
-    font-size: 9px;
-    padding: 2px 8px;
-    border-radius: 10px;
-    margin-top: 4px;
-    font-weight: 600;
-  }
-  .status-applied { background: rgba(0,200,83,0.15); color: var(--green); border: 1px solid var(--green); }
-  .status-pending { background: rgba(255,200,0,0.15); color: #ffcc00; border: 1px solid #ffcc00; }
-  .bforever-hero {
-    background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.05));
-    border: 1px solid var(--gold);
-    border-radius: 12px;
-    padding: 20px;
-    text-align: center;
-    margin-bottom: 16px;
-  }
-  .bforever-title {
-    font-size: 24px;
-    font-weight: 900;
-    color: var(--gold);
-    letter-spacing: 3px;
-    margin-bottom: 4px;
-  }
-  .bforever-tagline {
-    font-size: 12px;
-    color: rgba(201,168,76,0.7);
-    letter-spacing: 1px;
-    margin-bottom: 12px;
-  }
-  .steps-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 14px;
-  }
-  .step-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 6px;
-    text-align: center;
-  }
-  .step-icon { font-size: 20px; margin-bottom: 4px; }
-  .step-label { font-size: 9px; color: var(--gold); font-weight: 600; }
-  .whatsapp-btn {
-    position: fixed;
-    bottom: 70px;
-    right: 16px;
-    width: 48px;
-    height: 48px;
-    background: #25D366;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    box-shadow: 0 4px 15px rgba(37,211,102,0.4);
-    cursor: pointer;
-    z-index: 99;
-    text-decoration: none;
-    transition: transform 0.2s;
-  }
-  .whatsapp-btn:hover { transform: scale(1.1); }
-  .bottom-nav {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    background: #060E1C;
-    border-top: 1px solid var(--border);
-    display: flex;
-    z-index: 100;
-  }
-  .bottom-btn {
-    flex: 1;
-    padding: 10px 4px 8px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 8.5px;
-    color: var(--gray);
-    font-weight: 600;
-    letter-spacing: 0.3px;
-  }
-  .bottom-btn .icon { font-size: 18px; display: block; margin-bottom: 2px; }
-  .bottom-btn.active { color: var(--gold); }
-  .bottom-btn:hover { color: var(--gold-light); background: rgba(201,168,76,0.05); }
-  .page-bottom { height: 70px; }
-  .divider { height: 1px; background: var(--border); margin: 14px 0; }
-  .section-badge {
-    display: inline-block;
-    background: var(--gold-dim);
-    border: 1px solid var(--border);
-    color: var(--gold);
-    font-size: 10px;
-    font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 20px;
-    margin-bottom: 12px;
-    letter-spacing: 1px;
-  }
-  .gen3d-box {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    text-align: center;
-  }
-  .gen3d-box h2 { color: var(--gold); margin-bottom: 8px; font-size: 18px; }
-  .gen3d-box p { color: var(--gray); font-size: 12px; margin-bottom: 16px; }
-  .file-input-label {
-    display: block;
-    background: rgba(201,168,76,0.1);
-    border: 2px dashed var(--gold);
-    border-radius: 10px;
-    padding: 20px;
-    cursor: pointer;
-    margin-bottom: 14px;
-    color: var(--gold);
-    font-size: 13px;
-  }
-  #photo3d-input { display: none; }
+:root{
+  --navy:#070F1E;--navy2:#0C1830;
+  --gold:#C9A84C;--gold-light:#E8C97A;
+  --gold-dim:rgba(201,168,76,0.12);
+  --gold-border:rgba(201,168,76,0.28);
+  --white:#FFFFFF;--off-white:#E8EDF4;
+  --gray:#7A8FA6;--gray2:#4A5F78;
+  --green:#00D68F;--red:#FF4D6D;--blue:#4D9FFF;
+  --card:rgba(255,255,255,0.035);
+  --fd:'Space Grotesk',sans-serif;
+  --fh:'Syne',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--navy);color:var(--off-white);font-family:var(--fd);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+.header{background:linear-gradient(180deg,#040A14,#070F1E);border-bottom:1px solid var(--gold-border);padding:11px 14px 9px;text-align:center;position:sticky;top:0;z-index:200;box-shadow:0 2px 40px rgba(0,0,0,0.8);}
+.logo-row{display:flex;align-items:center;justify-content:flex-start;gap:10px;margin-bottom:3px;}
+.logo-img{height:44px;width:auto;object-fit:contain;}
+.brand-name{font-family:var(--fh);font-size:26px;font-weight:800;color:var(--gold);letter-spacing:4px;text-shadow:0 0 30px rgba(201,168,76,0.4);}
+.brand-v{font-size:9px;font-weight:700;background:var(--gold);color:var(--navy);padding:1px 5px;border-radius:4px;margin-left:3px;letter-spacing:1px;vertical-align:middle;}
+.brand-sub{font-size:9px;color:rgba(201,168,76,0.6);letter-spacing:2.5px;margin-bottom:6px;}
+.reg-bar{display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin-bottom:6px;}
+.reg-tag{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);color:rgba(201,168,76,0.85);font-size:7.5px;padding:2px 6px;border-radius:20px;}
+.status-row{display:flex;align-items:center;justify-content:center;gap:6px;font-size:10px;}
+.dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2.5s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,214,143,0.5);}50%{box-shadow:0 0 0 6px rgba(0,214,143,0);}}
+.status-text{color:var(--green);font-weight:600;}
+.lang-toggle{position:absolute;top:10px;right:12px;display:flex;gap:4px;}
+.lang-btn{font-size:9px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer;border:1px solid var(--gold-border);background:transparent;color:var(--gray);font-family:var(--fd);transition:all 0.2s;}
+.lang-btn.active{background:var(--gold);color:var(--navy);border-color:var(--gold);}
+.nav-tabs{display:flex;background:rgba(0,0,0,0.4);border-bottom:1px solid var(--gold-border);overflow-x:auto;scrollbar-width:none;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.nav-tab{flex:none;padding:10px 14px;font-size:10.5px;font-weight:600;color:var(--gray);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.2s;letter-spacing:0.3px;}
+.nav-tab.active{color:var(--gold);border-bottom-color:var(--gold);background:rgba(201,168,76,0.07);}
+.section{display:none;padding:13px 13px 80px;}
+.section.active{display:block;}
+.card{background:var(--card);border:1px solid var(--gold-border);border-radius:14px;padding:15px;margin-bottom:13px;}
+.card-title{font-family:var(--fh);color:var(--gold);font-size:11px;font-weight:700;letter-spacing:1.5px;margin-bottom:11px;display:flex;align-items:center;gap:6px;}
+.chat-area{background:rgba(0,0,0,0.35);border-radius:10px;border:1px solid rgba(255,255,255,0.05);min-height:180px;max-height:280px;overflow-y:auto;padding:11px;margin-bottom:11px;font-size:13px;line-height:1.6;}
+.chat-area::-webkit-scrollbar{width:3px;}
+.chat-area::-webkit-scrollbar-thumb{background:var(--gold-border);border-radius:3px;}
+.msg-ai{color:var(--off-white);margin-bottom:9px;padding:9px 12px;background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.02));border-radius:0 11px 11px 11px;border-left:3px solid var(--gold);animation:fi 0.3s ease;}
+.msg-user{color:#c8d8ff;margin-bottom:9px;padding:9px 12px;background:rgba(77,159,255,0.08);border-radius:11px 0 11px 11px;border-right:3px solid var(--blue);text-align:right;animation:fi 0.3s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+.input-row{display:flex;gap:7px;align-items:center;}
+.ai-input{flex:1;background:rgba(255,255,255,0.06);border:1px solid var(--gold-border);border-radius:10px;color:var(--white);font-family:var(--fd);font-size:13px;padding:10px 13px;outline:none;transition:all 0.2s;}
+.ai-input:focus{border-color:var(--gold);background:rgba(255,255,255,0.09);}
+.ai-input::placeholder{color:var(--gray2);}
+.btn{background:linear-gradient(135deg,#C9A84C,#A8842C);color:var(--navy);border:none;border-radius:10px;padding:11px 15px;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:var(--fd);}
+.btn:hover{background:linear-gradient(135deg,#E8C97A,#C9A84C);transform:translateY(-1px);box-shadow:0 4px 15px rgba(201,168,76,0.3);}
+.btn:active{transform:none;}
+.btn:disabled{opacity:0.45;cursor:not-allowed;transform:none;}
+.btn-outline{background:transparent;border:1px solid var(--gold-border);color:var(--gold);border-radius:10px;padding:10px 15px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:var(--fd);}
+.btn-outline:hover{background:var(--gold-dim);border-color:var(--gold);}
+.btn-voice{background:rgba(201,168,76,0.1);color:var(--gold);border:1px solid var(--gold-border);border-radius:10px;padding:10px 13px;font-size:16px;cursor:pointer;transition:all 0.2s;}
+.btn-voice.listening{background:rgba(255,77,109,0.15);color:#FF4D6D;border-color:#FF4D6D;animation:pr 1s infinite;}
+@keyframes pr{0%,100%{box-shadow:0 0 0 0 rgba(255,77,109,0.4);}50%{box-shadow:0 0 0 8px rgba(255,77,109,0);}}
+.btn-green{background:linear-gradient(135deg,#00D68F,#00A86B);color:#fff;}
+.btn-green:hover{background:linear-gradient(135deg,#00F0A0,#00D68F);}
+.btn-share{background:linear-gradient(135deg,#25D366,#1DA851);color:#fff;}
+.btn-insta{background:linear-gradient(135deg,#E1306C,#833AB4);color:#fff;}
+.btn-fb{background:linear-gradient(135deg,#1877F2,#0D5DBF);color:#fff;}
+.quick-cmds{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px;}
+.quick-cmd{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);color:var(--gold);font-size:9.5px;padding:4px 10px;border-radius:20px;cursor:pointer;transition:all 0.2s;font-family:var(--fd);}
+.quick-cmd:hover{background:rgba(201,168,76,0.2);transform:translateY(-1px);}
+.v-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px;}
+.v-card{background:var(--card);border:1px solid var(--gold-border);border-radius:12px;padding:12px;cursor:pointer;transition:all 0.25s;}
+.v-card:hover{border-color:var(--gold);background:var(--gold-dim);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.3);}
+.v-icon{font-size:22px;margin-bottom:6px;}
+.v-title{font-size:11px;font-weight:700;color:var(--gold);margin-bottom:3px;}
+.v-desc{font-size:9px;color:var(--gray);line-height:1.5;}
+.info-row{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:11px;}
+.info-row:last-child{border:none;}
+.info-key{color:var(--gray);flex:0 0 42%;}
+.info-val{color:var(--off-white);flex:0 0 56%;text-align:right;font-weight:500;}
+.form-group{margin-bottom:12px;}
+.form-label{display:block;font-size:11px;color:var(--gold);font-weight:600;margin-bottom:5px;letter-spacing:0.4px;}
+.form-input,.form-select,.form-textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--gold-border);border-radius:10px;color:var(--white);font-family:var(--fd);font-size:13px;padding:10px 12px;outline:none;transition:all 0.2s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--gold);background:rgba(255,255,255,0.08);}
+.form-textarea{min-height:75px;resize:vertical;}
+.form-select option{background:var(--navy2);}
+.grant-item{background:var(--card);border:1px solid var(--gold-border);border-radius:10px;padding:11px;margin-bottom:8px;}
+.grant-name{font-size:11.5px;font-weight:700;color:var(--gold);margin-bottom:3px;}
+.grant-detail{font-size:9.5px;color:var(--gray);margin-bottom:5px;}
+.badge{display:inline-block;font-size:8.5px;padding:2px 8px;border-radius:20px;font-weight:600;}
+.bg{background:rgba(0,214,143,0.12);color:var(--green);border:1px solid rgba(0,214,143,0.3);}
+.by{background:rgba(255,200,0,0.12);color:#ffcc00;border:1px solid rgba(255,200,0,0.3);}
+.bb{background:rgba(77,159,255,0.12);color:var(--blue);border:1px solid rgba(77,159,255,0.3);}
+.sec-badge{display:inline-block;background:var(--gold-dim);border:1px solid var(--gold-border);color:var(--gold);font-size:9px;font-weight:700;padding:3px 11px;border-radius:20px;margin-bottom:12px;letter-spacing:1.5px;}
+.divider{height:1px;background:var(--gold-border);margin:14px 0;opacity:0.4;}
+.gen3d-hero{background:linear-gradient(135deg,rgba(201,168,76,0.1),rgba(201,168,76,0.02));border:1px solid var(--gold-border);border-radius:16px;padding:20px 16px;text-align:center;margin-bottom:14px;}
+.gen3d-title{font-family:var(--fh);font-size:19px;font-weight:800;color:var(--gold);margin-bottom:5px;}
+.gen3d-sub{color:var(--gray);font-size:11.5px;line-height:1.6;}
+.upload-area{border:2px dashed var(--gold-border);border-radius:12px;padding:18px 14px;cursor:pointer;background:rgba(201,168,76,0.03);transition:all 0.2s;text-align:center;margin-bottom:10px;}
+.upload-area:hover{border-color:var(--gold);background:var(--gold-dim);}
+.upload-area.has-files{border-color:var(--green);background:rgba(0,214,143,0.04);}
+.upload-icon{font-size:30px;margin-bottom:6px;}
+.upload-text{color:var(--gold);font-size:13px;font-weight:600;margin-bottom:3px;}
+.upload-hint{color:var(--gray);font-size:10px;}
+#photo3d-input{display:none;}
+.preview-section{display:none;margin-bottom:12px;}
+.preview-label{font-size:10px;color:var(--gold);font-weight:600;margin-bottom:8px;letter-spacing:0.5px;}
+.thumb-row{display:flex;gap:8px;flex-wrap:wrap;}
+.thumb-wrap{position:relative;}
+.thumb{width:72px;height:72px;border-radius:10px;object-fit:cover;border:2px solid var(--gold-border);cursor:pointer;transition:all 0.2s;display:block;}
+.thumb.selected{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,0.3);}
+.thumb-remove{position:absolute;top:-6px;right:-6px;width:18px;height:18px;background:var(--red);border-radius:50%;font-size:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-weight:700;border:1px solid var(--navy);}
+.quality-bar{margin-bottom:12px;display:none;}
+.quality-label{font-size:10px;color:var(--gray);margin-bottom:5px;}
+.quality-indicator{display:flex;gap:6px;align-items:center;}
+.quality-dot{width:10px;height:10px;border-radius:50%;}
+.quality-text{font-size:11px;font-weight:600;}
+.colour-box{background:rgba(255,255,255,0.03);border:1px solid var(--gold-border);border-radius:10px;padding:12px;margin-bottom:12px;display:none;}
+.colour-title{font-size:10px;color:var(--gold);font-weight:600;margin-bottom:10px;letter-spacing:0.5px;}
+.slider-group{margin-bottom:8px;}
+.slider-label{display:flex;justify-content:space-between;font-size:10px;color:var(--gray);margin-bottom:4px;}
+.slider{width:100%;height:4px;border-radius:2px;background:rgba(255,255,255,0.1);outline:none;-webkit-appearance:none;cursor:pointer;}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--gold);cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.3);}
+.progress-wrap{background:rgba(255,255,255,0.06);border-radius:20px;height:8px;overflow:hidden;border:1px solid var(--gold-border);}
+.progress-bar{height:100%;border-radius:20px;background:linear-gradient(90deg,#C9A84C,#E8C97A,#C9A84C);background-size:200% 100%;animation:shimmer 1.5s infinite;transition:width 0.5s ease;}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+.progress-section{display:none;margin-top:13px;}
+.steps-indicator{display:flex;justify-content:space-between;margin-top:10px;}
+.step-dot{flex:1;text-align:center;position:relative;}
+.step-dot:not(:last-child):after{content:'';position:absolute;top:8px;left:60%;width:80%;height:1px;background:var(--gold-border);}
+.step-circle{width:18px;height:18px;border-radius:50%;border:2px solid var(--gold-border);display:inline-flex;align-items:center;justify-content:center;font-size:8px;color:var(--gray);transition:all 0.4s;background:var(--navy);}
+.step-circle.active{border-color:var(--gold);color:var(--gold);box-shadow:0 0 8px rgba(201,168,76,0.4);}
+.step-circle.done{border-color:var(--green);background:var(--green);color:var(--navy);}
+.step-name{font-size:8px;color:var(--gray);margin-top:4px;display:block;}
+.status-box{border-radius:10px;padding:11px 13px;margin:11px 0;font-size:12px;font-weight:600;text-align:center;display:none;}
+.s-proc{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold);}
+.s-ok{background:rgba(0,214,143,0.1);border:1px solid rgba(0,214,143,0.3);color:var(--green);}
+.s-err{background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.3);color:var(--red);}
+model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at center,#0D1F3A,#040A14);border-radius:14px;border:1px solid var(--gold-border);margin-top:13px;}
+.viewer-section{display:none;}
+.size-section{margin-top:14px;}
+.size-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px;}
+.size-card{background:var(--card);border:1px solid var(--gold-border);border-radius:9px;padding:9px 5px;text-align:center;cursor:pointer;transition:all 0.2s;}
+.size-card:hover,.size-card.selected{border-color:var(--gold);background:var(--gold-dim);}
+.size-inch{font-size:15px;font-weight:800;color:var(--gold);font-family:var(--fh);}
+.size-price{font-size:9px;color:var(--green);font-weight:600;margin-top:2px;}
+.size-orig{font-size:8px;color:var(--gray);text-decoration:line-through;}
+.approval-box{background:var(--card);border:1px solid var(--gold-border);border-radius:14px;padding:15px;margin-top:13px;display:none;}
+.approval-title{font-family:var(--fh);font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px;text-align:center;}
+.approval-sub{font-size:10.5px;color:var(--gray);text-align:center;margin-bottom:12px;}
+.approval-btns{display:flex;gap:9px;}
+.approval-btns .btn{flex:1;padding:12px;}
+.rev-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--gold-border);border-radius:9px;color:var(--white);font-family:var(--fd);font-size:12px;padding:10px 12px;outline:none;margin-top:10px;display:none;resize:vertical;min-height:70px;}
+.rev-input:focus{border-color:var(--gold);}
+.tracking-box{background:var(--card);border:1px solid var(--gold-border);border-radius:12px;padding:14px;margin-top:12px;display:none;}
+.tracking-title{font-size:11px;color:var(--gold);font-weight:700;margin-bottom:10px;}
+.track-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.track-icon{font-size:18px;width:32px;text-align:center;}
+.track-info h4{font-size:11px;font-weight:600;color:var(--off-white);}
+.track-info p{font-size:9.5px;color:var(--gray);}
+.track-status{margin-left:auto;font-size:9px;font-weight:700;}
+.ts-done{color:var(--green);}
+.ts-active{color:var(--gold);}
+.ts-pending{color:var(--gray);}
+.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.action-grid .btn{padding:11px 8px;font-size:11px;}
+.action-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:8px;}
+.action-grid-3 .btn{padding:10px 5px;font-size:10px;}
+.bulk-box{background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:12px;padding:14px;margin-bottom:13px;}
+.bulk-title{font-size:12px;color:var(--gold);font-weight:700;margin-bottom:10px;}
+.qty-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.qty-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--gold-border);background:rgba(255,255,255,0.05);color:var(--gold);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.qty-val{font-size:20px;font-weight:800;color:var(--gold);font-family:var(--fh);min-width:40px;text-align:center;}
+.bulk-price{font-size:11px;color:var(--gray);}
+.bulk-price span{color:var(--green);font-weight:700;}
+.bforever-hero{background:linear-gradient(135deg,rgba(201,168,76,0.13),rgba(201,168,76,0.03));border:1px solid var(--gold);border-radius:16px;padding:20px 16px;text-align:center;margin-bottom:14px;}
+.bforever-title{font-family:var(--fh);font-size:26px;font-weight:800;color:var(--gold);letter-spacing:4px;margin-bottom:4px;}
+.bforever-tag{font-size:10.5px;color:rgba(201,168,76,0.65);letter-spacing:1.5px;margin-bottom:11px;}
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:13px;}
+.step-card{background:var(--card);border:1px solid var(--gold-border);border-radius:10px;padding:11px 5px;text-align:center;}
+.step-ico{font-size:20px;margin-bottom:5px;}
+.step-lbl{font-size:8.5px;color:var(--gold);font-weight:700;letter-spacing:0.3px;}
+.price-table{width:100%;border-collapse:collapse;margin-bottom:12px;}
+.price-table th{background:rgba(201,168,76,0.12);color:var(--gold);font-size:9.5px;font-weight:700;padding:8px 9px;text-align:left;letter-spacing:0.4px;border-bottom:1px solid var(--gold-border);}
+.price-table td{font-size:11px;color:var(--off-white);padding:8px 9px;border-bottom:1px solid rgba(255,255,255,0.04);}
+.price-table tr:hover td{background:rgba(201,168,76,0.04);}
+.ps{text-decoration:line-through;color:var(--gray);font-size:9.5px;}
+.pn{color:var(--green);font-weight:700;}
+@keyframes scanAnim{0%{top:0;}100%{top:100%;}}
+@keyframes robotBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+@keyframes eyeBlink{0%,90%,100%{transform:scaleY(1);}95%{transform:scaleY(0.1);}}
+@keyframes antennaPulse{0%,100%{fill:#E8C97A;r:3;}50%{fill:#fff;r:4;}}
+@keyframes armWave{0%,100%{transform:rotate(0deg);transform-origin:top center;}25%{transform:rotate(15deg);transform-origin:top center;}75%{transform:rotate(-15deg);transform-origin:top center;}}
+@keyframes cubeRise{0%,100%{transform:scaleY(0.3);opacity:0.3;}50%{transform:scaleY(1);opacity:1;}}
+#robotSvg{animation:robotBob 1.5s ease-in-out infinite;}
+#eye1,#eye2{animation:eyeBlink 3s ease-in-out infinite;}
+#antennaDot{animation:antennaPulse 1s ease-in-out infinite;}
+#armL{animation:armWave 1.2s ease-in-out infinite;}
+#armR{animation:armWave 1.2s ease-in-out infinite reverse;}
+.build-cube{width:10px;height:20px;background:linear-gradient(180deg,#C9A84C,#6A4E20);border-radius:2px;animation:cubeRise 1s ease-in-out infinite;transform-origin:bottom;}
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:rgba(0,214,143,0.15);border:1px solid var(--green);color:var(--green);font-size:11.5px;font-weight:600;padding:9px 18px;border-radius:10px;z-index:500;display:none;animation:sd 0.3s ease;backdrop-filter:blur(10px);white-space:nowrap;max-width:90vw;text-align:center;}
+@keyframes sd{from{opacity:0;top:60px;}to{opacity:1;top:80px;}}
+.wa-fab{position:fixed;bottom:72px;right:13px;width:48px;height:48px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 18px rgba(37,211,102,0.45);z-index:150;text-decoration:none;transition:transform 0.2s;}
+.wa-fab:hover{transform:scale(1.1);}
+.bnav{position:fixed;bottom:0;left:0;right:0;background:rgba(4,10,20,0.97);border-top:1px solid var(--gold-border);display:flex;z-index:200;backdrop-filter:blur(10px);}
+.bnav-btn{flex:1;padding:8px 2px 6px;text-align:center;cursor:pointer;transition:all 0.2s;font-size:7.5px;color:var(--gray);font-weight:600;font-family:var(--fd);}
+.bnav-btn .ico{font-size:18px;display:block;margin-bottom:2px;}
+.bnav-btn.active{color:var(--gold);}
+.bnav-btn:hover{color:var(--gold-light);background:rgba(201,168,76,0.06);}
 </style>
 </head>
 <body>
-
-<!-- HEADER -->
-<div class="header">
+<div class="toast" id="toast"></div>
+<div class="header" style="position:relative;">
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('hi')" id="btn-hi">हि</button>
+    <button class="lang-btn" onclick="setLang('en')" id="btn-en">EN</button>
+  </div>
   <div class="logo-row">
     <img src="logo.jpg" alt="GAIOS logo" class="logo-img" onerror="this.style.display='none'">
-    <div class="brand-name">GAIOS™</div>
+    <div class="brand-name">GAIOS™<span class="brand-v">v7.0</span></div>
   </div>
   <div class="brand-sub">GENESYS AI ORCHESTRATION SYSTEM | BFOREVER™</div>
   <div class="reg-bar">
     <span class="reg-tag">DPIIT: DIPP274037</span>
     <span class="reg-tag">Patent: IN202611090765</span>
+    <span class="reg-tag">MoU: MoU/2026-27/37148</span>
     <span class="reg-tag">iSTART: 3B9DA1F5</span>
     <span class="reg-tag">Udyam: UDYAM-RJ-26-0089638</span>
   </div>
   <div class="status-row">
-    <div class="status-dot"></div>
+    <div class="dot"></div>
     <span class="status-text">ONLINE</span>
-    <span style="color:var(--gray);font-size:10px;">| Claude AI Active | v7.0</span>
+    <span style="color:var(--gray);font-size:9px;">| Claude AI | Hunyuan 3D 3.1 | v7.0</span>
   </div>
   <div style="text-align:center;margin-top:8px;">
     <a href="#" id="myAccountLink" onclick="goToAccount(event)" style="color:var(--gold);font-size:11px;text-decoration:none;border:1px solid var(--gold-border);padding:4px 12px;border-radius:20px;">🔐 Login / My Orders</a>
   </div>
 </div>
-
-<!-- NAV TABS -->
 <div class="nav-tabs">
   <div class="nav-tab active" onclick="showTab('console')">🤖 AI Console</div>
+  <div class="nav-tab" onclick="showTab('gen3d')">🖨️ 3D Studio</div>
   <div class="nav-tab" onclick="showTab('bforever')">✨ BFOREVER™</div>
   <div class="nav-tab" onclick="showTab('verticals')">🎯 Verticals</div>
   <div class="nav-tab" onclick="showTab('contact')">📞 Contact</div>
   <div class="nav-tab" onclick="showTab('about')">ℹ️ About</div>
-  <div class="nav-tab" onclick="showTab('gen3d')">🎯 3D Gen</div>
 </div>
 
-<!-- AI CONSOLE SECTION -->
+<!-- AI CONSOLE -->
 <div class="section active" id="tab-console">
-  <div class="console-card">
-    <div class="console-title">💬 GAIOS™ AI Console</div>
+  <div class="card">
+    <div class="card-title">💬 GAIOS™ AI Assistant</div>
     <div class="chat-area" id="chatArea">
-      <div class="msg-ai">🙏 Namaskar! Main GAIOS™ hoon — Genesys AI Orchestration System. Aap Hindi ya English mein koi bhi sawaal poochh sakte hain. Kya chahiye aapko?</div>
+      <div class="msg-ai" id="welcomeMsg">🙏 Namaskar! Main GAIOS™ hoon — Genesys AI Orchestration System. Pali, Rajasthan se India ki pehli full-colour PolyJet 3D hub. Hindi ya English mein poochhein!</div>
     </div>
     <div class="input-row">
-      <input type="text" class="ai-input" id="userInput" placeholder="Koi bhi sawaal poochhein..." onkeypress="if(event.key==='Enter') sendMessage()">
-      <button class="btn btn-voice" id="voiceBtn" onclick="toggleVoice()" title="Voice Input">🎙</button>
-      <button class="btn" onclick="sendMessage()">✨ Ask</button>
+      <input type="text" class="ai-input" id="userInput" placeholder="Koi bhi sawaal poochhein..." onkeypress="if(event.key==='Enter')sendMsg()">
+      <button class="btn-voice" id="voiceBtn" onclick="toggleVoice()">🎙</button>
+      <button class="btn" onclick="sendMsg()">✨ Ask</button>
     </div>
     <div class="quick-cmds">
-      <span class="quick-cmd" onclick="askQuick('GAIOS status kya hai?')">📊 Status</span>
-      <span class="quick-cmd" onclick="askQuick('Company info batao')">🏢 Company</span>
-      <span class="quick-cmd" onclick="askQuick('BFOREVER figurine service kya hai?')">✨ BFOREVER</span>
-      <span class="quick-cmd" onclick="askQuick('Grant status kya hai?')">💰 Grants</span>
-      <span class="quick-cmd" onclick="askQuick('3D printing process kya hai?')">🖨️ Printing</span>
-      <span class="quick-cmd" onclick="askQuick('Medical DICOM service batao')">🏥 Medical</span>
+      <span class="quick-cmd" onclick="askQ('GAIOS kya karta hai?')">📊 GAIOS</span>
+      <span class="quick-cmd" onclick="askQ('BFOREVER figurine ki price kya hai?')">✨ Price</span>
+      <span class="quick-cmd" onclick="askQ('3D model kitne time mein banta hai?')">⏱️ Time</span>
+      <span class="quick-cmd" onclick="askQ('Medical DICOM 3D model service kya hai?')">🏥 Medical</span>
+      <span class="quick-cmd" onclick="askQ('Scan partner kaise bane?')">🤝 Partner</span>
+      <span class="quick-cmd" onclick="askQ('Grant aur MoU status kya hai?')">💰 Grants</span>
     </div>
   </div>
-  <div class="page-bottom"></div>
 </div>
 
-<!-- BFOREVER SECTION -->
+<!-- 3D STUDIO -->
+<div class="section" id="tab-gen3d">
+  <div class="gen3d-hero">
+    <div class="gen3d-title">🖨️ GAIOS™ 3D Studio</div>
+    <div class="gen3d-sub">Photo upload karo → AI 3D model banayega → Approve karo → Order karo<br><small style="color:var(--gray2);">Hunyuan 3D 3.1 | Auto-compress | Multi-photo</small></div>
+  </div>
+  <div class="sec-badge">📸 STEP 1 — Photo Upload</div>
+  <div class="upload-area" id="uploadArea" onclick="document.getElementById('photo3d-input').click()">
+    <div class="upload-icon">📷</div>
+    <div class="upload-text" id="uploadText">Photos Choose Karo</div>
+    <div class="upload-hint">1-5 photos | JPG/PNG | Auto-compressed | Click here</div>
+  </div>
+  <input type="file" id="photo3d-input" accept="image/*" multiple onchange="handleFiles(this.files)">
+  <div class="preview-section" id="previewSection">
+    <div class="preview-label">📋 SELECTED PHOTOS — Tap to select primary</div>
+    <div class="thumb-row" id="thumbRow"></div>
+  </div>
+  <div class="quality-bar" id="qualityBar">
+    <div class="quality-label">📊 Photo Quality Check</div>
+    <div class="quality-indicator">
+      <div class="quality-dot" id="qualityDot"></div>
+      <span class="quality-text" id="qualityText"></span>
+    </div>
+  </div>
+  <div class="colour-box" id="colourBox">
+    <div class="colour-title">🎨 PHOTO ADJUSTMENT (Optional)</div>
+    <div class="slider-group">
+      <div class="slider-label"><span>Brightness</span><span id="brightnessVal">100%</span></div>
+      <input type="range" class="slider" id="brightnessSlider" min="50" max="150" value="100" oninput="adjustImage()">
+    </div>
+    <div class="slider-group">
+      <div class="slider-label"><span>Contrast</span><span id="contrastVal">100%</span></div>
+      <input type="range" class="slider" id="contrastSlider" min="50" max="150" value="100" oninput="adjustImage()">
+    </div>
+    <div class="slider-group">
+      <div class="slider-label"><span>Saturation</span><span id="saturationVal">100%</span></div>
+      <input type="range" class="slider" id="saturationSlider" min="50" max="150" value="100" oninput="adjustImage()">
+    </div>
+    <canvas id="adjustCanvas" style="display:none;"></canvas>
+  </div>
+  <div class="sec-badge" id="step2badge" style="display:none;">📐 STEP 2 — Size Choose Karo</div>
+  <div class="size-section" id="sizeSection" style="display:none;">
+    <div class="size-grid">
+      <div class="size-card" onclick="selectSize(this,'2.5')"><div class="size-inch">2.5"</div><div class="size-price">₹2,250</div><div class="size-orig">₹3,000</div></div>
+      <div class="size-card selected" onclick="selectSize(this,'4')"><div class="size-inch">4"</div><div class="size-price">₹3,750</div><div class="size-orig">₹5,000</div></div>
+      <div class="size-card" onclick="selectSize(this,'5')"><div class="size-inch">5"</div><div class="size-price">₹4,875</div><div class="size-orig">₹6,500</div></div>
+      <div class="size-card" onclick="selectSize(this,'6')"><div class="size-inch">6"</div><div class="size-price">₹6,375</div><div class="size-orig">₹8,500</div></div>
+    </div>
+    <div style="font-size:9px;color:var(--gray);text-align:center;margin-bottom:12px;">*Target prices — subject to production economics</div>
+  </div>
+  <div class="bulk-box" id="bulkBox" style="display:none;">
+    <div class="bulk-title">🎁 Bulk Order (Corporate / Wedding)</div>
+    <div class="qty-row">
+      <div class="qty-btn" onclick="changeQty(-1)">−</div>
+      <div class="qty-val" id="qtyVal">1</div>
+      <div class="qty-btn" onclick="changeQty(1)">+</div>
+      <div class="bulk-price">pieces | Total: <span id="bulkTotal">₹3,750</span></div>
+    </div>
+    <div style="font-size:9.5px;color:var(--gray);">10+ pieces: 10% off | 50+ pieces: 18% off | 100+ pieces: 25% off</div>
+  </div>
+  <div class="sec-badge" id="step3badge" style="display:none;">🚀 STEP 3 — 3D Model Generate Karo</div>
+  <button class="btn" id="gen3d-btn" style="width:100%;padding:13px;font-size:13px;margin-bottom:4px;" onclick="generate3D()">🚀 3D Model Generate Karo</button>
+  <div style="font-size:9px;color:var(--gray);text-align:center;margin-bottom:8px;">Processing time: ~3-6 minutes | Auto photo compression</div>
+  <div class="progress-section" id="progressSection">
+    <div id="animStage" style="background:linear-gradient(135deg,#040A14,#0A1628,#040A14);border:1px solid rgba(201,168,76,0.3);border-radius:16px;padding:20px 16px;margin-bottom:12px;text-align:center;position:relative;overflow:hidden;min-height:280px;">
+      <canvas id="particleCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.4;"></canvas>
+      <div id="animChar" style="position:relative;z-index:2;margin-bottom:10px;">
+        <svg id="robotSvg" width="80" height="100" viewBox="0 0 80 100" style="display:inline-block;filter:drop-shadow(0 0 12px rgba(201,168,76,0.6));">
+          <rect x="22" y="10" width="36" height="30" rx="8" fill="#1A1A2E" stroke="#C9A84C" stroke-width="2"/>
+          <circle id="eye1" cx="32" cy="25" r="5" fill="#C9A84C"/>
+          <circle id="eye2" cx="48" cy="25" r="5" fill="#C9A84C"/>
+          <circle cx="32" cy="25" r="2" fill="#040A14" id="pupil1"/>
+          <circle cx="48" cy="25" r="2" fill="#040A14" id="pupil2"/>
+          <line x1="40" y1="10" x2="40" y2="2" stroke="#C9A84C" stroke-width="2"/>
+          <circle id="antennaDot" cx="40" cy="2" r="3" fill="#E8C97A"/>
+          <path id="robotMouth" d="M 30 33 Q 40 40 50 33" stroke="#C9A84C" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <rect x="18" y="44" width="44" height="35" rx="8" fill="#1A1A2E" stroke="#C9A84C" stroke-width="2"/>
+          <rect x="26" y="50" width="28" height="20" rx="4" fill="#0D1F3A" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
+          <text x="40" y="60" font-family="Arial" font-size="5" fill="#C9A84C" text-anchor="middle">GAIOS™</text>
+          <text x="40" y="66" font-family="Arial" font-size="4" fill="#00D68F" text-anchor="middle" id="screenText">PROCESSING</text>
+          <rect id="armL" x="6" y="46" width="10" height="24" rx="5" fill="#1A1A2E" stroke="#C9A84C" stroke-width="2"/>
+          <rect id="armR" x="64" y="46" width="10" height="24" rx="5" fill="#1A1A2E" stroke="#C9A84C" stroke-width="2"/>
+          <rect x="24" y="82" width="12" height="16" rx="4" fill="#1A1A2E" stroke="#C9A84C" stroke-width="2"/>
+          <rect x="44" y="82" width="12" height="16" rx="4" fill="#1A1A2E" stroke="#C9A84C" stroke-width="2"/>
+          <rect x="20" y="94" width="18" height="6" rx="3" fill="#C9A84C"/>
+          <rect x="42" y="94" width="18" height="6" rx="3" fill="#C9A84C"/>
+        </svg>
+      </div>
+      <div id="speechBubble" style="position:relative;z-index:3;background:rgba(201,168,76,0.12);border:1.5px solid rgba(201,168,76,0.5);border-radius:12px;padding:10px 14px;margin:0 8px 12px;font-size:12px;font-weight:600;color:#E8C97A;min-height:44px;transition:all 0.5s ease;">
+        <span id="speechText">🤖 Ek second... main aapki photo ko 3D mein badal raha hoon!</span>
+      </div>
+      <div id="scanLine" style="position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.8),transparent);animation:scanAnim 2s linear infinite;top:0;z-index:1;"></div>
+      <div id="buildViz" style="display:flex;justify-content:center;gap:4px;margin-bottom:12px;position:relative;z-index:2;">
+        <div class="build-cube" style="animation-delay:0s"></div>
+        <div class="build-cube" style="animation-delay:0.1s"></div>
+        <div class="build-cube" style="animation-delay:0.2s"></div>
+        <div class="build-cube" style="animation-delay:0.3s"></div>
+        <div class="build-cube" style="animation-delay:0.4s"></div>
+        <div class="build-cube" style="animation-delay:0.5s"></div>
+        <div class="build-cube" style="animation-delay:0.6s"></div>
+        <div class="build-cube" style="animation-delay:0.7s"></div>
+        <div class="build-cube" style="animation-delay:0.8s"></div>
+        <div class="build-cube" style="animation-delay:0.9s"></div>
+        <div class="build-cube" style="animation-delay:1.0s"></div>
+        <div class="build-cube" style="animation-delay:1.1s"></div>
+      </div>
+      <div style="margin:0 8px;">
+        <div style="display:flex;justify-content:space-between;font-size:9.5px;color:rgba(201,168,76,0.7);margin-bottom:5px;">
+          <span id="progressText">⏳ Shuru ho raha hai...</span>
+          <span id="progressPct">0%</span>
+        </div>
+        <div class="progress-wrap" style="margin:0;"><div class="progress-bar" id="progressBar" style="width:5%"></div></div>
+        <div style="font-size:9px;color:var(--gray);text-align:center;margin-top:5px;" id="timeEst">Estimated: 3-6 minutes | Hunyuan 3D 3.1</div>
+      </div>
+    </div>
+    <div class="steps-indicator" style="margin-bottom:8px;">
+      <div class="step-dot"><div class="step-circle active" id="sc1">1</div><span class="step-name">Upload</span></div>
+      <div class="step-dot"><div class="step-circle" id="sc2">2</div><span class="step-name">AI Process</span></div>
+      <div class="step-dot"><div class="step-circle" id="sc3">3</div><span class="step-name">3D Build</span></div>
+      <div class="step-dot"><div class="step-circle" id="sc4">4</div><span class="step-name">Ready</span></div>
+    </div>
+  </div>
+  <div class="status-box s-proc" id="sProc"></div>
+  <div class="status-box s-ok" id="sOk"></div>
+  <div class="status-box s-err" id="sErr"></div>
+  <div class="viewer-section" id="viewerSection">
+    <model-viewer id="modelViewer" auto-rotate camera-controls shadow-intensity="1.2" environment-image="neutral" exposure="1"></model-viewer>
+    <div class="tracking-box" id="trackingBox">
+      <div class="tracking-title">📦 Order Status</div>
+      <div class="track-row"><div class="track-icon">✅</div><div class="track-info"><h4>Photo Received</h4><p>GAIOS™ mein upload ho gayi</p></div><div class="track-status ts-done">DONE</div></div>
+      <div class="track-row"><div class="track-icon">🧠</div><div class="track-info"><h4>AI Processing</h4><p>Hunyuan 3D 3.1 model bana raha hai</p></div><div class="track-status ts-done">DONE</div></div>
+      <div class="track-row"><div class="track-icon">👁️</div><div class="track-info"><h4>Customer Preview</h4><p>Aap dekh rahe hain — approve karein</p></div><div class="track-status ts-active">ACTIVE ◉</div></div>
+      <div class="track-row"><div class="track-icon">🖨️</div><div class="track-info"><h4>PolyJet Printing</h4><p>Pali hub mein Mimaki 3DUJ-553</p></div><div class="track-status ts-pending">PENDING</div></div>
+      <div class="track-row"><div class="track-icon">📦</div><div class="track-info"><h4>Quality Check & Delivery</h4><p>~5 days estimated</p></div><div class="track-status ts-pending">PENDING</div></div>
+    </div>
+    <div class="approval-box" id="approvalBox">
+      <div class="approval-title">✅ 3D Model Ready — Aapki Approval Chahiye</div>
+      <div class="approval-sub">Model 360° rotate karke dekhen → Approve karein ya changes batayein</div>
+      <div id="approvalStatus" style="font-size:11px;text-align:center;color:var(--green);display:none;margin-bottom:8px;"></div>
+      <div class="approval-btns">
+        <button class="btn btn-green" onclick="approveModel()">✅ Approve & Order</button>
+        <button class="btn-outline" onclick="toggleRevision()">✏️ Changes</button>
+      </div>
+      <textarea class="rev-input" id="revText" placeholder="Kya changes chahiye?"></textarea>
+      <button class="btn" id="revSubmitBtn" style="width:100%;margin-top:9px;display:none;" onclick="submitRevision()">📨 Revision Request Bhejein</button>
+    </div>
+    <div style="margin-top:12px;">
+      <div style="font-size:10px;color:var(--gold);font-weight:600;margin-bottom:8px;letter-spacing:0.5px;">⬇️ DOWNLOAD & SHARE</div>
+      <div class="action-grid">
+        <button class="btn" onclick="downloadModel()">⬇️ Download GLB</button>
+        <button class="btn btn-share" onclick="shareWA()">💬 WhatsApp</button>
+      </div>
+      <div class="action-grid-3" style="margin-top:8px;">
+        <button class="btn btn-insta" onclick="shareInsta()">📸 Instagram</button>
+        <button class="btn btn-fb" onclick="shareFB()">👍 Facebook</button>
+        <button class="btn-outline" onclick="copyLink()" style="font-size:10px;padding:10px 5px;">🔗 Copy Link</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BFOREVER -->
 <div class="section" id="tab-bforever">
   <div class="bforever-hero">
     <div class="bforever-title">BFOREVER™</div>
-    <div class="bforever-tagline">WHERE YOUR MOMENTS LIVE FOREVER</div>
-    <p style="font-size:12px;color:rgba(255,255,255,0.8);line-height:1.6;">Apni photo do — hum aapki yaad ko ek khoobsurat 3D figurine mein badal denge. Hamesha ke liye.</p>
+    <div class="bforever-tag">WHERE YOUR MOMENTS LIVE FOREVER</div>
+    <p style="font-size:12px;color:rgba(255,255,255,0.8);line-height:1.7;">Ek photo do — hum aapki yaad ko ek khoobsurat full-colour 3D figurine mein badal denge. Hamesha ke liye.</p>
   </div>
-  <div class="section-badge">✨ HOW IT WORKS</div>
+  <div class="sec-badge">✨ HOW IT WORKS</div>
   <div class="steps-grid">
-    <div class="step-card"><div class="step-icon">📸</div><div class="step-label">PHOTO DO</div></div>
-    <div class="step-card"><div class="step-icon">🔄</div><div class="step-label">3D SCAN</div></div>
-    <div class="step-card"><div class="step-icon">🎨</div><div class="step-label">PRINT KARO</div></div>
+    <div class="step-card"><div class="step-ico">📸</div><div class="step-lbl">PHOTO DO</div></div>
+    <div class="step-card"><div class="step-ico">🧠</div><div class="step-lbl">AI PROCESS</div></div>
+    <div class="step-card"><div class="step-ico">✅</div><div class="step-lbl">APPROVE</div></div>
+    <div class="step-card"><div class="step-ico">📦</div><div class="step-lbl">RECEIVE</div></div>
   </div>
   <div class="divider"></div>
-  <div class="section-badge">🎯 USE CASES</div>
-  <div class="vertical-grid" style="margin-bottom:14px;">
-    <div class="vertical-card"><div class="v-icon">💒</div><div class="v-title">Shaadi</div><div class="v-desc">Dulha-Dulhan ki 3D figurine — ek yaadgar tohfa</div></div>
-    <div class="vertical-card"><div class="v-icon">🎂</div><div class="v-title">Birthday</div><div class="v-desc">Unique birthday gift — khud ki figurine</div></div>
-    <div class="vertical-card"><div class="v-icon">👴</div><div class="v-title">Yaadgar</div><div class="v-desc">Buzurgon ki figurine — unki yaad hamesha</div></div>
-    <div class="vertical-card"><div class="v-icon">🏆</div><div class="v-title">Achievement</div><div class="v-desc">Retirement ya success ka jashn</div></div>
+  <div class="sec-badge">💰 PRICING</div>
+  <table class="price-table">
+    <tr><th>Size</th><th>Market</th><th>BFOREVER™</th><th>Delivery</th></tr>
+    <tr><td>2.5"</td><td><span class="ps">₹3,000</span></td><td><span class="pn">₹2,250</span></td><td>~5 days</td></tr>
+    <tr><td>4"</td><td><span class="ps">₹5,000</span></td><td><span class="pn">₹3,750</span></td><td>~5 days</td></tr>
+    <tr><td>5"</td><td><span class="ps">₹6,500</span></td><td><span class="pn">₹4,875</span></td><td>~5 days</td></tr>
+    <tr><td>6"</td><td><span class="ps">₹8,500</span></td><td><span class="pn">₹6,375</span></td><td>~5 days</td></tr>
+  </table>
+  <div style="font-size:9px;color:var(--gray);text-align:center;margin-bottom:14px;">*Target prices, subject to actual production economics</div>
+  <div class="divider"></div>
+  <div class="sec-badge">🎯 USE CASES</div>
+  <div class="v-grid">
+    <div class="v-card" onclick="showBforeverModal('shaadi')"><div class="v-icon">💒</div><div class="v-title">Shaadi</div><div class="v-desc">Dulha-Dulhan ki 3D figurine — ek yaadgar tohfa</div></div>
+    <div class="v-card" onclick="showBforeverModal('birthday')"><div class="v-icon">🎂</div><div class="v-title">Birthday</div><div class="v-desc">Unique gift — khud ki ya kisi priye ki figurine</div></div>
+    <div class="v-card" onclick="showBforeverModal('yaadgar')"><div class="v-icon">👴</div><div class="v-title">Yaadgar</div><div class="v-desc">Buzurgon ki figurine — unki yaad hamesha</div></div>
+    <div class="v-card" onclick="showBforeverModal('achievement')"><div class="v-icon">🏆</div><div class="v-title">Achievement</div><div class="v-desc">Retirement ya success ka khaas jashn</div></div>
   </div>
-  <div style="background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border:1px solid var(--gold);border-radius:10px;padding:14px;text-align:center;margin-bottom:14px;">
-    <div style="font-size:13px;color:var(--gold);font-weight:700;margin-bottom:4px;">📍 Pan-India Delivery</div>
-    <div style="font-size:11px;color:var(--gray);">Hub: Pali, Rajasthan | 48 ghante mein delivery</div>
-    <div style="font-size:11px;color:var(--gray);">10 Scan Points — Aapke shehar mein</div>
+  <div style="background:linear-gradient(135deg,rgba(201,168,76,0.1),rgba(201,168,76,0.03));border:1px solid var(--gold-border);border-radius:12px;padding:13px;text-align:center;margin-bottom:14px;">
+    <div style="font-size:12px;color:var(--gold);font-weight:700;margin-bottom:5px;">📍 Pan-India Network</div>
+    <div style="font-size:10.5px;color:var(--gray);line-height:1.7;">Hub: Pali, Rajasthan | 10 Scan Points — Aapke shehar mein<br>Delhi • Mumbai • Bengaluru • Hyderabad • Pune<br>Ahmedabad • Surat • Jaipur • Ludhiana • Kolkata</div>
   </div>
-  <button class="btn" style="width:100%;padding:14px;font-size:14px;" onclick="showTab('contact')">📞 Abhi Order Karein</button>
-  <div class="page-bottom"></div>
+  <button class="btn" style="width:100%;padding:13px;font-size:13px;" onclick="showTab('gen3d')">🚀 3D Preview Dekho & Order Karo</button>
 </div>
 
-<!-- VERTICALS SECTION -->
+<!-- VERTICALS -->
 <div class="section" id="tab-verticals">
-  <div class="section-badge">🎯 9 BUSINESS VERTICALS</div>
-  <div class="vertical-grid">
-    <div class="vertical-card"><div class="v-icon">👥</div><div class="v-title">Consumer Figurines</div><div class="v-desc">Photo se 3D figurine — BFOREVER™ brand</div></div>
-    <div class="vertical-card"><div class="v-icon">🏛️</div><div class="v-title">Heritage & Tourism</div><div class="v-desc">Museum replicas, fort models, historical artifacts</div></div>
-    <div class="vertical-card"><div class="v-icon">🏗️</div><div class="v-title">Real Estate</div><div class="v-desc">Architectural 3D models for builders & developers</div></div>
-    <div class="vertical-card"><div class="v-icon">🏥</div><div class="v-title">Medical DICOM</div><div class="v-desc">CT/MRI scan se 3D organ models — surgical planning</div></div>
-    <div class="vertical-card"><div class="v-icon">🚁</div><div class="v-title">Drone Terrain</div><div class="v-desc">GIS/drone data se physical terrain models</div></div>
-    <div class="vertical-card"><div class="v-icon">🏺</div><div class="v-title">Antique & Museum</div><div class="v-desc">Heritage replica printing with full colour accuracy</div></div>
-    <div class="vertical-card"><div class="v-icon">⚙️</div><div class="v-title">Reverse Engineering</div><div class="v-desc">Machine parts scan & reproduce — 24-48 hrs</div></div>
-    <div class="vertical-card"><div class="v-icon">🛡️</div><div class="v-title">Defence</div><div class="v-desc">Terrain mapping, military models, strategic planning</div></div>
-    <div class="vertical-card" style="grid-column:span 2;"><div class="v-icon">🎁</div><div class="v-title">Corporate Gifting</div><div class="v-desc">Premium 3D printed awards, trophies & corporate gifts</div></div>
+  <div class="sec-badge">🎯 15 BUSINESS VERTICALS</div>
+  <div class="v-grid">
+    <div class="v-card" onclick="showVerticalModal('consumer-figurines')"><div class="v-icon">👥</div><div class="v-title">Consumer Figurines</div><div class="v-desc">Photo se full-colour 3D — BFOREVER™</div></div>
+    <div class="v-card" onclick="showVerticalModal('heritage-tourism')"><div class="v-icon">🏛️</div><div class="v-title">Heritage & Tourism</div><div class="v-desc">Museum replicas, fort models, artifacts</div></div>
+    <div class="v-card" onclick="showVerticalModal('real-estate')"><div class="v-icon">🏗️</div><div class="v-title">Real Estate</div><div class="v-desc">Architectural 3D models — builders</div></div>
+    <div class="v-card" onclick="showVerticalModal('medical-dicom')"><div class="v-icon">🏥</div><div class="v-title">Medical DICOM</div><div class="v-desc">CT/MRI se 3D organ models</div></div>
+    <div class="v-card" onclick="showVerticalModal('drone-lidar')"><div class="v-icon">🚁</div><div class="v-title">Drone/LiDAR</div><div class="v-desc">GIS data se physical terrain models</div></div>
+    <div class="v-card" onclick="showVerticalModal('antique-museum')"><div class="v-icon">🏺</div><div class="v-title">Antique & Museum</div><div class="v-desc">Heritage replica — full colour</div></div>
+    <div class="v-card" onclick="showVerticalModal('reverse-engineering')"><div class="v-icon">⚙️</div><div class="v-title">Reverse Engineering</div><div class="v-desc">Machine parts scan & reproduce</div></div>
+    <div class="v-card" onclick="showVerticalModal('defence')"><div class="v-icon">🛡️</div><div class="v-title">Defence</div><div class="v-desc">Terrain mapping, military models</div></div>
+    <div class="v-card" onclick="showVerticalModal('corporate-gifting')"><div class="v-icon">🎁</div><div class="v-title">Corporate Gifting</div><div class="v-desc">Premium 3D awards, trophies</div></div>
+    <div class="v-card" onclick="showVerticalModal('visitor-centre')"><div class="v-icon">🏔️</div><div class="v-title">Visitor Centre</div><div class="v-desc">Relief maps, terrain models</div></div>
+    <div class="v-card" onclick="showVerticalModal('religious-tourism')"><div class="v-icon">⛪</div><div class="v-title">Religious Tourism</div><div class="v-desc">Temple models, deity replicas</div></div>
+    <div class="v-card" onclick="showVerticalModal('education-stem')"><div class="v-icon">🎓</div><div class="v-title">Education/STEM</div><div class="v-desc">3D learning models for schools</div></div>
   </div>
-  <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;margin-bottom:14px;">
-    <div style="font-size:13px;color:var(--gold);font-weight:700;margin-bottom:8px;">🖨️ Technology</div>
+  <div class="card">
+    <div class="card-title" style="justify-content:center;">🖨️ Technology</div>
     <div class="info-row"><span class="info-key">Printer</span><span class="info-val">Mimaki 3DUJ-553</span></div>
     <div class="info-row"><span class="info-key">Colours</span><span class="info-val">10 Million+</span></div>
     <div class="info-row"><span class="info-key">Resolution</span><span class="info-val">1200×1200 DPI</span></div>
     <div class="info-row"><span class="info-key">Scanner</span><span class="info-val">DreamBot G9-1000</span></div>
-    <div class="info-row"><span class="info-key">AI</span><span class="info-val">GAIOS™ | Patent IN202611090765</span></div>
+    <div class="info-row"><span class="info-key">AI Engine</span><span class="info-val">GAIOS™ + Hunyuan 3D 3.1</span></div>
+    <div class="info-row"><span class="info-key">Patent</span><span class="info-val">IN202611090765</span></div>
   </div>
-  <div class="page-bottom"></div>
 </div>
 
-<!-- CONTACT SECTION -->
+<!-- CONTACT -->
 <div class="section" id="tab-contact">
-  <div class="section-badge">📞 CONTACT US</div>
-  <div class="console-card">
-    <div class="console-title">📋 Inquiry Form</div>
+  <div class="sec-badge">📞 CONTACT US</div>
+  <div class="card">
+    <div class="card-title">📋 Inquiry Form</div>
+    <div class="form-group"><label class="form-label">Naam *</label><input type="text" class="form-input" id="c_name" placeholder="Poora naam"></div>
+    <div class="form-group"><label class="form-label">Mobile *</label><input type="tel" class="form-input" id="c_phone" placeholder="+91 XXXXXXXXXX"></div>
+    <div class="form-group"><label class="form-label">City</label><input type="text" class="form-input" id="c_city" placeholder="Aapka shehar"></div>
     <div class="form-group">
-      <label class="form-label">Aapka Naam *</label>
-      <input type="text" class="form-input" id="c_name" placeholder="Poora naam">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Mobile Number *</label>
-      <input type="tel" class="form-input" id="c_phone" placeholder="+91 XXXXXXXXXX">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Email</label>
-      <input type="email" class="form-input" id="c_email" placeholder="aapka@email.com">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Service Chahiye *</label>
+      <label class="form-label">Service *</label>
       <select class="form-select" id="c_service">
-        <option value="">-- Select Service --</option>
+        <option value="">-- Service Choose Karein --</option>
         <option>BFOREVER™ — 3D Figurine</option>
         <option>Heritage/Museum Replica</option>
         <option>Real Estate Model</option>
         <option>Medical DICOM Model</option>
-        <option>Drone/Terrain Mapping</option>
+        <option>Drone/LiDAR Terrain Model</option>
         <option>Reverse Engineering</option>
         <option>Corporate Gift/Trophy</option>
-        <option>Defence/Strategic</option>
-        <option>Antique Replica</option>
+        <option>Bulk Order (Wedding/Corporate)</option>
+        <option>Core Scan Partner Banna Chahta Hoon</option>
         <option>Other</option>
       </select>
     </div>
-    <div class="form-group">
-      <label class="form-label">Aapki Zaroorat</label>
-      <textarea class="form-textarea" id="c_msg" placeholder="Aapka project ya requirement describe karein..."></textarea>
-    </div>
-    <button class="btn" style="width:100%;padding:13px;font-size:13px;" onclick="submitForm()">📨 Inquiry Bhejein</button>
-    <div class="success-msg" id="successMsg">✅ Shukriya! Aapki inquiry mil gayi. Hum 24 ghante mein sampark karenge.</div>
+    <div class="form-group"><label class="form-label">Message</label><textarea class="form-textarea" id="c_msg" placeholder="Project ya requirement..."></textarea></div>
+    <button class="btn" style="width:100%;padding:12px;" onclick="submitForm()">📨 WhatsApp Par Bhejein</button>
+    <div class="status-box s-ok" id="successMsg" style="margin-top:9px;">✅ Shukriya! 24 ghante mein sampark karenge.</div>
   </div>
   <div class="divider"></div>
-  <div class="section-badge">📍 DIRECT CONTACT</div>
-  <div class="console-card">
-    <a href="tel:+916350132497" style="text-decoration:none;">
-      <div class="info-row" style="padding:10px 0;cursor:pointer;">
-        <span class="info-key" style="font-size:13px;">📱 Call</span>
-        <span class="info-val" style="color:var(--gold);font-size:13px;">+91-6350132497</span>
-      </div>
-    </a>
-    <a href="mailto:genesysadditive3dcreation@gmail.com" style="text-decoration:none;">
-      <div class="info-row" style="padding:10px 0;cursor:pointer;">
-        <span class="info-key" style="font-size:12px;">✉️ Email</span>
-        <span class="info-val" style="color:var(--gold);font-size:11px;">genesysadditive3dcreation@gmail.com</span>
-      </div>
-    </a>
-    <div class="info-row" style="padding:10px 0;">
-      <span class="info-key" style="font-size:12px;">🌐 Website</span>
-      <span class="info-val" style="color:var(--gold);font-size:12px;">genesysadditive3dcreation.com</span>
-    </div>
-    <div class="info-row" style="padding:10px 0;border:none;">
-      <span class="info-key" style="font-size:12px;">📍 Address</span>
-      <span class="info-val" style="font-size:11px;line-height:1.4;">Shop No. 03, Opp. Central Co-op Bank, Main Bapunagar Road, Pali, Rajasthan 306401</span>
-    </div>
+  <div class="card">
+    <a href="tel:+916350132497" style="text-decoration:none;"><div class="info-row" style="cursor:pointer;padding:10px 0;"><span class="info-key">📱 Call</span><span class="info-val" style="color:var(--gold);">+91-6350132497</span></div></a>
+    <a href="mailto:genesysadditive3dcreation@gmail.com" style="text-decoration:none;"><div class="info-row" style="cursor:pointer;padding:10px 0;"><span class="info-key">✉️ Email</span><span class="info-val" style="color:var(--gold);font-size:10px;">genesysadditive3dcreation@gmail.com</span></div></a>
+    <div class="info-row" style="padding:10px 0;"><span class="info-key">🌐 Web</span><span class="info-val" style="color:var(--gold);">genesysadditive3dcreation.com</span></div>
+    <div class="info-row" style="padding:10px 0;border:none;"><span class="info-key">📍 Hub</span><span class="info-val" style="font-size:10px;line-height:1.5;">Shop No. 03, Opp. Central Co-op Bank, Main Bapunagar Road, Pali, Rajasthan 306401</span></div>
   </div>
-  <div class="page-bottom"></div>
 </div>
 
-<!-- ABOUT SECTION -->
+<!-- ABOUT -->
 <div class="section" id="tab-about">
-  <div class="section-badge">🏢 COMPANY INFO</div>
-  <div class="info-section">
-    <div class="console-card">
-      <div class="info-row"><span class="info-key">Company</span><span class="info-val">Genesys Additive 3D Creation Pvt. Ltd.</span></div>
-      <div class="info-row"><span class="info-key">CIN</span><span class="info-val">U32909RJ2026PTC115570</span></div>
-      <div class="info-row"><span class="info-key">GSTIN</span><span class="info-val">08AANCG1745Q1ZW</span></div>
-      <div class="info-row"><span class="info-key">PAN</span><span class="info-val">AANCG1745Q</span></div>
-      <div class="info-row"><span class="info-key">IEC</span><span class="info-val">AANCG1745Q</span></div>
-      <div class="info-row"><span class="info-key">DPIIT</span><span class="info-val">DIPP274037</span></div>
-      <div class="info-row"><span class="info-key">Patent</span><span class="info-val">IN202611090765</span></div>
-      <div class="info-row"><span class="info-key">Udyam</span><span class="info-val">UDYAM-RJ-26-0089638</span></div>
-      <div class="info-row"><span class="info-key">iSTART</span><span class="info-val">3B9DA1F5</span></div>
-      <div class="info-row"><span class="info-key">BFOREVER™ TM</span><span class="info-val">O-0005671986</span></div>
-      <div class="info-row" style="border:none;"><span class="info-key">GAIOS™ TM</span><span class="info-val">O-0005674550</span></div>
-    </div>
+  <div class="sec-badge">🏢 COMPANY INFO</div>
+  <div class="card">
+    <div class="info-row"><span class="info-key">Company</span><span class="info-val" style="font-size:10px;">Genesys Additive 3D Creation Pvt. Ltd.</span></div>
+    <div class="info-row"><span class="info-key">CIN</span><span class="info-val">U32909RJ2026PTC115570</span></div>
+    <div class="info-row"><span class="info-key">GSTIN</span><span class="info-val">08AANCG1745Q1ZW</span></div>
+    <div class="info-row"><span class="info-key">DPIIT</span><span class="info-val">DIPP274037</span></div>
+    <div class="info-row"><span class="info-key">Patent</span><span class="info-val">IN202611090765</span></div>
+    <div class="info-row"><span class="info-key">Udyam</span><span class="info-val">UDYAM-RJ-26-0089638</span></div>
+    <div class="info-row"><span class="info-key">iSTART</span><span class="info-val">3B9DA1F5</span></div>
+    <div class="info-row"><span class="info-key">RIPS 2024 MoU</span><span class="info-val" style="color:var(--green);">MoU/2026-27/37148 ✅</span></div>
+    <div class="info-row"><span class="info-key">BFOREVER™ TM</span><span class="info-val">O-0005671986</span></div>
+    <div class="info-row" style="border:none;"><span class="info-key">GAIOS™ TM</span><span class="info-val">O-0005674550</span></div>
   </div>
-  <div class="section-badge">💰 GRANTS & RECOGNITIONS</div>
-  <div class="grant-item"><div class="grant-name">IHFC IIT Delhi — UdyogTech Synapse 2026</div><div class="grant-detail">Grant up to ₹2 Crore | App: IHFC-786032</div><span class="grant-status status-applied">✅ Applied</span></div>
-  <div class="grant-item"><div class="grant-name">iSTART QRate — Rajasthan Govt.</div><div class="grant-detail">Pre-Seed ₹2.4L → Platinum ₹2 Crore</div><span class="grant-status status-pending">⏳ Result Awaited</span></div>
-  <div class="grant-item"><div class="grant-name">iDEX Open Challenge — MoD</div><div class="grant-detail">Grant up to ₹1.5 Crore | Deadline: 30 Sep 2026</div><span class="grant-status status-applied">✅ Applied</span></div>
-  <div class="grant-item"><div class="grant-name">TIDE 2.0 — MeitY / JECRC</div><div class="grant-detail">Grant up to ₹47 Lakh</div><span class="grant-status status-applied">✅ Applied</span></div>
-  <div class="grant-item"><div class="grant-name">TRI-PRAMan 4 — NCAM</div><div class="grant-detail">Additive Manufacturing + Medical DICOM</div><span class="grant-status status-applied">✅ Applied</span></div>
-  <div class="grant-item"><div class="grant-name">TATA Social Enterprise Challenge</div><div class="grant-detail">IIM Calcutta Innovation Park</div><span class="grant-status status-applied">✅ Applied</span></div>
-  <div class="grant-item" style="margin-bottom:14px;"><div class="grant-name">NCAM Startup Collaboration</div><div class="grant-detail">MeitY backed AM Ecosystem</div><span class="grant-status status-pending">⏳ Response Awaited</span></div>
-  <div class="page-bottom"></div>
+  <div class="sec-badge">💰 GRANTS & RECOGNITIONS</div>
+  <div class="grant-item"><div class="grant-name">RIPS 2024 — Govt. of Rajasthan</div><div class="grant-detail">MoU: MoU/2026-27/37148 | ₹6 Cr | AI Enabled Additive Manufacturing</div><span class="badge bg">✅ MoU Signed — 19 Aug 2026</span></div>
+  <div class="grant-item"><div class="grant-name">TCOE TDIP — DoT Govt. of India</div><div class="grant-detail">₹1.25 Crore | TDIP2026-210422518</div><span class="badge bg">✅ Applied</span></div>
+  <div class="grant-item"><div class="grant-name">IHFC IIT Delhi — UdyogTech Synapse</div><div class="grant-detail">₹2 Crore | IHFC-786032</div><span class="badge bg">✅ Applied</span></div>
+  <div class="grant-item"><div class="grant-name">RakshaTech Synapse — IHFC IIT Delhi</div><div class="grant-detail">₹2 Crore | IHFC-252212</div><span class="badge bg">✅ Applied</span></div>
+  <div class="grant-item"><div class="grant-name">iDEX Open Challenge — MoD</div><div class="grant-detail">₹1.5 Crore | OP202608113999</div><span class="badge by">⏳ Under Evaluation</span></div>
+  <div class="grant-item"><div class="grant-name">Schaeffler Social Innovator Fellowship</div><div class="grant-detail">IHFC + IIMA Ventures + H.O.P.E.</div><span class="badge bg">✅ Applied — 18 Aug 2026</span></div>
+  <div class="grant-item"><div class="grant-name">iSTART QRate — Rajasthan Govt.</div><div class="grant-detail">Score: 94.90/292 | Re-evaluation: Oct-Nov 2026</div><span class="badge by">⏳ Re-evaluation Pending</span></div>
+  <div class="grant-item" style="margin-bottom:0;"><div class="grant-name">TDB RDIF — Ministry of Science & Technology</div><div class="grant-detail">Low-interest loan | TDB/RDIF-0457/2026-2027</div><span class="badge bb">🔄 Applied</span></div>
 </div>
 
-<!-- 3D GEN SECTION -->
-<div class="section" id="tab-gen3d">
-  <div class="gen3d-box">
-    <h2>🎯 3D Preview Generator</h2>
-    <p>Photo upload karo — GAIOS™ 3D figurine preview banayega</p>
-    <label class="file-input-label" for="photo3d-input">
-      📸 Photo Choose Karo (Click Here)
-    </label>
-    <input type="file" id="photo3d-input" accept="image/*" onchange="previewSelected()">
-    <div id="preview-name" style="color:var(--gold);font-size:12px;margin-bottom:12px;"></div>
-    <button class="btn" id="gen3d-btn" style="width:100%;padding:13px;font-size:14px;" onclick="generate3D()">🚀 3D Generate Karo</button>
-    <div id="photo3d-result" style="margin-top:20px;"></div>
-  </div>
-  <div class="page-bottom"></div>
-</div>
+<a href="https://wa.me/916350132497?text=Namaskar%2C%20GAIOS%20se%20inquiry%20kar%20raha%20hoon" class="wa-fab" target="_blank">💬</a>
 
-<!-- WhatsApp Float -->
-<a href="https://wa.me/916350132497?text=Namaskar%2C%20GAIOS%20website%20se%20inquiry%20kar%20raha%20hoon" class="whatsapp-btn" target="_blank">💬</a>
-
-<!-- BOTTOM NAV -->
-<div class="bottom-nav">
-  <div class="bottom-btn active" id="nav-console" onclick="showTab('console')"><span class="icon">🤖</span>AI Console</div>
-  <div class="bottom-btn" id="nav-bforever" onclick="showTab('bforever')"><span class="icon">✨</span>BFOREVER™</div>
-  <div class="bottom-btn" id="nav-verticals" onclick="showTab('verticals')"><span class="icon">🎯</span>Verticals</div>
-  <div class="bottom-btn" id="nav-contact" onclick="showTab('contact')"><span class="icon">📞</span>Contact</div>
-  <div class="bottom-btn" id="nav-about" onclick="showTab('about')"><span class="icon">ℹ️</span>About</div>
-  <div class="bottom-btn" id="nav-gen3d" onclick="showTab('gen3d')"><span class="icon">🎯</span>3D Gen</div>
+<div class="bnav">
+  <div class="bnav-btn active" id="nav-console" onclick="showTab('console')"><span class="ico">🤖</span>AI Console</div>
+  <div class="bnav-btn" id="nav-gen3d" onclick="showTab('gen3d')"><span class="ico">🖨️</span>3D Studio</div>
+  <div class="bnav-btn" id="nav-bforever" onclick="showTab('bforever')"><span class="ico">✨</span>BFOREVER™</div>
+  <div class="bnav-btn" id="nav-verticals" onclick="showTab('verticals')"><span class="ico">🎯</span>Verticals</div>
+  <div class="bnav-btn" id="nav-contact" onclick="showTab('contact')"><span class="ico">📞</span>Contact</div>
+  <div class="bnav-btn" id="nav-about" onclick="showTab('about')"><span class="ico">ℹ️</span>About</div>
 </div>
 
 <script>
-// ===== SINGLE TAB FUNCTION =====
-function showTab(tab) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.bottom-btn').forEach(b => b.classList.remove('active'));
-  var el = document.getElementById('tab-' + tab);
-  if (el) el.classList.add('active');
-  var navEl = document.getElementById('nav-' + tab);
-  if (navEl) navEl.classList.add('active');
-  var navTabs = document.querySelectorAll('.nav-tab');
-  var tabMap = ['console','bforever','verticals','contact','about','gen3d'];
-  var idx = tabMap.indexOf(tab);
-  if (idx >= 0 && navTabs[idx]) navTabs[idx].classList.add('active');
+// ══ LANGUAGE ══
+var lang = 'hi';
+function setLang(l) {
+  lang = l;
+  document.documentElement.setAttribute('data-lang', l);
+  document.getElementById('btn-hi').classList.toggle('active', l==='hi');
+  document.getElementById('btn-en').classList.toggle('active', l==='en');
 }
 
-// ===== AI CHAT =====
-var chatArea = document.getElementById('chatArea');
-var isLoading = false;
-
-function addMsg(text, isUser) {
-  var div = document.createElement('div');
-  div.className = isUser ? 'msg-user' : 'msg-ai';
-  div.textContent = text;
-  chatArea.appendChild(div);
-  chatArea.scrollTop = chatArea.scrollHeight;
+// ══ TABS ══
+var TABS=['console','gen3d','bforever','verticals','contact','about'];
+function showTab(t) {
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.nav-tab').forEach(function(n){n.classList.remove('active');});
+  document.querySelectorAll('.bnav-btn').forEach(function(b){b.classList.remove('active');});
+  var el=document.getElementById('tab-'+t); if(el) el.classList.add('active');
+  var nv=document.getElementById('nav-'+t); if(nv) nv.classList.add('active');
+  var i=TABS.indexOf(t), tabs=document.querySelectorAll('.nav-tab');
+  if(i>=0&&tabs[i]) tabs[i].classList.add('active');
+  window.scrollTo(0,0);
 }
 
-function addLoading() {
-  var div = document.createElement('div');
-  div.className = 'msg-ai';
-  div.id = 'loadingMsg';
-  div.textContent = '⏳ Soch raha hoon...';
-  chatArea.appendChild(div);
-  chatArea.scrollTop = chatArea.scrollHeight;
-}
+// ══ TOAST ══
+function toast(m,d){var t=document.getElementById('toast');t.textContent=m;t.style.display='block';setTimeout(function(){t.style.display='none';},d||3000);}
 
-function removeLoading() {
-  var el = document.getElementById('loadingMsg');
-  if (el) el.remove();
-}
-
-async function sendMessage() {
-  var input = document.getElementById('userInput');
-  var msg = input.value.trim();
-  if (!msg || isLoading) return;
-  input.value = '';
-  addMsg(msg, true);
-  isLoading = true;
-  addLoading();
-  try {
-    var res = await fetch('/api/claude', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        system: 'Aap GAIOS hain — Genesys AI Orchestration System. Company: India ki pehli commercial full-colour PolyJet 3D printing hub, Pali, Rajasthan. Brands: BFOREVER (figurines) aur GAIOS (AI platform). Patent: IN202611090765 | DPIIT: DIPP274037 | Printer: Mimaki 3DUJ-553. Contact: +91-6350132497. Hamesha Hindi ya Hinglish mein jawab do. Short aur helpful raho.',
-        messages: [{ role: 'user', content: msg }]
-      })
-    });
-    var data = await res.json();
-    removeLoading();
-    var reply = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : 'Kuch technical issue aaya. Dobara try karein.';
-    addMsg(reply, false);
-    speakReply(reply);
-  } catch(e) {
-    removeLoading();
-    addMsg('Network error. Internet connection check karein.', false);
-  }
-  isLoading = false;
-}
-
-// ===== VOICE OUTPUT — ElevenLabs (better Hindi TTS), falls back to browser TTS =====
-async function speakReply(text) {
-  try {
-    var res = await fetch('/api/elevenlabs-tts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: text })
-    });
-    if (!res.ok) throw new Error('tts not available');
-    var data = await res.json();
-    if (!data.audio) throw new Error('no audio');
-    var audio = new Audio('data:' + (data.mime || 'audio/mpeg') + ';base64,' + data.audio);
-    audio.play();
-  } catch (e) {
-    if (window.speechSynthesis) {
-      var utt = new SpeechSynthesisUtterance(text);
-      utt.lang = 'hi-IN';
-      utt.rate = 0.9;
-      speechSynthesis.speak(utt);
-    }
-  }
-}
-
-// ===== MY ACCOUNT / LOGIN ROUTING =====
+// ══ MY ACCOUNT / LOGIN ROUTING ══
 function goToAccount(e) {
   if (e) e.preventDefault();
   try {
@@ -782,163 +623,430 @@ function goToAccount(e) {
   window.location.href = '/auth.html';
 }
 
-function askQuick(q) {
-  document.getElementById('userInput').value = q;
-  sendMessage();
+// ══ ROBOT SPEAK — GLOBAL SCOPE ══
+var _elAudio = null;
+
+function robotSpeakBrowser(text) {
+  var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu, '').replace(/[^\u0000-\u024F\u0900-\u097F ]/g, '').trim();
+  if(!clean) return;
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+  var utter = new SpeechSynthesisUtterance(clean);
+  utter.lang = 'hi-IN';
+  utter.rate = 0.85;
+  utter.pitch = 1.1;
+  window.speechSynthesis.speak(utter);
 }
 
-// ===== VOICE =====
-var recognition = null;
-var listening = false;
-
-function toggleVoice() {
-  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-    alert('Voice feature is browser mein available nahi hai.');
-    return;
-  }
-  if (listening) { recognition.stop(); return; }
-  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  recognition = new SR();
-  recognition.lang = 'hi-IN';
-  recognition.interimResults = false;
-  recognition.onstart = function() {
-    listening = true;
-    document.getElementById('voiceBtn').classList.add('listening');
-    document.getElementById('voiceBtn').textContent = '🔴';
-  };
-  recognition.onresult = function(e) {
-    document.getElementById('userInput').value = e.results[0][0].transcript;
-  };
-  recognition.onend = function() {
-    listening = false;
-    document.getElementById('voiceBtn').classList.remove('listening');
-    document.getElementById('voiceBtn').textContent = '🎙';
-    if (document.getElementById('userInput').value) sendMessage();
-  };
-  recognition.onerror = function() {
-    listening = false;
-    document.getElementById('voiceBtn').classList.remove('listening');
-    document.getElementById('voiceBtn').textContent = '🎙';
-  };
-  recognition.start();
+function stopAllSpeech() {
+  if (_elAudio) { try { _elAudio.pause(); _elAudio.currentTime = 0; } catch(e){} _elAudio = null; }
+  if (window.speechSynthesis) { window.speechSynthesis.cancel(); }
 }
 
-// ===== CONTACT FORM =====
-function submitForm() {
-  var name = document.getElementById('c_name').value.trim();
-  var phone = document.getElementById('c_phone').value.trim();
-  var service = document.getElementById('c_service').value;
-  if (!name || !phone || !service) {
-    alert('Kripya naam, mobile aur service zaroor bharen.');
-    return;
-  }
-  var msg = 'Namaskar%2C%20Mera%20naam%20' + encodeURIComponent(name) + '%20hai.%20Mobile%3A%20' + encodeURIComponent(phone) + '.%20Service%3A%20' + encodeURIComponent(service);
-  window.open('https://wa.me/916350132497?text=' + msg, '_blank');
-  document.getElementById('successMsg').style.display = 'block';
-  setTimeout(function() { document.getElementById('successMsg').style.display = 'none'; }, 5000);
-}
-
-// ===== 3D GEN — REAL REPLICATE API =====
-function previewSelected() {
-  var f = document.getElementById('photo3d-input').files[0];
-  if (f) document.getElementById('preview-name').textContent = '✅ Selected: ' + f.name;
-}
-
-async function generate3D() {
-  var fileInput = document.getElementById('photo3d-input');
-  var resultDiv = document.getElementById('photo3d-result');
-  if (!fileInput.files[0]) { alert('Pehle photo select karo!'); return; }
-
-  var btn = document.getElementById('gen3d-btn');
-  if (btn) btn.disabled = true;
-
-  resultDiv.innerHTML = '<p style="color:gold;margin-bottom:10px">⏳ GAIOS™ AI 3D model shuru kar raha hai...</p><div style="width:100%;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;"><div style="height:100%;background:#C9A84C;border-radius:3px;animation:prog 4s infinite;"></div></div><style>@keyframes prog{0%{width:5%}50%{width:85%}100%{width:95%}}</style>';
-
+async function robotSpeak(text) {
+  var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu, '').replace(/[^\u0000-\u024F\u0900-\u097F .,!?]/g, '').trim();
+  if (!clean) return;
+  stopAllSpeech();
   try {
-    var reader = new FileReader();
-    reader.onload = async function(e) {
-      var base64 = e.target.result.split(',')[1];
-      var imageType = fileInput.files[0].type || 'image/jpeg';
-
-      try {
-        // Step 1: Prediction start karo
-        var res = await fetch('/api/photo3d', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ imageBase64: base64, imageType: imageType })
-        });
-
-        var data = await res.json();
-
-        if (!data.predictionId) {
-          resultDiv.innerHTML = '<p style="color:#FF6666;">❌ Error: ' + (data.error || 'Start failed') + '</p>';
-          if (btn) btn.disabled = false;
-          return;
-        }
-
-        // Step 2: Frontend se poll karo
-        var predId = data.predictionId;
-        var seconds = 0;
-        
-        for (var i = 0; i < 40; i++) {
-          await new Promise(function(r) { setTimeout(r, 5000); });
-          seconds += 5;
-          resultDiv.querySelector('p').textContent = '⏳ 3D model ban raha hai... ' + seconds + ' seconds...';
-
-          var pollRes = await fetch('/api/photo3d', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ predictionId: predId })
-          });
-
-          var pollData = await pollRes.json();
-
-          if (pollData.status === 'succeeded' && pollData.output) {
-            show3DResult(resultDiv, pollData.output);
-            if (btn) btn.disabled = false;
-            return;
-          } else if (pollData.status === 'failed') {
-            resultDiv.innerHTML = '<p style="color:#FF6666;">❌ 3D generation failed. Try again.</p>';
-            if (btn) btn.disabled = false;
-            return;
-          }
-        }
-
-        resultDiv.innerHTML = '<p style="color:#FF6666;">❌ Timeout. Please try again.</p>';
-        if (btn) btn.disabled = false;
-
-      } catch(err) {
-        resultDiv.innerHTML = '<p style="color:#FF6666;">❌ Error: ' + err.message + '</p>';
-        if (btn) btn.disabled = false;
-      }
-    };
-    reader.readAsDataURL(fileInput.files[0]);
+    var res = await fetch('/api/elevenlabs-tts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: clean })
+    });
+    if (!res.ok) throw new Error('EL ' + res.status);
+    var data = await res.json();
+    if (!data.audio) throw new Error('No audio');
+    var byteArr = Uint8Array.from(atob(data.audio), function(c) { return c.charCodeAt(0); });
+    var blob = new Blob([byteArr], { type: data.mime || 'audio/mpeg' });
+    var url = URL.createObjectURL(blob);
+    _elAudio = new Audio(url);
+    _elAudio.volume = 0.95;
+    _elAudio.onended = function() { URL.revokeObjectURL(url); _elAudio = null; };
+    _elAudio.play();
   } catch(e) {
-    resultDiv.innerHTML = '<p style="color:#FF6666;">❌ Error: ' + e.message + '</p>';
-    if (btn) btn.disabled = false;
+    robotSpeakBrowser(clean);
   }
 }
 
-function show3DResult(resultDiv, output) {
-  var outputs = Array.isArray(output) ? output : [output];
-  var html = '<p style="color:lightgreen;font-size:16px;margin-bottom:12px">✅ 3D Model Ready! Printing ke liye taiyar!</p>';
-  var dlHtml = '';
+// ══ CHAT ══
+var chatArea=document.getElementById('chatArea');
+var isLoad=false, chatHist=[];
+function addMsg(text,isUser){
+  var d=document.createElement('div');
+  d.className=isUser?'msg-user':'msg-ai';
+  d.textContent=text;
+  chatArea.appendChild(d);
+  chatArea.scrollTop=chatArea.scrollHeight;
+  chatHist.push({role:isUser?'user':'assistant',content:text});
+}
+function addLoad(){var d=document.createElement('div');d.className='msg-ai';d.id='lm';d.textContent='⏳ ...';chatArea.appendChild(d);chatArea.scrollTop=chatArea.scrollHeight;}
+function remLoad(){var e=document.getElementById('lm');if(e)e.remove();}
+async function sendMsg(){
+  var inp=document.getElementById('userInput');
+  var msg=inp.value.trim();
+  if(!msg||isLoad) return;
+  inp.value=''; addMsg(msg,true); isLoad=true; addLoad();
+  try {
+    var msgs=chatHist.slice(-8);
+    var res=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      model:'claude-sonnet-4-6',max_tokens:600,
+      system:'Aap GAIOS™ hain — Genesys Additive 3D Creation Pvt. Ltd. ka AI Assistant. India ki pehli commercial full-colour PolyJet 3D printing hub, Pali, Rajasthan. Brands: BFOREVER™ aur GAIOS™. Patent: IN202611090765 | DPIIT: DIPP274037 | Printer: Mimaki 3DUJ-553 | Scanner: DreamBot G9-1000 | Contact: +91-6350132497. RIPS 2024 MoU signed: MoU/2026-27/37148. 10 Scan Partners: Delhi, Mumbai, Bengaluru, Hyderabad, Pune, Ahmedabad, Surat, Jaipur, Ludhiana, Kolkata. User ki language mein jawab do (Hindi/English). 200 words max. Helpful aur professional raho.',
+      messages:msgs.length?msgs:[{role:'user',content:msg}]
+    })});
+    var data=await res.json(); remLoad();
+    var rep=(data.content&&data.content[0]&&data.content[0].text)?data.content[0].text:'Kuch issue aaya. Dobara try karein.';
+    addMsg(rep,false);
+    robotSpeak(rep);
+  } catch(e){remLoad();addMsg('Network error.',false);}
+  isLoad=false;
+}
+function askQ(q){document.getElementById('userInput').value=q;sendMsg();}
 
-  outputs.forEach(function(url, i) {
-    if (url && typeof url === 'string') {
-      if (url.match(/\.(png|jpg|jpeg|webp|gif)/i)) {
-        html += '<img src="' + url + '" style="max-width:100%;max-height:350px;object-fit:contain;border:2px solid gold;border-radius:12px;margin-bottom:10px;" alt="3D View">';
-      } else {
-        html += '<div style="padding:16px;color:#C9A84C;font-size:14px;border:1px solid #C9A84C;border-radius:8px;margin-bottom:10px;">✅ 3D Model File Ready!</div>';
-      }
-      dlHtml += '<a href="' + url + '" target="_blank" style="display:inline-block;background:rgba(201,168,76,0.15);color:#C9A84C;border:1px solid #C9A84C;border-radius:8px;padding:8px 16px;margin:4px;text-decoration:none;font-size:12px;">📥 Download 3D File</a>';
+// ══ VOICE ══
+var rec=null,lis=false;
+function toggleVoice(){
+  if(!('webkitSpeechRecognition' in window)&&!('SpeechRecognition' in window)){alert('Voice not available.');return;}
+  if(lis){rec.stop();return;}
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  rec=new SR(); rec.lang=lang==='hi'?'hi-IN':'en-US'; rec.interimResults=false;
+  rec.onstart=function(){lis=true;document.getElementById('voiceBtn').classList.add('listening');document.getElementById('voiceBtn').textContent='🔴';};
+  rec.onresult=function(e){document.getElementById('userInput').value=e.results[0][0].transcript;};
+  rec.onend=function(){lis=false;document.getElementById('voiceBtn').classList.remove('listening');document.getElementById('voiceBtn').textContent='🎙';if(document.getElementById('userInput').value)sendMsg();};
+  rec.onerror=function(){lis=false;document.getElementById('voiceBtn').classList.remove('listening');document.getElementById('voiceBtn').textContent='🎙';};
+  rec.start();
+}
+
+// ══ PHOTO QUALITY CHECK ══
+function checkQuality(img) {
+  var canvas=document.createElement('canvas');
+  canvas.width=img.width; canvas.height=img.height;
+  var ctx=canvas.getContext('2d');
+  ctx.drawImage(img,0,0);
+  var data=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+  var brightness=0;
+  for(var i=0;i<data.length;i+=4) brightness+=(data[i]+data[i+1]+data[i+2])/3;
+  brightness/=(data.length/4);
+  var qBar=document.getElementById('qualityBar');
+  var qDot=document.getElementById('qualityDot');
+  var qText=document.getElementById('qualityText');
+  qBar.style.display='block';
+  if(brightness<40){qDot.style.background='#FF4D6D';qText.textContent='⚠️ Photo bahut dark hai';qText.style.color='#FF4D6D';}
+  else if(brightness>220){qDot.style.background='#ffcc00';qText.textContent='⚠️ Photo bahut bright hai';qText.style.color='#ffcc00';}
+  else{qDot.style.background='#00D68F';qText.textContent='✅ Photo quality achhi hai!';qText.style.color='#00D68F';}
+}
+
+// ══ MULTI-PHOTO UPLOAD ══
+var selFiles=[], selIdx=0, curModelUrl=null;
+function handleFiles(files) {
+  selFiles=[];
+  var thumbRow=document.getElementById('thumbRow');
+  thumbRow.innerHTML='';
+  var count=Math.min(files.length,5);
+  for(var i=0;i<count;i++){
+    selFiles.push(files[i]);
+    (function(f,idx){
+      var reader=new FileReader();
+      reader.onload=function(e){
+        var wrap=document.createElement('div');wrap.className='thumb-wrap';
+        var img=document.createElement('img');
+        img.className='thumb'+(idx===0?' selected':'');
+        img.src=e.target.result;
+        img.style.width='72px';img.style.height='72px';img.style.objectFit='cover';
+        img.onload=function(){if(idx===0)checkQuality(img);};
+        img.onclick=(function(ix,im){return function(){
+          document.querySelectorAll('.thumb').forEach(function(t){t.classList.remove('selected');});
+          im.classList.add('selected');selIdx=ix;checkQuality(im);
+        };})(idx,img);
+        var rem=document.createElement('div');rem.className='thumb-remove';rem.textContent='×';
+        rem.onclick=(function(ix){return function(ev){ev.stopPropagation();selFiles.splice(ix,1);handleFiles(selFiles);};})(idx);
+        wrap.appendChild(img);wrap.appendChild(rem);thumbRow.appendChild(wrap);
+      };
+      reader.readAsDataURL(f);
+    })(files[i],i);
+  }
+  document.getElementById('previewSection').style.display=count>0?'block':'none';
+  document.getElementById('uploadText').textContent=count>0?(count+' Photo(s) Selected ✅'):'Photos Choose Karo';
+  document.getElementById('uploadArea').classList.toggle('has-files',count>0);
+  document.getElementById('colourBox').style.display=count>0?'block':'none';
+  document.getElementById('sizeSection').style.display=count>0?'block':'none';
+  document.getElementById('step2badge').style.display=count>0?'inline-block':'none';
+  document.getElementById('bulkBox').style.display=count>0?'block':'none';
+  document.getElementById('step3badge').style.display=count>0?'inline-block':'none';
+}
+
+function adjustImage(){
+  var b=document.getElementById('brightnessSlider').value;
+  var c=document.getElementById('contrastSlider').value;
+  var s=document.getElementById('saturationSlider').value;
+  document.getElementById('brightnessVal').textContent=b+'%';
+  document.getElementById('contrastVal').textContent=c+'%';
+  document.getElementById('saturationVal').textContent=s+'%';
+  document.querySelectorAll('.thumb.selected').forEach(function(t){t.style.filter='brightness('+b+'%) contrast('+c+'%) saturate('+s+')';});
+}
+
+var selSize='4';
+var sizePrices={'2.5':2250,'4':3750,'5':4875,'6':6375};
+function selectSize(el,size){
+  document.querySelectorAll('.size-card').forEach(function(s){s.classList.remove('selected');});
+  el.classList.add('selected');selSize=size;updateBulkTotal();
+}
+
+var qty=1;
+function changeQty(d){qty=Math.max(1,Math.min(500,qty+d));document.getElementById('qtyVal').textContent=qty;updateBulkTotal();}
+function updateBulkTotal(){
+  var base=sizePrices[selSize]||3750;
+  var disc=qty>=100?0.25:qty>=50?0.18:qty>=10?0.10:0;
+  document.getElementById('bulkTotal').textContent='₹'+Math.round(base*qty*(1-disc)).toLocaleString('en-IN');
+}
+
+// ══ AUDIO SYSTEM ══
+var audioCtx=null,bgGainNode=null,isMusicOn=false;
+function getAudioCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+
+function startBgMusic(){
+  try{
+    var ctx=getAudioCtx();bgGainNode=ctx.createGain();bgGainNode.gain.value=0.08;bgGainNode.connect(ctx.destination);
+    var notes=[130,196,261,196,130,165,196,261],noteIdx=0,bpm=120,beatTime=60/bpm;
+    function playNote(time,freq,dur){
+      var osc=ctx.createOscillator(),gain=ctx.createGain();osc.connect(gain);gain.connect(bgGainNode);
+      osc.type='sine';osc.frequency.value=freq;
+      gain.gain.setValueAtTime(0.15,time);gain.gain.exponentialRampToValueAtTime(0.001,time+dur);
+      osc.start(time);osc.stop(time+dur);
     }
+    isMusicOn=true;
+    function scheduleBeat(){
+      if(!isMusicOn)return;
+      var t=ctx.currentTime+0.1;
+      for(var i=0;i<8;i++)playNote(t+i*beatTime*0.5,notes[(noteIdx+i)%notes.length],beatTime*0.4);
+      noteIdx=(noteIdx+8)%notes.length;setTimeout(scheduleBeat,4000);
+    }
+    scheduleBeat();
+  }catch(e){}
+}
+
+function playBeep(ctx,freq,vol,dur){
+  try{var o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='square';o.frequency.value=freq;g.gain.value=vol;g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);o.start();o.stop(ctx.currentTime+dur);}catch(e){}
+}
+
+function stopBgMusic(){isMusicOn=false;if(bgGainNode){try{bgGainNode.gain.value=0;}catch(e){}}}
+
+function playSuccessSound(){
+  try{var ctx=getAudioCtx();[523,659,784,1047].forEach(function(freq,i){var o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='sine';o.frequency.value=freq;g.gain.setValueAtTime(0.3,ctx.currentTime+i*0.15);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+i*0.15+0.4);o.start(ctx.currentTime+i*0.15);o.stop(ctx.currentTime+i*0.15+0.5);});}catch(e){}
+}
+
+function playErrorSound(){try{var ctx=getAudioCtx();[400,300,200].forEach(function(freq,i){setTimeout(function(){playBeep(ctx,freq,0.1,0.2);},i*150);});}catch(e){}}
+
+async function speakLine(text) {
+  var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu,'').replace(/[^\u0000-\u024F\u0900-\u097F .,!?]/g,'').trim();
+  if (!clean) return;
+  stopAllSpeech();
+  try {
+    var res = await fetch('/api/elevenlabs-tts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: clean })
+    });
+    if (!res.ok) throw new Error('EL ' + res.status);
+    var data = await res.json();
+    if (!data.audio) throw new Error('No audio');
+    var byteArr = Uint8Array.from(atob(data.audio), function(c) { return c.charCodeAt(0); });
+    var blob = new Blob([byteArr], { type: data.mime || 'audio/mpeg' });
+    var url = URL.createObjectURL(blob);
+    _elAudio = new Audio(url);
+    _elAudio.volume = 0.85;
+    _elAudio.onended = function() { URL.revokeObjectURL(url); _elAudio = null; };
+    _elAudio.play();
+  } catch(e) {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    var utt = new SpeechSynthesisUtterance(clean); utt.lang='hi-IN'; utt.rate=1.1; utt.pitch=1.3; utt.volume=0.9;
+    window.speechSynthesis.speak(utt);
+  }
+}
+
+var funnyLines=["🤖 Ek second... main aapki photo ko 3D mein badal raha hoon!","😅 Itni sundar photo thi... ab 3D mein aur bhi sundar lagoge!","🔬 Har pixel ko personally check kar raha hoon... patience!","🎨 Rang bharenge, chehra banayenge... Mimaki printer ke liye taiyaar!","🏗️ Ek ek layer build ho rahi hai... jaise Pali mein ghar banta hai!","🧠 GAIOS™ soch raha hai... aur woh bahut tez sochta hai!","☕ Thoda chai peeyein... model ban raha hai!","🌟 India ka pehla full-colour 3D hub — Pali, Rajasthan se namaste!","🎯 Accuracy: 99.9%... baaki 0.1% Gopal ji ke liye chhod diya!","🖨️ Mimaki 3DUJ-553 printer taiyaar ho rahi hai Pali mein!","🚀 Hunyuan AI ka jaadu dekho... Chinese technology, Indian innovation!","💫 DPIIT number hai, Patent hai — guarantee hai quality ki!","🎪 3D model almost ready... thoda aur wait karo mere dost!","🤩 Jab model aayega, tum dekhte reh jaoge!","🏆 RIPS 2024 MoU signed, Government ka bharosa — quality assured!"];
+var lineIdx=0,speechInt=null,particleAnim=null;
+
+function startSpeechBubbles(){
+  lineIdx=0;speakLine(funnyLines[0]);
+  speechInt=setInterval(function(){
+    lineIdx=(lineIdx+1)%funnyLines.length;
+    var sb=document.getElementById('speechBubble'),st=document.getElementById('speechText');
+    if(sb&&st){sb.style.opacity='0';setTimeout(function(){st.textContent=funnyLines[lineIdx];sb.style.opacity='1';speakLine(funnyLines[lineIdx]);},300);}
+  },5000);
+}
+
+function stopSpeechBubbles(){if(speechInt)clearInterval(speechInt);if(window.speechSynthesis)window.speechSynthesis.cancel();}
+
+function initParticles(){
+  var canvas=document.getElementById('particleCanvas');if(!canvas)return;
+  var ctx=canvas.getContext('2d'),particles=[],W=canvas.offsetWidth,H=canvas.offsetHeight;
+  canvas.width=W;canvas.height=H;
+  for(var i=0;i<40;i++)particles.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+0.5,dx:(Math.random()-0.5)*0.5,dy:-Math.random()*0.8-0.3,alpha:Math.random(),gold:Math.random()>0.5});
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(function(p){ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.gold?'rgba(201,168,76,'+p.alpha+')':'rgba(0,214,143,'+(p.alpha*0.5)+')';ctx.fill();p.x+=p.dx;p.y+=p.dy;p.alpha+=(Math.random()-0.5)*0.05;p.alpha=Math.max(0.1,Math.min(0.8,p.alpha));if(p.y<0){p.y=H;p.x=Math.random()*W;}if(p.x<0||p.x>W)p.dx*=-1;});
+    particleAnim=requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+function stopParticles(){if(particleAnim)cancelAnimationFrame(particleAnim);}
+function updatePct(val){var el=document.getElementById('progressPct');if(el)el.textContent=Math.round(val)+'%';}
+
+var progInt=null,progVal=5;
+function startProg(){
+  progVal=5;document.getElementById('progressSection').style.display='block';
+  document.getElementById('progressBar').style.width='5%';updatePct(5);
+  startSpeechBubbles();startBgMusic();setTimeout(initParticles,100);
+  progInt=setInterval(function(){if(progVal<82){progVal+=Math.random()*1.8;document.getElementById('progressBar').style.width=progVal+'%';updatePct(progVal);}},3000);
+}
+function doneProg(){
+  clearInterval(progInt);stopSpeechBubbles();stopBgMusic();stopParticles();playSuccessSound();
+  document.getElementById('progressBar').style.width='100%';updatePct(100);
+  var st=document.getElementById('speechText');if(st)st.textContent='🎉 Ho gaya! Aapka 3D model ready hai!';
+  speakLine('Ho gaya! Aapka teen dee model ready hai!');
+  setTimeout(function(){document.getElementById('progressSection').style.display='none';},1800);
+}
+function stopProg(){clearInterval(progInt);stopSpeechBubbles();stopBgMusic();stopParticles();playErrorSound();document.getElementById('progressSection').style.display='none';}
+
+function setStep(n){for(var i=1;i<=4;i++){var c=document.getElementById('sc'+i);if(i<n){c.classList.remove('active');c.classList.add('done');c.textContent='✓';}else if(i===n){c.classList.add('active');c.classList.remove('done');}else{c.classList.remove('active','done');c.textContent=i;}}}
+function showStat(type,msg){['sProc','sOk','sErr'].forEach(function(id){document.getElementById(id).style.display='none';});if(type&&msg){document.getElementById('s'+type).textContent=msg;document.getElementById('s'+type).style.display='block';}}
+
+// ══ GENERATE 3D ══
+async function generate3D(){
+  if(selFiles.length===0){alert('Pehle photo(s) select karo!');return;}
+  var btn=document.getElementById('gen3d-btn');
+  btn.disabled=true;btn.textContent='⏳ Generating...';
+  document.getElementById('viewerSection').style.display='none';
+  document.getElementById('approvalBox').style.display='none';
+  document.getElementById('trackingBox').style.display='none';
+  var file=selFiles[selIdx]||selFiles[0];
+  var b=document.getElementById('brightnessSlider').value;
+  var c=document.getElementById('contrastSlider').value;
+  var s=document.getElementById('saturationSlider').value;
+  var needsAdjust=(b!='100'||c!='100'||s!='100');
+  function getBase64(file,cb){
+    if(file.size>1500000||needsAdjust){
+      var canvas=document.createElement('canvas'),img=new Image();
+      img.onload=function(){var scale=Math.min(1,1200/Math.max(img.width,img.height));canvas.width=img.width*scale;canvas.height=img.height*scale;var ctx=canvas.getContext('2d');ctx.filter='brightness('+b+'%) contrast('+c+'%) saturate('+s+')';ctx.drawImage(img,0,0,canvas.width,canvas.height);canvas.toBlob(function(blob){var r=new FileReader();r.onload=function(e){cb(e.target.result.split(',')[1]);};r.readAsDataURL(blob);},'image/jpeg',0.85);};
+      img.src=URL.createObjectURL(file);
+    }else{var r=new FileReader();r.onload=function(e){cb(e.target.result.split(',')[1]);};r.readAsDataURL(file);}
+  }
+  getBase64(file,async function(base64){
+    startProg();setStep(2);showStat('Proc','⏳ GAIOS™ AI 3D model shuru kar raha hai...');
+    try{
+      var res=await fetch('/api/photo3d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imageBase64:base64,imageType:'image/jpeg'})});
+      var data=await res.json();
+      if(!data.predictionId){stopProg();showStat('Err','❌ '+(data.error||'Start failed'));btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';return;}
+      setStep(3);var predId=data.predictionId,secs=0;
+      for(var i=0;i<72;i++){
+        await new Promise(function(r){setTimeout(r,5000);});secs+=5;
+        showStat('Proc','⏳ Processing: '+secs+'s — Hunyuan 3D generating...');
+        var pr=await fetch('/api/photo3d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({predictionId:predId})});
+        var pd=await pr.json();
+        if(pd.status==='succeeded'&&pd.output){
+          var outs=Array.isArray(pd.output)?pd.output:[pd.output];var mu=null;
+          outs.forEach(function(u){if(u&&u.match&&u.match(/\.(glb|obj|gltf)/i))mu=u;});
+          doneProg();setStep(4);curModelUrl=mu||outs[0];
+          if(mu){showStat('Ok','✅ 3D Model Ready!');document.getElementById('modelViewer').setAttribute('src',mu);document.getElementById('viewerSection').style.display='block';document.getElementById('approvalBox').style.display='block';document.getElementById('trackingBox').style.display='block';}
+          else{showStat('Ok','✅ Model ready!');document.getElementById('viewerSection').style.display='block';}
+          btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';toast('🎉 3D Model Bana! '+secs+'s mein!',4000);return;
+        }else if(pd.status==='failed'){stopProg();showStat('Err','❌ Generation failed.');btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';return;}
+      }
+      stopProg();showStat('Err','⏳ Timeout. Dobara try karein.');btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';
+    }catch(err){stopProg();showStat('Err','❌ '+err.message);btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';}
   });
+}
 
-  html += dlHtml;
-  html += '<div style="background:linear-gradient(135deg,rgba(201,168,76,0.2),rgba(201,168,76,0.05));border:1px solid #C9A84C;border-radius:10px;padding:12px;margin-top:12px;text-align:center;"><div style="color:#C9A84C;font-size:13px;font-weight:700;">🖨️ BFOREVER™ PolyJet Print Ready</div><div style="color:#8899AA;font-size:11px;">Mimaki 3DUJ-553 | 10 Million+ Colours</div></div>';
+function approveModel(){
+  document.getElementById('approvalStatus').style.display='block';
+  document.getElementById('approvalStatus').textContent='✅ Model Approved!';
+  toast('✅ Approved! +91-6350132497',4000);
+  setTimeout(function(){window.open('https://wa.me/916350132497?text=Namaskar%2C%20maine%20GAIOS%20par%20apna%203D%20model%20approve%20kar%20diya%20hai.%20Size%3A%20'+selSize+'%22','_blank');},1200);
+}
+function toggleRevision(){var rt=document.getElementById('revText'),rb=document.getElementById('revSubmitBtn');var show=rt.style.display!=='block';rt.style.display=show?'block':'none';rb.style.display=show?'block':'none';if(show)rt.focus();}
+function submitRevision(){var text=document.getElementById('revText').value.trim();if(!text){alert('Changes likhein.');return;}window.open('https://wa.me/916350132497?text=Changes%3A%20'+encodeURIComponent(text),'_blank');toast('✅ Revision request bhaij di!',3000);}
+function downloadModel(){if(!curModelUrl){toast('Pehle model generate karo!');return;}var a=document.createElement('a');a.href=curModelUrl;a.download='GAIOS-3D-'+selSize+'inch.glb';a.target='_blank';a.click();}
+function shareWA(){if(!curModelUrl){toast('Pehle model generate karo!');return;}window.open('https://wa.me/?text='+encodeURIComponent('🎉 Mera GAIOS™ 3D Model!\n'+curModelUrl),'_blank');}
+function shareInsta(){if(!curModelUrl){toast('Pehle model generate karo!');return;}navigator.clipboard.writeText(curModelUrl).then(function(){toast('📸 Link copy ho gayi!',4000);});}
+function shareFB(){if(!curModelUrl){toast('Pehle model generate karo!');return;}window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(curModelUrl),'_blank');}
+function copyLink(){if(!curModelUrl){toast('Pehle model generate karo!');return;}navigator.clipboard.writeText(curModelUrl).then(function(){toast('✅ Link copy ho gayi!',2000);});}
 
-  resultDiv.innerHTML = html;
+// ══ CONTACT ══
+function submitForm(){
+  var n=document.getElementById('c_name').value.trim();
+  var p=document.getElementById('c_phone').value.trim();
+  var sv=document.getElementById('c_service').value;
+  var ct=document.getElementById('c_city').value.trim();
+  var mg=document.getElementById('c_msg').value.trim();
+  if(!n||!p||!sv){alert('Naam, mobile aur service zaroor bharen.');return;}
+  var waMsg='Namaskar%2C%20Naam%3A%20'+encodeURIComponent(n)+'%20%7C%20Mobile%3A%20'+encodeURIComponent(p)+(ct?'%20%7C%20City%3A%20'+encodeURIComponent(ct):'')+'%20%7C%20Service%3A%20'+encodeURIComponent(sv)+(mg?'%20%7C%20Details%3A%20'+encodeURIComponent(mg):'');
+  window.open('https://wa.me/916350132497?text='+waMsg,'_blank');
+  var sm=document.getElementById('successMsg');sm.style.display='block';setTimeout(function(){sm.style.display='none';},5000);
+}
+
+// ══ MODAL MUSIC ══
+function playBgMusic(type){
+  try{
+    var ctx=new(window.AudioContext||window.webkitAudioContext)();
+    var notes={'happy':[523,659,784,1047],'classical':[392,494,587,698],'corporate':[440,554,659,880],'calm':[349,440,523,698],'tech':[880,1047,1319,1047],'wedding':[784,988,1175,988]};
+    var seq=notes[type]||notes['happy'];
+    seq.forEach(function(freq,i){
+      var osc=ctx.createOscillator(),gain=ctx.createGain();osc.connect(gain);gain.connect(ctx.destination);
+      osc.frequency.value=freq;osc.type='sine';
+      gain.gain.setValueAtTime(0.08,ctx.currentTime+i*0.4);gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+i*0.4+0.35);
+      osc.start(ctx.currentTime+i*0.4);osc.stop(ctx.currentTime+i*0.4+0.4);
+    });
+  }catch(e){}
+}
+
+// ══ VERTICAL DATA ══
+var verticalData={
+  'consumer-figurines':{title:'🧍 Consumer Figurines — BFOREVER™',desc:'Aapki ya aapke priyajan ki photo se world-class full-colour 3D figurine! Mimaki 3DUJ-553 PolyJet printer se banegi — India mein pehli baar. Shaadi, birthday, anniversary — har khaas mauke ke liye perfect yaadgaar tohfa.',music:'happy',color:'#C9A84C'},
+  'heritage-tourism':{title:'🏛️ Heritage & Tourism',desc:'Rajasthan ke forts, temples aur historical artifacts ke exact 3D replicas! Museums, tourist centers aur government departments ke liye premium quality models. GAIOS™ AI se scan karein, print karein — heritage ko nayi zindagi milegi.',music:'classical',color:'#8B6914'},
+  'real-estate':{title:'🏗️ Real Estate',desc:'Builders aur architects ke liye full-colour 3D architectural models! Blueprint se seedha 3D model — clients ko project dikhana ab aur bhi asaan. Pre-launch marketing mein game changer!',music:'corporate',color:'#4A90D9'},
+  'medical-dicom':{title:'🏥 Medical DICOM',desc:'CT scan aur MRI se exact 3D organ models! Surgeons operation se pehle practice kar sakte hain. Medical colleges, hospitals aur diagnostic centers ke liye revolutionary technology.',music:'calm',color:'#E74C3C'},
+  'drone-lidar':{title:'🚁 Drone/LiDAR',desc:'Drone survey data se physical terrain models! GIS data ko 3D reality mein convert karein. Urban planning, infrastructure projects aur government surveys ke liye perfect solution.',music:'tech',color:'#27AE60'},
+  'antique-museum':{title:'🏺 Antique & Museum',desc:'Rare artifacts aur antiques ke full-colour 3D replicas! Original ko preserve karein, replicas sell karein. Museums, collectors aur heritage organizations ke liye unique business opportunity.',music:'classical',color:'#9B59B6'},
+  'reverse-engineering':{title:'⚙️ Reverse Engineering',desc:'Machine parts scan karein aur exact replicas banayein! Spare parts jo market mein available nahi — GAIOS™ se possible hai. Manufacturing aur industrial maintenance ke liye revolutionary solution.',music:'tech',color:'#E67E22'},
+  'defence':{title:'🛡️ Defence',desc:'Terrain mapping aur military scale models! Training purposes ke liye exact geographical models. Strategic planning aur simulation ke liye use hote hain.',music:'corporate',color:'#2C3E50'},
+  'corporate-gifting':{title:'🎁 Corporate Gifting',desc:'Premium 3D awards, trophies aur corporate gifts! Company logo, product replicas ya founder ki figurine — sab kuch possible! Employee recognition aur client gifting mein unique impression.',music:'happy',color:'#F39C12'},
+  'visitor-centre':{title:'🗺️ Visitor Centre',desc:'Relief maps aur terrain models visitor centers ke liye! National parks, hill stations aur tourist attractions ke liye interactive 3D maps.',music:'calm',color:'#16A085'},
+  'religious-tourism':{title:'🕌 Religious Tourism',desc:'Temple models, deity replicas aur religious artifacts ke 3D prints! Teerth sthalon ki miniature replicas — devotees ke liye precious souvenirs.',music:'classical',color:'#E74C3C'},
+  'education-stem':{title:'📚 Education/STEM',desc:'3D learning models schools aur colleges ke liye! Anatomy, geography, mathematics — har subject mein 3D models se padhai interesting aur effective hoti hai.',music:'happy',color:'#3498DB'}
+};
+
+var bforeverData={
+  'shaadi':{title:'💍 Shaadi — Dulha-Dulhan ki 3D Figurine',desc:'Shaadi ki sabse khaas yaad — Dulha-Dulhan ki full-colour 3D figurine! Actual wedding dress mein, exact chehra, exact look — GAIOS™ AI se scan karein aur Mimaki printer pe print karein. Cake topper se lekar mantelpiece decoration tak — yeh gift zindagi bhar yaad rahega.',music:'wedding',color:'#FFD700'},
+  'birthday':{title:'🎂 Birthday — Unique 3D Gift',desc:'Birthday pe aisa gift jo kabhi bhula na ja sake! Khud ki ya kisi priye ki exact 3D figurine — unka chehra, unke kapde, unka andaaz — sab kuch 3D mein! Yeh sirf ek gift nahi, ek yaad hai jo hamesha saath rahegi!',music:'happy',color:'#FF6B9D'},
+  'yaadgar':{title:'💝 Yaadgaar — Unki Yaad Hamesha',desc:'Jo humse door ho gaye — unki yaad ko 3D mein jinda rakhen! Purani photo se exact 3D figurine banva sakte hain. BFOREVER™ ka matlab hai — "Be Forever" — unki yaad hamesha hamare saath!',music:'calm',color:'#9B59B6'},
+  'achievement':{title:'🏆 Achievement — Safalta Ka Jashn',desc:'Retirement, promotion, medal, degree — har badi safalta deserve karti hai ek khaas celebration! Achievement figurine mein wo pehne huye uniform mein, trophy ke saath — bilkul waise jaise wo hain!',music:'corporate',color:'#F39C12'}
+};
+
+// ══ VERTICAL MODAL ══
+function showVerticalModal(key){
+  var d=verticalData[key];
+  if(!d)return;
+  playBgMusic(d.music);
+  window.speechSynthesis.cancel();
+  robotSpeak(d.title.replace(/[^\w\s\u0900-\u097F.,!?]/g,'') + '. ' + d.desc);
+  var modal=document.createElement('div');
+  modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
+  modal.innerHTML='<div style="background:linear-gradient(135deg,#0C1830,#1a2a4a);border:2px solid '+d.color+';border-radius:16px;padding:28px;max-width:480px;width:100%;position:relative;"><button onclick="window.speechSynthesis.cancel();this.parentElement.parentElement.remove()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;">✕</button><h2 style="color:'+d.color+';font-size:1.2rem;margin-bottom:12px;">'+d.title+'</h2><p style="color:#e0e0e0;line-height:1.7;font-size:0.95rem;">'+d.desc+'</p><div style="margin-top:20px;padding:14px;background:rgba(201,168,76,0.1);border-radius:10px;border-left:3px solid '+d.color+';"><p style="color:'+d.color+';font-weight:bold;margin:0;font-size:0.9rem;">🚀 Coming Soon — Oct/Nov 2026</p><p style="color:#aaa;font-size:0.85rem;margin:6px 0 0;">Mimaki 3DUJ-553 printer commissioning ke baad yeh service shuru hogi. Pan-India scan points ke through aap yeh service le sakte hain!</p></div><button onclick="window.speechSynthesis.cancel();this.parentElement.parentElement.remove()" style="margin-top:16px;width:100%;padding:12px;background:'+d.color+';border:none;border-radius:8px;color:#000;font-weight:bold;cursor:pointer;font-size:1rem;">Samajh Gaya! ✓</button></div>';
+  document.body.appendChild(modal);
+}
+
+// ══ BFOREVER MODAL ══
+function showBforeverModal(key){
+  var d=bforeverData[key];
+  if(!d)return;
+  playBgMusic(d.music);
+  window.speechSynthesis.cancel();
+  robotSpeak(d.title.replace(/[^\w\s\u0900-\u097F.,!?]/g,'') + '. ' + d.desc);
+  var modal=document.createElement('div');
+  modal.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
+  modal.innerHTML='<div style="background:linear-gradient(135deg,#1a0a0a,#2a1a1a);border:2px solid '+d.color+';border-radius:16px;padding:28px;max-width:480px;width:100%;position:relative;"><button onclick="window.speechSynthesis.cancel();this.parentElement.parentElement.remove()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;">✕</button><h2 style="color:'+d.color+';font-size:1.2rem;margin-bottom:12px;">'+d.title+'</h2><p style="color:#e0e0e0;line-height:1.7;font-size:0.95rem;">'+d.desc+'</p><div style="margin-top:20px;text-align:center;"><a href="https://bforever.in" target="_blank" style="display:inline-block;padding:12px 24px;background:'+d.color+';border-radius:8px;color:#000;font-weight:bold;text-decoration:none;margin-right:10px;">🌐 BFOREVER™ Website</a><button onclick="window.speechSynthesis.cancel();this.parentElement.parentElement.parentElement.remove()" style="padding:12px 24px;background:transparent;border:2px solid '+d.color+';border-radius:8px;color:'+d.color+';font-weight:bold;cursor:pointer;">Theek Hai ✓</button></div></div>';
+  document.body.appendChild(modal);
 }
 </script>
 </body>
