@@ -935,7 +935,9 @@ async function generate3D(){
   getBase64(file,async function(base64){
     startProg();setStep(2);showStat('Proc','⏳ GAIOS™ AI 3D model shuru kar raha hai...');
     try{
-      var res=await fetch('/api/photo3d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imageBase64:base64,imageType:'image/jpeg'})});
+      var phone=prompt('Apna WhatsApp number daalo (91XXXXXXXXXX):','916350132497');
+      var fd=new FormData();fd.append('file',file);fd.append('phone',phone||'916350132497');fd.append('vertical','figurine');
+      var res=await fetch(DGX_API+'/generate3d',{method:'POST',body:fd});
       var data=await res.json();
       if(!data.predictionId){stopProg();showStat('Err','❌ '+(data.error||'Start failed'));btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';return;}
       setStep(3);var predId=data.predictionId,secs=0;
