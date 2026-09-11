@@ -647,16 +647,13 @@ async function robotSpeak(text) {
   if (!clean) return;
   stopAllSpeech();
   try {
-    var res = await fetch('/api/elevenlabs-tts', {
+    var res = await fetch('https://api.genesysadditive3dcreation.com/tts/stream', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: clean })
+      body: JSON.stringify({ text: clean, voice: 'Magpie-Multilingual.HI-IN.Aria' })
     });
-    if (!res.ok) throw new Error('EL ' + res.status);
-    var data = await res.json();
-    if (!data.audio) throw new Error('No audio');
-    var byteArr = Uint8Array.from(atob(data.audio), function(c) { return c.charCodeAt(0); });
-    var blob = new Blob([byteArr], { type: data.mime || 'audio/mpeg' });
+    if (!res.ok) throw new Error('TTS ' + res.status);
+    var blob = await res.blob();
     var url = URL.createObjectURL(blob);
     _elAudio = new Audio(url);
     _elAudio.volume = 0.95;
@@ -840,16 +837,13 @@ async function speakLine(text) {
   if (!clean) return;
   stopAllSpeech();
   try {
-    var res = await fetch('/api/elevenlabs-tts', {
+    var res = await fetch('https://api.genesysadditive3dcreation.com/tts/stream', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: clean })
+      body: JSON.stringify({ text: clean, voice: 'Magpie-Multilingual.HI-IN.Aria' })
     });
-    if (!res.ok) throw new Error('EL ' + res.status);
-    var data = await res.json();
-    if (!data.audio) throw new Error('No audio');
-    var byteArr = Uint8Array.from(atob(data.audio), function(c) { return c.charCodeAt(0); });
-    var blob = new Blob([byteArr], { type: data.mime || 'audio/mpeg' });
+    if (!res.ok) throw new Error('TTS ' + res.status);
+    var blob = await res.blob();
     var url = URL.createObjectURL(blob);
     _elAudio = new Audio(url);
     _elAudio.volume = 0.85;
