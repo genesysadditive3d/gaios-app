@@ -642,7 +642,10 @@ function stopAllSpeech() {
   if (window.speechSynthesis) { window.speechSynthesis.cancel(); }
 }
 
+var _ttsLock = false;
 async function robotSpeak(text) {
+  if(_ttsLock) return;
+  _ttsLock = true;
   var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu, '').replace(/[^\u0000-\u024F\u0900-\u097F .,!?]/g, '').trim();
   if (!clean) return;
   stopAllSpeech();
@@ -661,6 +664,8 @@ async function robotSpeak(text) {
     _elAudio.play();
   } catch(e) {
     robotSpeakBrowser(clean);
+  } finally {
+    _ttsLock = false;
   }
 }
 
