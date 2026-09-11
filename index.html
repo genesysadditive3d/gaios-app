@@ -1049,5 +1049,28 @@ function showBforeverModal(key){
   document.body.appendChild(modal);
 }
 </script>
+<script>
+const DGX_API = "https://api.genesysadditive3dcreation.com";
+
+async function uploadToDGX(file, phone, vertical="figurine") {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("phone", phone);
+  formData.append("vertical", vertical);
+  try {
+    const res = await fetch(`${DGX_API}/upload`, {method:"POST", body:formData});
+    const data = await res.json();
+    if(data.success) {
+      alert(`Order #${data.order_id} received! WhatsApp pe confirmation aayega.`);
+      return data.order_id;
+    }
+  } catch(e) { console.error("DGX API Error:", e); }
+}
+
+async function checkOrderStatus(orderId) {
+  const res = await fetch(`${DGX_API}/order/${orderId}`);
+  return await res.json();
+}
+</script>
 </body>
 </html>
