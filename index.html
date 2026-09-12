@@ -938,8 +938,15 @@ async function generate3D(){
       var fd=new FormData();fd.append('file',file);fd.append('phone',phone||'916350132497');fd.append('vertical','figurine');
       var res=await fetch(DGX_API+'/generate3d',{method:'POST',body:fd});
       var data=await res.json();
-      if(!data.predictionId){stopProg();showStat('Err','❌ '+(data.error||'Start failed'));btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';return;}
-      setStep(3);var predId=data.predictionId,secs=0;
+      if(!data.success){stopProg();showStat('Err','❌ '+(data.error||'Start failed'));btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';return;}
+      showStat('Ok','✅ 3D Model Ready!');
+      var glbUrl=DGX_API+data.glb;
+      document.getElementById('modelViewer').setAttribute('src',glbUrl);
+      document.getElementById('viewerSection').style.display='block';
+      document.getElementById('approvalBox').style.display='block';
+      stopProg();btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';
+      toast('🎉 3D Model Ready!',4000);
+      setStep(3);var predId=data.order_id,secs=0;
       for(var i=0;i<72;i++){
         await new Promise(function(r){setTimeout(r,5000);});secs+=5;
         showStat('Proc','⏳ Processing: '+secs+'s — Hunyuan 3D generating...');
