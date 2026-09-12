@@ -911,7 +911,7 @@ function stopProg(){clearInterval(progInt);stopSpeechBubbles();stopBgMusic();sto
 function setStep(n){for(var i=1;i<=4;i++){var c=document.getElementById('sc'+i);if(i<n){c.classList.remove('active');c.classList.add('done');c.textContent='✓';}else if(i===n){c.classList.add('active');c.classList.remove('done');}else{c.classList.remove('active','done');c.textContent=i;}}}
 function showStat(type,msg){['sProc','sOk','sErr'].forEach(function(id){document.getElementById(id).style.display='none';});if(type&&msg){document.getElementById('s'+type).textContent=msg;document.getElementById('s'+type).style.display='block';}}
 
-// ══ GENERATE 3D ══
+// ══ GENERATE 3D — FIXED ══
 async function generate3D(){
   if(selFiles.length===0){alert('Pehle photo(s) select karo!');return;}
   var btn=document.getElementById('gen3d-btn');
@@ -936,53 +936,33 @@ async function generate3D(){
     try{
       var phone=prompt('Apna WhatsApp number daalo (91XXXXXXXXXX):','916350132497');
       var fd=new FormData();fd.append('file',file);fd.append('phone',phone||'916350132497');fd.append('vertical','figurine');
-      var controller = new AbortController();
-      var timeoutId = setTimeout(function(){controller.abort();}, 300000);
-      var res=await fetch(DGX_API+'/generate3d/async',{method:'POST',body:fd,signal:controller.signal});
-      clearTimeout(timeoutId);
+      var res=await fetch(DGX_API+'/generate3d/async',{method:'POST',body:fd});
       var data=await res.json();
       if(!data.success){stopProg();showStat('Err','❌ '+(data.error||'Start failed'));btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';return;}
-      showStat('Ok','✅ 3D Model Ready!');
-      var glbUrl=DGX_API+data.glb;
-      document.getElementById('modelViewer').setAttribute('src',glbUrl);
-      document.getElementById('viewerSection').style.display='block';
-      document.getElementById('approvalBox').style.display='block';
-      stopProg();btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';
-      toast('🎉 3D Model Ready!',4000);
-      setStep(3);var predId=data.order_id,secs=0;
-      // Poll order status
-      var pollInterval = setInterval(async function(){
-        secs++;
+      var predId=data.order_id;var secs=0;
+      showStat('Proc','⏳ 3D Model ban raha hai... 0s');setStep(3);
+      var pollInterval=setInterval(async function(){
+        secs+=5;
         showStat('Proc','⏳ 3D Model ban raha hai... '+secs+'s');
-        var sr = await fetch(DGX_API+'/order/'+predId);
-        var sd = await sr.json();
-        if(sd.status==='ready'){
-          clearInterval(pollInterval);
-          var glbUrl=DGX_API+'/outputs/'+predId+'.glb';
-          document.getElementById('modelViewer').setAttribute('src',glbUrl);
-          document.getElementById('viewerSection').style.display='block';
-          document.getElementById('approvalBox').style.display='block';
-          showStat('Ok','✅ 3D Model Ready!');
-          toast('🎉 Model taiyar!',4000);
-          stopProg();btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';
-        }
-        if(secs>600){clearInterval(pollInterval);stopProg();showStat('Err','⏳ Timeout');}
-      }, 5000);
-      for(var i=0;i<72;i++){
-        await new Promise(function(r){setTimeout(r,5000);});secs+=5;
-        showStat('Proc','⏳ Processing: '+secs+'s — Hunyuan 3D generating...');
-        var pr=await fetch('/api/photo3d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({predictionId:predId})});
-        var pd=await pr.json();
-        if(pd.status==='succeeded'&&pd.output){
-          var outs=Array.isArray(pd.output)?pd.output:[pd.output];var mu=null;
-          outs.forEach(function(u){if(u&&u.match&&u.match(/\.(glb|obj|gltf)/i))mu=u;});
-          doneProg();setStep(4);curModelUrl=mu||outs[0];
-          if(mu){showStat('Ok','✅ 3D Model Ready!');document.getElementById('modelViewer').setAttribute('src',mu);document.getElementById('viewerSection').style.display='block';document.getElementById('approvalBox').style.display='block';document.getElementById('trackingBox').style.display='block';}
-          else{showStat('Ok','✅ Model ready!');document.getElementById('viewerSection').style.display='block';}
-          btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';toast('🎉 3D Model Bana! '+secs+'s mein!',4000);return;
-        }else if(pd.status==='failed'){stopProg();showStat('Err','❌ Generation failed.');btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';return;}
-      }
-      stopProg();showStat('Err','⏳ Timeout. Dobara try karein.');btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';
+        try{
+          var sr=await fetch(DGX_API+'/order/'+predId);
+          var sd=await sr.json();
+          if(sd.status==='ready'){
+            clearInterval(pollInterval);
+            var glbUrl=DGX_API+'/outputs/'+predId+'.glb';
+            document.getElementById('modelViewer').setAttribute('src',glbUrl);
+            document.getElementById('viewerSection').style.display='block';
+            document.getElementById('approvalBox').style.display='block';
+            document.getElementById('trackingBox').style.display='block';
+            curModelUrl=glbUrl;
+            doneProg();setStep(4);
+            showStat('Ok','✅ 3D Model Ready! '+secs+'s mein bana!');
+            toast('🎉 Model taiyar!',4000);
+            btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';
+          }
+        }catch(e){console.log('Poll error:',e);}
+        if(secs>900){clearInterval(pollInterval);stopProg();showStat('Err','⏳ Timeout.');btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';}
+      },5000);
     }catch(err){stopProg();showStat('Err','❌ '+err.message);btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';}
   });
 }
