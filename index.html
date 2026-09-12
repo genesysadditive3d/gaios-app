@@ -950,6 +950,24 @@ async function generate3D(){
       stopProg();btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';
       toast('🎉 3D Model Ready!',4000);
       setStep(3);var predId=data.order_id,secs=0;
+      // Poll order status
+      var pollInterval = setInterval(async function(){
+        secs++;
+        showStat('Proc','⏳ 3D Model ban raha hai... '+secs+'s');
+        var sr = await fetch(DGX_API+'/order/'+predId);
+        var sd = await sr.json();
+        if(sd.status==='ready'){
+          clearInterval(pollInterval);
+          var glbUrl=DGX_API+'/outputs/'+predId+'.glb';
+          document.getElementById('modelViewer').setAttribute('src',glbUrl);
+          document.getElementById('viewerSection').style.display='block';
+          document.getElementById('approvalBox').style.display='block';
+          showStat('Ok','✅ 3D Model Ready!');
+          toast('🎉 Model taiyar!',4000);
+          stopProg();btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';
+        }
+        if(secs>600){clearInterval(pollInterval);stopProg();showStat('Err','⏳ Timeout');}
+      }, 5000);
       for(var i=0;i<72;i++){
         await new Promise(function(r){setTimeout(r,5000);});secs+=5;
         showStat('Proc','⏳ Processing: '+secs+'s — Hunyuan 3D generating...');
