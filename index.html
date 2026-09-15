@@ -850,9 +850,12 @@ async function speakLine(text) {
     if(res.ok) {
       var blob = await res.blob();
       var url = URL.createObjectURL(blob);
-      if(window._gaiosAudio){ window._gaiosAudio.pause(); window._gaiosAudio.src=''; }
+      if(window._gaiosAudio){ 
+        try{ window._gaiosAudio.pause(); window._gaiosAudio.currentTime=0; }catch(e){}
+      }
       window._gaiosAudio = new Audio(url);
-      window._gaiosAudio.play();
+      window._gaiosAudio.onended = function(){ URL.revokeObjectURL(url); };
+      window._gaiosAudio.play().catch(function(){});
       return;
     }
   } catch(e) {}
@@ -939,10 +942,10 @@ function cancelGenerate() {
 
 async function generate3D(){
   _cancelRequested = false;
-  document.getElementById('cancel-btn').style.display = '';
-  document.getElementById('gen3d-btn').style.display = 'none';
   if(selFiles.length===0){alert('Pehle photo(s) select karo!');return;}
   var btn=document.getElementById('gen3d-btn');
+  document.getElementById('cancel-btn').style.display = '';
+  document.getElementById('gen3d-btn').style.display = 'none';
   btn.disabled=true;btn.textContent='⏳ Generating...';
   document.getElementById('viewerSection').style.display='none';
   document.getElementById('approvalBox').style.display='none';
@@ -962,8 +965,8 @@ async function generate3D(){
   getBase64(file,async function(base64){
     startProg();setStep(2);showStat('Proc','⏳ GAIOS™ AI 3D model shuru kar raha hai...');
     try{
-      var phone=prompt('Apna WhatsApp number daalo (91XXXXXXXXXX):','916350132497');
-      var fd=new FormData();fd.append('file',file);fd.append('phone',phone||'916350132497');fd.append('vertical','figurine');
+      var phone='916350132497';
+      var fd=new FormData();fd.append('file',file);fd.append('phone',phone);fd.append('vertical','figurine');
       var res=await fetch(DGX_API+'/generate3d/async',{method:'POST',body:fd});
       var data=await res.json();
       if(!data.success){stopProg();showStat('Err','❌ '+(data.error||'Start failed'));btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';return;}
