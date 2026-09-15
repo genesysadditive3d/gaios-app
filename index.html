@@ -645,6 +645,7 @@ function stopAllSpeech() {
 
 var _ttsLock = false;
 async function robotSpeak(text) {
+  if(_cancelRequested) return;
   if(_ttsLock) { _ttsQueue = text; return; }
   _ttsLock = true;
   _ttsQueue = null;
@@ -846,6 +847,7 @@ async function speakLine(text) {
   var clean = text.replace(/[\u{1F300}-\u{1FFFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '').replace(/[🤖😅🔬🎨🏗️🧠☕🌟🎯🖨️🚀💫🎪🤩🏆]/g, '').trim();
   if(!clean) return;
   try {
+    if(_cancelRequested) return;
     var res = await fetch('https://api.genesysadditive3dcreation.com/tts/stream?text=' + encodeURIComponent(clean) + '&language=hi-IN&voice=shubh', {method:'POST', headers:{'Content-Type':'application/json'}});
     if(res.ok) {
       var blob = await res.blob();
@@ -853,6 +855,7 @@ async function speakLine(text) {
       if(window._gaiosAudio){ 
         try{ window._gaiosAudio.pause(); window._gaiosAudio.currentTime=0; }catch(e){}
       }
+      if(_cancelRequested) { URL.revokeObjectURL(url); return; }
       window._gaiosAudio = new Audio(url);
       window._gaiosAudio.onended = function(){ URL.revokeObjectURL(url); };
       window._gaiosAudio.play().catch(function(){});
@@ -924,8 +927,14 @@ var _currentPredId = null;
 var _pollInterval = null;
 function cancelGenerate() {
   _cancelRequested = true;
-  if(window.speechSynthesis) window.speechSynthesis.cancel();
   _ttsLock = false;
+  _ttsQueue = null;
+  // Stop ALL audio instantly
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+  if(window._gaiosAudio) {
+    try{ window._gaiosAudio.pause(); window._gaiosAudio.currentTime=0; window._gaiosAudio.src=''; }catch(e){}
+    window._gaiosAudio = null;
+  }
   if(speechInt) { clearInterval(speechInt); speechInt = null; }
   if(_pollInterval) { clearInterval(_pollInterval); _pollInterval = null; }
   stopProg(); stopSpeechBubbles(); stopBgMusic(); stopParticles();
