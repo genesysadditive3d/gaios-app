@@ -337,6 +337,7 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
   </div>
   <div class="sec-badge" id="step3badge" style="display:none;">🚀 STEP 3 — 3D Model Generate Karo</div>
   <button class="btn" id="gen3d-btn" style="width:100%;padding:13px;font-size:13px;margin-bottom:4px;" onclick="generate3D()">🚀 3D Model Generate Karo</button>
+  <button id="cancel-btn" style="display:none;width:100%;padding:10px;font-size:12px;margin-bottom:4px;background:rgba(180,30,30,0.85);color:#fff;border:1.5px solid #e05555;border-radius:10px;cursor:pointer;font-weight:700;" onclick="cancelGenerate()">⛔ Generation Rok Do (Cancel)</button>
   <div style="font-size:9px;color:var(--gray);text-align:center;margin-bottom:8px;">Processing time: ~3-6 minutes | Auto photo compression</div>
   <div class="progress-section" id="progressSection">
     <div id="animStage" style="background:linear-gradient(135deg,#040A14,#0A1628,#040A14);border:1px solid rgba(201,168,76,0.3);border-radius:16px;padding:20px 16px;margin-bottom:12px;text-align:center;position:relative;overflow:hidden;min-height:280px;">
@@ -644,12 +645,15 @@ function stopAllSpeech() {
 
 var _ttsLock = false;
 async function robotSpeak(text) {
-  if(_ttsLock) return;
+  if(_ttsLock) { _ttsQueue = text; return; }
   _ttsLock = true;
+  _ttsQueue = null;
   var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu, '').replace(/[^\u0000-\u024F\u0900-\u097F .,!?]/g, '').trim();
   if (!clean) return;
   stopAllSpeech();
   try {
+    var cleanText = text.replace(/[🤖✅❌🎉]/g, '').trim();
+    if(!cleanText) { _ttsLock=false; return; }
     var res = await fetch('https://api.genesysadditive3dcreation.com/tts/stream', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -912,7 +916,29 @@ function setStep(n){for(var i=1;i<=4;i++){var c=document.getElementById('sc'+i);
 function showStat(type,msg){['sProc','sOk','sErr'].forEach(function(id){document.getElementById(id).style.display='none';});if(type&&msg){document.getElementById('s'+type).textContent=msg;document.getElementById('s'+type).style.display='block';}}
 
 // ══ GENERATE 3D — FIXED ══
+
+var _cancelRequested = false;
+var _currentPredId = null;
+function cancelGenerate() {
+  _cancelRequested = true;
+  // Stop TTS
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+  _ttsLock = false;
+  // Hide cancel, show generate
+  document.getElementById('cancel-btn').style.display = 'none';
+  document.getElementById('gen3d-btn').style.display = '';
+  document.getElementById('gen3d-btn').disabled = false;
+  document.getElementById('gen3d-btn').textContent = '🚀 3D Model Generate Karo';
+  // Reset UI
+  var lb = document.getElementById('loadingBox');
+  if(lb) lb.style.display = 'none';
+  robotSpeak('Generation rok diya gaya.');
+}
+
 async function generate3D(){
+  _cancelRequested = false;
+  document.getElementById('cancel-btn').style.display = '';
+  document.getElementById('gen3d-btn').style.display = 'none';
   if(selFiles.length===0){alert('Pehle photo(s) select karo!');return;}
   var btn=document.getElementById('gen3d-btn');
   btn.disabled=true;btn.textContent='⏳ Generating...';
