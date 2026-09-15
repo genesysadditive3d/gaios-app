@@ -850,8 +850,9 @@ async function speakLine(text) {
     if(res.ok) {
       var blob = await res.blob();
       var url = URL.createObjectURL(blob);
-      var au = new Audio(url);
-      au.play();
+      if(window._gaiosAudio){ window._gaiosAudio.pause(); window._gaiosAudio.src=''; }
+      window._gaiosAudio = new Audio(url);
+      window._gaiosAudio.play();
       return;
     }
   } catch(e) {}
@@ -917,11 +918,14 @@ function showStat(type,msg){['sProc','sOk','sErr'].forEach(function(id){document
 
 var _cancelRequested = false;
 var _currentPredId = null;
+var _pollInterval = null;
 function cancelGenerate() {
   _cancelRequested = true;
   if(window.speechSynthesis) window.speechSynthesis.cancel();
   _ttsLock = false;
-  if(typeof speechInt !== "undefined" && speechInt) { clearInterval(speechInt); speechInt = null; }
+  if(speechInt) { clearInterval(speechInt); speechInt = null; }
+  if(_pollInterval) { clearInterval(_pollInterval); _pollInterval = null; }
+  stopProg(); stopSpeechBubbles(); stopBgMusic(); stopParticles();
   // Hide cancel, show generate
   document.getElementById('cancel-btn').style.display = 'none';
   document.getElementById('gen3d-btn').style.display = '';
@@ -965,7 +969,7 @@ async function generate3D(){
       if(!data.success){stopProg();showStat('Err','❌ '+(data.error||'Start failed'));btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';return;}
       var predId=data.order_id;var secs=0;
       showStat('Proc','⏳ 3D Model ban raha hai... 0s');setStep(3);
-      var pollInterval=setInterval(async function(){
+      _pollInterval=setInterval(async function(){
         secs+=5;
         showStat('Proc','⏳ 3D Model ban raha hai... '+secs+'s');
         try{
@@ -973,7 +977,7 @@ async function generate3D(){
           var sr=await fetch(DGX_API+'/order/'+predId);
           var sd=await sr.json();
           if(sd.status==='ready'){
-            clearInterval(pollInterval);
+            clearInterval(_pollInterval); _pollInterval=null;
             var glbUrl=DGX_API+'/outputs/'+predId+'.glb';
             document.getElementById('modelViewer').setAttribute('src',glbUrl);
             document.getElementById('viewerSection').style.display='block';
@@ -986,7 +990,7 @@ async function generate3D(){
             btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';
           }
         }catch(e){console.log('Poll error:',e);}
-        if(secs>900){clearInterval(pollInterval);stopProg();showStat('Err','⏳ Timeout.');btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';}
+        if(secs>900){clearInterval(_pollInterval); _pollInterval=null;stopProg();showStat('Err','⏳ Timeout.');btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';}
       },5000);
     }catch(err){stopProg();showStat('Err','❌ '+err.message);btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';}
   });
