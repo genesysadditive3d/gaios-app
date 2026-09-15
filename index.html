@@ -645,6 +645,7 @@ function stopAllSpeech() {
 
 var _ttsLock = false;
 async function robotSpeak(text) {
+  if(_cancelRequested) return;
   if(_ttsLock) { _ttsQueue = text; return; }
   _ttsLock = true;
   _ttsQueue = null;
@@ -842,24 +843,23 @@ function playSuccessSound(){
 function playErrorSound(){try{var ctx=getAudioCtx();[400,300,200].forEach(function(freq,i){setTimeout(function(){playBeep(ctx,freq,0.1,0.2);},i*150);});}catch(e){}}
 
 async function speakLine(text) {
-  // Clean emoji from text
-  var clean = text.replace(/[\u{1F300}-\u{1FFFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '').replace(/[🤖😅🔬🎨🏗️🧠☕🌟🎯🖨️🚀💫🎪🤩🏆]/g, '').trim();
-  if(!clean) return;
+  var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu,'').replace(/[🤖😅🔬🎨🏗️🧠☕🌟🎯🖨️🚀💫🎪🤩🏆⏳✅❌🎉]/g,'').trim();
+  if(!clean || _cancelRequested) return;
   try {
-    var res = await fetch('https://api.genesysadditive3dcreation.com/tts/stream?text=' + encodeURIComponent(clean) + '&language=hi-IN&voice=shubh', {method:'POST', headers:{'Content-Type':'application/json'}});
-    if(res.ok) {
+    var res = await fetch('https://api.genesysadditive3dcreation.com/tts/stream?text='+encodeURIComponent(clean)+'&language=hi-IN&voice=shubh',{method:'POST'});
+    if(res.ok && !_cancelRequested){
       var blob = await res.blob();
-      var url = URL.createObjectURL(blob);
-      var au = new Audio(url);
-      au.play();
+      if(window._gaiosAudio){ try{window._gaiosAudio.pause();window._gaiosAudio.src='';}catch(e){} }
+      window._gaiosAudio = new Audio(URL.createObjectURL(blob));
+      window._gaiosAudio.play().catch(function(){});
       return;
     }
-  } catch(e) {}
-  // Fallback browser TTS
-  if(window.speechSynthesis) {
+  } catch(e){}
+  if(_cancelRequested) return;
+  if(window.speechSynthesis){
     window.speechSynthesis.cancel();
-    var u = new SpeechSynthesisUtterance(clean);
-    u.lang = 'hi-IN'; u.rate = 0.9;
+    var u=new SpeechSynthesisUtterance(clean);
+    u.lang='hi-IN'; u.rate=0.9;
     window.speechSynthesis.speak(u);
   }
 }
@@ -916,12 +916,17 @@ function showStat(type,msg){['sProc','sOk','sErr'].forEach(function(id){document
 // ══ GENERATE 3D — FIXED ══
 
 var _cancelRequested = false;
+var _pollInterval = null;
 var _currentPredId = null;
 function cancelGenerate() {
   _cancelRequested = true;
-  if(window.speechSynthesis) window.speechSynthesis.cancel();
   _ttsLock = false;
-  if(typeof speechInt !== "undefined" && speechInt) { clearInterval(speechInt); speechInt = null; }
+  _ttsQueue = null;
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+  if(window._gaiosAudio){ try{window._gaiosAudio.pause();window._gaiosAudio.currentTime=0;window._gaiosAudio.src='';}catch(e){} window._gaiosAudio=null; }
+  if(speechInt){ clearInterval(speechInt); speechInt=null; }
+  if(_pollInterval){ clearInterval(_pollInterval); _pollInterval=null; }
+  stopProg(); stopSpeechBubbles(); stopBgMusic(); stopParticles();
   // Hide cancel, show generate
   document.getElementById('cancel-btn').style.display = 'none';
   document.getElementById('gen3d-btn').style.display = '';
@@ -965,7 +970,7 @@ async function generate3D(){
       if(!data.success){stopProg();showStat('Err','❌ '+(data.error||'Start failed'));btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';return;}
       var predId=data.order_id;var secs=0;
       showStat('Proc','⏳ 3D Model ban raha hai... 0s');setStep(3);
-      var pollInterval=setInterval(async function(){
+      _pollInterval=setInterval(async function(){
         secs+=5;
         showStat('Proc','⏳ 3D Model ban raha hai... '+secs+'s');
         try{
@@ -973,7 +978,7 @@ async function generate3D(){
           var sr=await fetch(DGX_API+'/order/'+predId);
           var sd=await sr.json();
           if(sd.status==='ready'){
-            clearInterval(pollInterval);
+            clearInterval(_pollInterval); _pollInterval=null;
             var glbUrl=DGX_API+'/outputs/'+predId+'.glb';
             document.getElementById('modelViewer').setAttribute('src',glbUrl);
             document.getElementById('viewerSection').style.display='block';
@@ -986,7 +991,7 @@ async function generate3D(){
             btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';
           }
         }catch(e){console.log('Poll error:',e);}
-        if(secs>900){clearInterval(pollInterval);stopProg();showStat('Err','⏳ Timeout.');btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';}
+        if(secs>900){clearInterval(_pollInterval); _pollInterval=null;stopProg();showStat('Err','⏳ Timeout.');btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';}
       },5000);
     }catch(err){stopProg();showStat('Err','❌ '+err.message);btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';}
   });
