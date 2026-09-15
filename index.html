@@ -842,27 +842,25 @@ function playSuccessSound(){
 function playErrorSound(){try{var ctx=getAudioCtx();[400,300,200].forEach(function(freq,i){setTimeout(function(){playBeep(ctx,freq,0.1,0.2);},i*150);});}catch(e){}}
 
 async function speakLine(text) {
-  var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu,'').replace(/[^\u0000-\u024F\u0900-\u097F .,!?]/g,'').trim();
-  if (!clean) return;
-  stopAllSpeech();
+  // Clean emoji from text
+  var clean = text.replace(/[\u{1F300}-\u{1FFFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '').replace(/[🤖😅🔬🎨🏗️🧠☕🌟🎯🖨️🚀💫🎪🤩🏆]/g, '').trim();
+  if(!clean) return;
   try {
-    var res = await fetch('https://api.genesysadditive3dcreation.com/tts/stream', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: clean, voice: 'Magpie-Multilingual.HI-IN.Aria' })
-    });
-    if (!res.ok) throw new Error('TTS ' + res.status);
-    var blob = await res.blob();
-    var url = URL.createObjectURL(blob);
-    _elAudio = new Audio(url);
-    _elAudio.volume = 0.85;
-    _elAudio.onended = function() { URL.revokeObjectURL(url); _elAudio = null; };
-    _elAudio.play();
-  } catch(e) {
-    if (!window.speechSynthesis) return;
+    var res = await fetch('https://api.genesysadditive3dcreation.com/tts/stream?text=' + encodeURIComponent(clean) + '&language=hi-IN&voice=shubh', {method:'POST', headers:{'Content-Type':'application/json'}});
+    if(res.ok) {
+      var blob = await res.blob();
+      var url = URL.createObjectURL(blob);
+      var au = new Audio(url);
+      au.play();
+      return;
+    }
+  } catch(e) {}
+  // Fallback browser TTS
+  if(window.speechSynthesis) {
     window.speechSynthesis.cancel();
-    var utt = new SpeechSynthesisUtterance(clean); utt.lang='hi-IN'; utt.rate=1.1; utt.pitch=1.3; utt.volume=0.9;
-    window.speechSynthesis.speak(utt);
+    var u = new SpeechSynthesisUtterance(clean);
+    u.lang = 'hi-IN'; u.rate = 0.9;
+    window.speechSynthesis.speak(u);
   }
 }
 
@@ -921,9 +919,9 @@ var _cancelRequested = false;
 var _currentPredId = null;
 function cancelGenerate() {
   _cancelRequested = true;
-  // Stop TTS
   if(window.speechSynthesis) window.speechSynthesis.cancel();
   _ttsLock = false;
+  if(typeof speechInt !== "undefined" && speechInt) { clearInterval(speechInt); speechInt = null; }
   // Hide cancel, show generate
   document.getElementById('cancel-btn').style.display = 'none';
   document.getElementById('gen3d-btn').style.display = '';
@@ -971,6 +969,7 @@ async function generate3D(){
         secs+=5;
         showStat('Proc','⏳ 3D Model ban raha hai... '+secs+'s');
         try{
+          if(_cancelRequested) { console.log("Cancelled!"); return; }
           var sr=await fetch(DGX_API+'/order/'+predId);
           var sd=await sr.json();
           if(sd.status==='ready'){
