@@ -529,6 +529,8 @@ function updatePct(val){var el=document.getElementById('progressPct');if(el)el.t
 
 var progInt=null,progVal=5;
 function startProg(){
+  var fc = document.getElementById('funChars');
+  if(fc) fc.classList.add('show');
   progVal=5;document.getElementById('progressSection').style.display='block';
   document.getElementById('progressBar').style.width='5%';updatePct(5);
   startSpeechBubbles();startBgMusic();setTimeout(initParticles,100);
@@ -541,7 +543,11 @@ function doneProg(){
   speakLine('Ho gaya! Aapka teen dee model ready hai!');
   setTimeout(function(){document.getElementById('progressSection').style.display='none';},1800);
 }
-function stopProg(){clearInterval(progInt);stopSpeechBubbles();stopBgMusic();stopParticles();playErrorSound();document.getElementById('progressSection').style.display='none';}
+function stopProg(){
+  clearInterval(progInt);stopSpeechBubbles();stopBgMusic();stopParticles();playErrorSound();
+  document.getElementById('progressSection').style.display='none';
+  var fc=document.getElementById('funChars'); if(fc) fc.classList.remove('show');
+}
 
 function setStep(n){for(var i=1;i<=4;i++){var c=document.getElementById('sc'+i);if(i<n){c.classList.remove('active');c.classList.add('done');c.textContent='✓';}else if(i===n){c.classList.add('active');c.classList.remove('done');}else{c.classList.remove('active','done');c.textContent=i;}}}
 function showStat(type,msg){['sProc','sOk','sErr'].forEach(function(id){document.getElementById(id).style.display='none';});if(type&&msg){document.getElementById('s'+type).textContent=msg;document.getElementById('s'+type).style.display='block';}}
@@ -748,5 +754,211 @@ async function checkOrderStatus(orderId) {
   return await res.json();
 }
 </script>
+
+<div class="fun-chars-container" id="funChars">
+
+  <!-- Camel 🐪 -->
+  <div class="char-camel">
+    <svg width="70" height="60" viewBox="0 0 70 60">
+      <!-- Body -->
+      <ellipse cx="35" cy="40" rx="22" ry="12" fill="#C9982A"/>
+      <!-- Hump 1 -->
+      <ellipse cx="25" cy="28" rx="10" ry="8" fill="#C9982A"/>
+      <!-- Hump 2 -->
+      <ellipse cx="43" cy="26" rx="9" ry="7" fill="#C9982A"/>
+      <!-- Neck -->
+      <rect x="12" y="28" width="8" height="18" rx="4" fill="#C9982A"/>
+      <!-- Head -->
+      <ellipse cx="10" cy="24" rx="8" ry="6" fill="#C9982A"/>
+      <!-- Eye -->
+      <circle cx="7" cy="22" r="2" fill="#0A1628"/>
+      <circle cx="6.5" cy="21.5" r="0.7" fill="white"/>
+      <!-- Nose -->
+      <ellipse cx="4" cy="25" rx="2" ry="1.5" fill="#B8860B"/>
+      <!-- Legs -->
+      <rect x="16" y="50" width="5" height="12" rx="2" fill="#B8860B"/>
+      <rect x="24" y="50" width="5" height="12" rx="2" fill="#B8860B"/>
+      <rect x="38" y="50" width="5" height="12" rx="2" fill="#B8860B"/>
+      <rect x="46" y="50" width="5" height="12" rx="2" fill="#B8860B"/>
+      <!-- Tail -->
+      <path d="M 57 40 Q 65 35 62 28" stroke="#B8860B" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <text x="5" y="8" font-size="10" fill="#C9982A" font-weight="bold">🐪 Pali</text>
+    </svg>
+  </div>
+
+  <!-- Peacock 🦚 -->
+  <div class="char-peacock">
+    <svg width="65" height="75" viewBox="0 0 65 75">
+      <!-- Fan feathers -->
+      <g style="animation:peacockFan 2s ease-in-out infinite; transform-origin:32px 45px">
+        <ellipse cx="32" cy="20" rx="28" ry="18" fill="none" stroke="#0D7A5E" stroke-width="2"/>
+        <ellipse cx="32" cy="20" rx="20" ry="12" fill="rgba(13,122,94,0.3)"/>
+        <circle cx="12" cy="12" r="4" fill="#C9982A"/>
+        <circle cx="52" cy="12" r="4" fill="#C9982A"/>
+        <circle cx="32" cy="6" r="4" fill="#C9982A"/>
+        <circle cx="18" cy="6" r="3" fill="#1B3A6B"/>
+        <circle cx="46" cy="6" r="3" fill="#1B3A6B"/>
+        <!-- Eye spots -->
+        <circle cx="12" cy="12" r="2" fill="#0A1628"/>
+        <circle cx="52" cy="12" r="2" fill="#0A1628"/>
+        <circle cx="32" cy="6" r="2" fill="#0A1628"/>
+      </g>
+      <!-- Body -->
+      <ellipse cx="32" cy="52" rx="10" ry="13" fill="#0D7A5E"/>
+      <!-- Neck -->
+      <rect x="28" y="38" width="8" height="16" rx="4" fill="#1B6B8A"/>
+      <!-- Head -->
+      <circle cx="32" cy="35" r="7" fill="#1B6B8A"/>
+      <!-- Crown -->
+      <circle cx="28" cy="29" r="2" fill="#C9982A"/>
+      <circle cx="32" cy="27" r="2" fill="#C9982A"/>
+      <circle cx="36" cy="29" r="2" fill="#C9982A"/>
+      <!-- Eye -->
+      <circle cx="30" cy="34" r="2" fill="#0A1628"/>
+      <circle cx="29.5" cy="33.5" r="0.7" fill="white"/>
+      <!-- Beak -->
+      <path d="M 25 36 L 22 38 L 25 37" fill="#C9982A"/>
+      <!-- Legs -->
+      <rect x="27" y="63" width="4" height="10" rx="2" fill="#0D5C2E"/>
+      <rect x="34" y="63" width="4" height="10" rx="2" fill="#0D5C2E"/>
+      <text x="5" y="75" font-size="9" fill="#0D7A5E" font-weight="bold">🦚 Rajasthan</text>
+    </svg>
+  </div>
+
+  <!-- Tiger 🐯 -->
+  <div class="char-tiger">
+    <svg width="75" height="65" viewBox="0 0 75 65">
+      <!-- Body -->
+      <ellipse cx="42" cy="42" rx="24" ry="14" fill="#E87C1E"/>
+      <!-- Stripes body -->
+      <line x1="30" y1="30" x2="28" y2="55" stroke="#0A1628" stroke-width="2.5" opacity="0.5"/>
+      <line x1="40" y1="29" x2="38" y2="56" stroke="#0A1628" stroke-width="2.5" opacity="0.5"/>
+      <line x1="50" y1="30" x2="48" y2="55" stroke="#0A1628" stroke-width="2.5" opacity="0.5"/>
+      <!-- Head -->
+      <circle cx="18" cy="34" r="14" fill="#E87C1E"/>
+      <!-- Stripes head -->
+      <line x1="10" y1="22" x2="8" y2="32" stroke="#0A1628" stroke-width="2" opacity="0.5"/>
+      <line x1="18" y1="20" x2="16" y2="30" stroke="#0A1628" stroke-width="2" opacity="0.5"/>
+      <line x1="26" y1="22" x2="24" y2="32" stroke="#0A1628" stroke-width="2" opacity="0.5"/>
+      <!-- Face white -->
+      <ellipse cx="18" cy="38" rx="9" ry="6" fill="#FFF5E0"/>
+      <!-- Eyes -->
+      <circle cx="13" cy="30" r="3.5" fill="#FFF5E0"/>
+      <circle cx="23" cy="30" r="3.5" fill="#FFF5E0"/>
+      <circle cx="13" cy="30" r="2" fill="#1B6B8A"/>
+      <circle cx="23" cy="30" r="2" fill="#1B6B8A"/>
+      <circle cx="13" cy="29.5" r="0.8" fill="white"/>
+      <circle cx="23" cy="29.5" r="0.8" fill="white"/>
+      <!-- Nose -->
+      <path d="M 15 36 L 18 38 L 21 36 L 18 34 Z" fill="#C94040"/>
+      <!-- Whiskers -->
+      <line x1="4" y1="37" x2="12" y2="38" stroke="#0A1628" stroke-width="1"/>
+      <line x1="4" y1="40" x2="12" y2="40" stroke="#0A1628" stroke-width="1"/>
+      <line x1="24" y1="38" x2="32" y2="37" stroke="#0A1628" stroke-width="1"/>
+      <line x1="24" y1="40" x2="32" y2="40" stroke="#0A1628" stroke-width="1"/>
+      <!-- Ears -->
+      <polygon points="8,20 14,26 18,18" fill="#E87C1E"/>
+      <polygon points="28,20 22,26 18,18" fill="#E87C1E"/>
+      <polygon points="10,21 14,25 16,20" fill="#C94040" opacity="0.5"/>
+      <polygon points="26,21 22,25 20,20" fill="#C94040" opacity="0.5"/>
+      <!-- Legs -->
+      <rect x="24" y="53" width="6" height="12" rx="3" fill="#E87C1E"/>
+      <rect x="34" y="53" width="6" height="12" rx="3" fill="#E87C1E"/>
+      <rect x="48" y="53" width="6" height="12" rx="3" fill="#E87C1E"/>
+      <rect x="58" y="53" width="6" height="12" rx="3" fill="#E87C1E"/>
+      <!-- Tail -->
+      <path d="M 65 42 Q 75 35 70 25" stroke="#E87C1E" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <circle cx="70" cy="24" r="4" fill="#0A1628"/>
+      <text x="5" y="10" font-size="9" fill="#E87C1E" font-weight="bold">🐯 Sherni</text>
+    </svg>
+  </div>
+
+  <!-- Cartoon Scientist 🔬 -->
+  <div class="char-scientist">
+    <svg width="60" height="80" viewBox="0 0 60 80">
+      <!-- Lab coat -->
+      <rect x="12" y="35" width="36" height="35" rx="8" fill="white" stroke="#1B3A6B" stroke-width="1.5"/>
+      <!-- Shirt -->
+      <rect x="18" y="35" width="24" height="15" rx="4" fill="#C9982A"/>
+      <!-- Head -->
+      <circle cx="30" cy="22" r="16" fill="#FFDAAA"/>
+      <!-- Hair -->
+      <path d="M 14 16 Q 30 4 46 16" fill="#C9982A" stroke="#B8860B" stroke-width="1"/>
+      <rect x="13" y="14" width="5" height="8" rx="2" fill="#C9982A"/>
+      <rect x="42" y="14" width="5" height="8" rx="2" fill="#C9982A"/>
+      <!-- Glasses -->
+      <circle cx="24" cy="21" r="5" fill="none" stroke="#0A1628" stroke-width="1.5"/>
+      <circle cx="36" cy="21" r="5" fill="none" stroke="#0A1628" stroke-width="1.5"/>
+      <line x1="29" y1="21" x2="31" y2="21" stroke="#0A1628" stroke-width="1.5"/>
+      <line x1="14" y1="21" x2="19" y2="21" stroke="#0A1628" stroke-width="1.5"/>
+      <line x1="41" y1="21" x2="46" y2="21" stroke="#0A1628" stroke-width="1.5"/>
+      <!-- Eyes -->
+      <circle cx="24" cy="21" r="2.5" fill="#1B3A6B"/>
+      <circle cx="36" cy="21" r="2.5" fill="#1B3A6B"/>
+      <circle cx="23.5" cy="20.5" r="0.8" fill="white"/>
+      <circle cx="35.5" cy="20.5" r="0.8" fill="white"/>
+      <!-- Smile -->
+      <path d="M 24 28 Q 30 33 36 28" stroke="#C94040" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <!-- Arms -->
+      <rect x="2" y="38" width="12" height="6" rx="3" fill="white" stroke="#1B3A6B" stroke-width="1"/>
+      <rect x="46" y="38" width="12" height="6" rx="3" fill="white" stroke="#1B3A6B" stroke-width="1"/>
+      <!-- Flask in hand -->
+      <path d="M 50 44 L 48 58 Q 50 62 54 58 L 52 44 Z" fill="rgba(0,196,180,0.6)" stroke="#0D7A5E" stroke-width="1"/>
+      <rect x="49" y="42" width="4" height="4" rx="1" fill="#aaa"/>
+      <circle cx="51" cy="55" r="2" fill="rgba(201,152,42,0.8)"/>
+      <!-- Lab coat pockets -->
+      <rect x="16" y="52" width="10" height="8" rx="2" fill="none" stroke="#1B3A6B" stroke-width="1"/>
+      <!-- GAIOS badge -->
+      <rect x="28" y="38" width="16" height="8" rx="2" fill="#C9982A"/>
+      <text x="30" y="45" font-size="5" fill="#0A1628" font-weight="bold">GAIOS</text>
+      <!-- Legs -->
+      <rect x="18" y="68" width="8" height="12" rx="3" fill="#1B3A6B"/>
+      <rect x="34" y="68" width="8" height="12" rx="3" fill="#1B3A6B"/>
+      <!-- Shoes -->
+      <ellipse cx="22" cy="80" rx="7" ry="3" fill="#0A1628"/>
+      <ellipse cx="38" cy="80" rx="7" ry="3" fill="#0A1628"/>
+      <text x="2" y="12" font-size="8" fill="#1B3A6B" font-weight="bold">🔬 GAIOS</text>
+    </svg>
+  </div>
+
+  <!-- 3D Robot Printer -->
+  <div class="char-robot3d">
+    <svg width="58" height="70" viewBox="0 0 58 70">
+      <!-- Printer body -->
+      <rect x="8" y="25" width="42" height="35" rx="6" fill="#1B3A6B" stroke="#C9982A" stroke-width="1.5"/>
+      <!-- Screen -->
+      <rect x="13" y="30" width="32" height="18" rx="4" fill="#0D1628"/>
+      <!-- 3D model on screen -->
+      <polygon points="29,33 22,38 36,38" fill="#C9982A" opacity="0.8"/>
+      <polygon points="22,38 29,42 29,33" fill="#E8C97A" opacity="0.6"/>
+      <polygon points="36,38 29,42 29,33" fill="#B8860B" opacity="0.7"/>
+      <!-- Print head -->
+      <rect x="20" y="52" width="18" height="5" rx="2" fill="#C9982A"/>
+      <!-- Print beam -->
+      <line x1="29" y1="57" x2="29" y2="62" stroke="#00C4B4" stroke-width="2" opacity="0.8"/>
+      <!-- Antenna -->
+      <line x1="29" y1="25" x2="29" y2="12" stroke="#C9982A" stroke-width="2"/>
+      <circle cx="29" cy="10" r="4" fill="#C9982A"/>
+      <circle cx="29" cy="10" r="2" fill="#0A1628"/>
+      <!-- Legs/wheels -->
+      <circle cx="15" cy="62" r="5" fill="#0A1628" stroke="#C9982A" stroke-width="1"/>
+      <circle cx="43" cy="62" r="5" fill="#0A1628" stroke="#C9982A" stroke-width="1"/>
+      <circle cx="15" cy="62" r="2" fill="#C9982A"/>
+      <circle cx="43" cy="62" r="2" fill="#C9982A"/>
+      <!-- Buttons -->
+      <circle cx="40" cy="33" r="2.5" fill="#C94040"/>
+      <circle cx="40" cy="40" r="2.5" fill="#0D7A5E"/>
+      <circle cx="40" cy="47" r="2.5" fill="#C9982A"/>
+      <text x="5" y="10" font-size="8" fill="#C9982A" font-weight="bold">🖨️ Mimaki</text>
+    </svg>
+  </div>
+
+  <!-- Sparkles -->
+  <span class="sparkle-star" style="left:10%;bottom:80px;animation-delay:0s">✨</span>
+  <span class="sparkle-star" style="left:30%;bottom:90px;animation-delay:0.5s">⭐</span>
+  <span class="sparkle-star" style="left:55%;bottom:85px;animation-delay:1s">✨</span>
+  <span class="sparkle-star" style="left:75%;bottom:88px;animation-delay:1.5s">⭐</span>
+  <span class="sparkle-star" style="left:88%;bottom:82px;animation-delay:0.8s">✨</span>
+</div>
 </body>
 </html>
