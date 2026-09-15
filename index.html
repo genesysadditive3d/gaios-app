@@ -645,7 +645,6 @@ function stopAllSpeech() {
 
 var _ttsLock = false;
 async function robotSpeak(text) {
-  if(_cancelRequested) return;
   if(_ttsLock) { _ttsQueue = text; return; }
   _ttsLock = true;
   _ttsQueue = null;
@@ -847,18 +846,12 @@ async function speakLine(text) {
   var clean = text.replace(/[\u{1F300}-\u{1FFFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '').replace(/[🤖😅🔬🎨🏗️🧠☕🌟🎯🖨️🚀💫🎪🤩🏆]/g, '').trim();
   if(!clean) return;
   try {
-    if(_cancelRequested) return;
     var res = await fetch('https://api.genesysadditive3dcreation.com/tts/stream?text=' + encodeURIComponent(clean) + '&language=hi-IN&voice=shubh', {method:'POST', headers:{'Content-Type':'application/json'}});
     if(res.ok) {
       var blob = await res.blob();
       var url = URL.createObjectURL(blob);
-      if(window._gaiosAudio){ 
-        try{ window._gaiosAudio.pause(); window._gaiosAudio.currentTime=0; }catch(e){}
-      }
-      if(_cancelRequested) { URL.revokeObjectURL(url); return; }
-      window._gaiosAudio = new Audio(url);
-      window._gaiosAudio.onended = function(){ URL.revokeObjectURL(url); };
-      window._gaiosAudio.play().catch(function(){});
+      var au = new Audio(url);
+      au.play();
       return;
     }
   } catch(e) {}
@@ -924,20 +917,11 @@ function showStat(type,msg){['sProc','sOk','sErr'].forEach(function(id){document
 
 var _cancelRequested = false;
 var _currentPredId = null;
-var _pollInterval = null;
 function cancelGenerate() {
   _cancelRequested = true;
-  _ttsLock = false;
-  _ttsQueue = null;
-  // Stop ALL audio instantly
   if(window.speechSynthesis) window.speechSynthesis.cancel();
-  if(window._gaiosAudio) {
-    try{ window._gaiosAudio.pause(); window._gaiosAudio.currentTime=0; window._gaiosAudio.src=''; }catch(e){}
-    window._gaiosAudio = null;
-  }
-  if(speechInt) { clearInterval(speechInt); speechInt = null; }
-  if(_pollInterval) { clearInterval(_pollInterval); _pollInterval = null; }
-  stopProg(); stopSpeechBubbles(); stopBgMusic(); stopParticles();
+  _ttsLock = false;
+  if(typeof speechInt !== "undefined" && speechInt) { clearInterval(speechInt); speechInt = null; }
   // Hide cancel, show generate
   document.getElementById('cancel-btn').style.display = 'none';
   document.getElementById('gen3d-btn').style.display = '';
@@ -951,10 +935,10 @@ function cancelGenerate() {
 
 async function generate3D(){
   _cancelRequested = false;
-  if(selFiles.length===0){alert('Pehle photo(s) select karo!');return;}
-  var btn=document.getElementById('gen3d-btn');
   document.getElementById('cancel-btn').style.display = '';
   document.getElementById('gen3d-btn').style.display = 'none';
+  if(selFiles.length===0){alert('Pehle photo(s) select karo!');return;}
+  var btn=document.getElementById('gen3d-btn');
   btn.disabled=true;btn.textContent='⏳ Generating...';
   document.getElementById('viewerSection').style.display='none';
   document.getElementById('approvalBox').style.display='none';
@@ -974,14 +958,14 @@ async function generate3D(){
   getBase64(file,async function(base64){
     startProg();setStep(2);showStat('Proc','⏳ GAIOS™ AI 3D model shuru kar raha hai...');
     try{
-      var phone='916350132497';
-      var fd=new FormData();fd.append('file',file);fd.append('phone',phone);fd.append('vertical','figurine');
+      var phone=prompt('Apna WhatsApp number daalo (91XXXXXXXXXX):','916350132497');
+      var fd=new FormData();fd.append('file',file);fd.append('phone',phone||'916350132497');fd.append('vertical','figurine');
       var res=await fetch(DGX_API+'/generate3d/async',{method:'POST',body:fd});
       var data=await res.json();
       if(!data.success){stopProg();showStat('Err','❌ '+(data.error||'Start failed'));btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';return;}
       var predId=data.order_id;var secs=0;
       showStat('Proc','⏳ 3D Model ban raha hai... 0s');setStep(3);
-      _pollInterval=setInterval(async function(){
+      var pollInterval=setInterval(async function(){
         secs+=5;
         showStat('Proc','⏳ 3D Model ban raha hai... '+secs+'s');
         try{
@@ -989,7 +973,7 @@ async function generate3D(){
           var sr=await fetch(DGX_API+'/order/'+predId);
           var sd=await sr.json();
           if(sd.status==='ready'){
-            clearInterval(_pollInterval); _pollInterval=null;
+            clearInterval(pollInterval);
             var glbUrl=DGX_API+'/outputs/'+predId+'.glb';
             document.getElementById('modelViewer').setAttribute('src',glbUrl);
             document.getElementById('viewerSection').style.display='block';
@@ -1002,7 +986,7 @@ async function generate3D(){
             btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';
           }
         }catch(e){console.log('Poll error:',e);}
-        if(secs>900){clearInterval(_pollInterval); _pollInterval=null;stopProg();showStat('Err','⏳ Timeout.');btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';}
+        if(secs>900){clearInterval(pollInterval);stopProg();showStat('Err','⏳ Timeout.');btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';}
       },5000);
     }catch(err){stopProg();showStat('Err','❌ '+err.message);btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';}
   });
