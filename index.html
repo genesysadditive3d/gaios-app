@@ -888,21 +888,22 @@ var lineIdx=0,speechInt=null,particleAnim=null;
 
 function startSpeechBubbles(){
   lineIdx=0;
+  speechInt=true;
   var sb=document.getElementById('speechBubble'),st=document.getElementById('speechText');
-  async function showNextLine(){
+  function showNextLine(){
     if(!speechInt) return;
     if(sb&&st){
       sb.style.opacity='0';
-      setTimeout(async function(){
+      setTimeout(function(){
         st.textContent=funnyLines[lineIdx];
         sb.style.opacity='1';
-        await speakLine(funnyLines[lineIdx]);
-        lineIdx=(lineIdx+1)%funnyLines.length;
-        if(speechInt) setTimeout(showNextLine, 500);
+        speakLine(funnyLines[lineIdx]).then(function(){
+          lineIdx=(lineIdx+1)%funnyLines.length;
+          if(speechInt) showNextLine();
+        });
       },300);
     }
   }
-  speechInt=true;
   showNextLine();
 }
 
