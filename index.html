@@ -643,48 +643,51 @@ function stopAllSpeech() {
   if (window.speechSynthesis) { window.speechSynthesis.cancel(); }
 }
 
-var _ttsLock = false;
 var _elAudio = null;
+var _speaking = false;
 
 function stopAllSpeech(){
-  _ttsLock = false;
-  if(_elAudio){try{_elAudio.pause();}catch(e){}; _elAudio=null;}
+  _speaking = false;
+  if(_elAudio){try{_elAudio.pause();_elAudio.src='';}catch(e){}; _elAudio=null;}
   if(window.speechSynthesis) window.speechSynthesis.cancel();
 }
 
-async function speakLine(text) {
+function speakLine(text){
   var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu,'').replace(/[^\u0000-\u024F\u0900-\u097F .,!?]/g,'').trim();
-  if (!clean) return;
-  if(_elAudio){try{_elAudio.pause();}catch(e){}; _elAudio=null;}
-  return new Promise(async function(resolve){
-    try {
-      var res = await fetch('https://api.genesysadditive3dcreation.com/tts/stream', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: clean, voice: 'Magpie-Multilingual.HI-IN.Aria' })
-      });
-      if (!res.ok) throw new Error('TTS ' + res.status);
-      var blob = await res.blob();
-      var url = URL.createObjectURL(blob);
-      _elAudio = new Audio(url);
-      _elAudio.volume = 0.95;
-      _elAudio.onended = function(){ URL.revokeObjectURL(url); _elAudio=null; resolve(); };
-      _elAudio.onerror = function(){ _elAudio=null; resolve(); };
-      _elAudio.play();
-    } catch(e) {
+  if(!clean) return Promise.resolve();
+  if(_elAudio){try{_elAudio.pause();_elAudio.src='';}catch(e){}; _elAudio=null;}
+  return new Promise(function(resolve){
+    fetch('https://api.genesysadditive3dcreation.com/tts/stream',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({text:clean,voice:'Magpie-Multilingual.HI-IN.Aria'})
+    }).then(function(r){return r.blob();}).then(function(blob){
+      var url=URL.createObjectURL(blob);
+      var a=new Audio(url);
+      a.volume=0.95;
+      a.onended=function(){URL.revokeObjectURL(url);_elAudio=null;resolve();};
+      a.onerror=function(){_elAudio=null;resolve();};
+      _elAudio=a;
+      a.play().catch(function(){resolve();});
+    }).catch(function(){
       if(window.speechSynthesis){
+        var u=new SpeechSynthesisUtterance(clean);
+        u.lang='hi-IN';u.rate=1.1;u.pitch=1.3;u.volume=0.9;
+        u.onend=function(){resolve();};
         window.speechSynthesis.cancel();
-        var utt=new SpeechSynthesisUtterance(clean);
-        utt.lang='hi-IN'; utt.rate=1.1; utt.pitch=1.3; utt.volume=0.9;
-        utt.onend=function(){resolve();};
-        window.speechSynthesis.speak(utt);
-      } else { resolve(); }
-    }
+        window.speechSynthesis.speak(u);
+      }else{resolve();}
+    });
   });
 }
 
-async function robotSpeak(text) {
-  await speakLine(text);
+function robotSpeak(text){return speakLine(text);}
+function robotSpeakBrowser(text){
+  if(!window.speechSynthesis)return;
+  var u=new SpeechSynthesisUtterance(text);
+  u.lang='hi-IN';u.rate=1.1;u.pitch=1.3;u.volume=0.9;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(u);
 }
 
 // ══ CHAT ══
