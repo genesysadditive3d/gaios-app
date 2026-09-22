@@ -867,15 +867,26 @@ var funnyLines=["🤖 Ek second... main aapki photo ko 3D mein badal raha hoon!"
 var lineIdx=0,speechInt=null,particleAnim=null;
 
 function startSpeechBubbles(){
-  lineIdx=0;speakLine(funnyLines[0]);
-  speechInt=setInterval(function(){
-    lineIdx=(lineIdx+1)%funnyLines.length;
-    var sb=document.getElementById('speechBubble'),st=document.getElementById('speechText');
-    if(sb&&st){sb.style.opacity='0';setTimeout(function(){st.textContent=funnyLines[lineIdx];sb.style.opacity='1';speakLine(funnyLines[lineIdx]);},300);}
-  },5000);
+  lineIdx=0;
+  var sb=document.getElementById('speechBubble'),st=document.getElementById('speechText');
+  async function showNextLine(){
+    if(!speechInt) return;
+    if(sb&&st){
+      sb.style.opacity='0';
+      setTimeout(async function(){
+        st.textContent=funnyLines[lineIdx];
+        sb.style.opacity='1';
+        await speakLine(funnyLines[lineIdx]);
+        lineIdx=(lineIdx+1)%funnyLines.length;
+        if(speechInt) setTimeout(showNextLine, 500);
+      },300);
+    }
+  }
+  speechInt=true;
+  showNextLine();
 }
 
-function stopSpeechBubbles(){if(speechInt)clearInterval(speechInt);if(window.speechSynthesis)window.speechSynthesis.cancel();}
+function stopSpeechBubbles(){speechInt=null;if(window.speechSynthesis)window.speechSynthesis.cancel();}
 
 function initParticles(){
   var canvas=document.getElementById('particleCanvas');if(!canvas)return;
