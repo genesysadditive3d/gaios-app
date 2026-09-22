@@ -649,7 +649,6 @@ async function robotSpeak(text) {
   _ttsLock = true;
   var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu, '').replace(/[^\u0000-\u024F\u0900-\u097F .,!?]/g, '').trim();
   if (!clean) return;
-  stopAllSpeech();
   try {
     var res = await fetch('https://api.genesysadditive3dcreation.com/tts/stream', {
       method: 'POST',
