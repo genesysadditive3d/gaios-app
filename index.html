@@ -644,29 +644,47 @@ function stopAllSpeech() {
 }
 
 var _ttsLock = false;
-async function robotSpeak(text) {
-  if(_ttsLock) return;
-  _ttsLock = true;
-  var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu, '').replace(/[^\u0000-\u024F\u0900-\u097F .,!?]/g, '').trim();
+var _elAudio = null;
+
+function stopAllSpeech(){
+  _ttsLock = false;
+  if(_elAudio){try{_elAudio.pause();}catch(e){}; _elAudio=null;}
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+}
+
+async function speakLine(text) {
+  var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu,'').replace(/[^\u0000-\u024F\u0900-\u097F .,!?]/g,'').trim();
   if (!clean) return;
-  try {
-    var res = await fetch('https://api.genesysadditive3dcreation.com/tts/stream', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: clean, voice: 'Magpie-Multilingual.HI-IN.Aria' })
-    });
-    if (!res.ok) throw new Error('TTS ' + res.status);
-    var blob = await res.blob();
-    var url = URL.createObjectURL(blob);
-    _elAudio = new Audio(url);
-    _elAudio.volume = 0.95;
-    _elAudio.onended = function() { URL.revokeObjectURL(url); _elAudio = null; };
-    _elAudio.play();
-  } catch(e) {
-    robotSpeakBrowser(clean);
-  } finally {
-    _ttsLock = false;
-  }
+  if(_elAudio){try{_elAudio.pause();}catch(e){}; _elAudio=null;}
+  return new Promise(async function(resolve){
+    try {
+      var res = await fetch('https://api.genesysadditive3dcreation.com/tts/stream', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: clean, voice: 'Magpie-Multilingual.HI-IN.Aria' })
+      });
+      if (!res.ok) throw new Error('TTS ' + res.status);
+      var blob = await res.blob();
+      var url = URL.createObjectURL(blob);
+      _elAudio = new Audio(url);
+      _elAudio.volume = 0.95;
+      _elAudio.onended = function(){ URL.revokeObjectURL(url); _elAudio=null; resolve(); };
+      _elAudio.onerror = function(){ _elAudio=null; resolve(); };
+      _elAudio.play();
+    } catch(e) {
+      if(window.speechSynthesis){
+        window.speechSynthesis.cancel();
+        var utt=new SpeechSynthesisUtterance(clean);
+        utt.lang='hi-IN'; utt.rate=1.1; utt.pitch=1.3; utt.volume=0.9;
+        utt.onend=function(){resolve();};
+        window.speechSynthesis.speak(utt);
+      } else { resolve(); }
+    }
+  });
+}
+
+async function robotSpeak(text) {
+  await speakLine(text);
 }
 
 // ══ CHAT ══
