@@ -857,29 +857,39 @@ function playSuccessSound(){
 
 function playErrorSound(){try{var ctx=getAudioCtx();[400,300,200].forEach(function(freq,i){setTimeout(function(){playBeep(ctx,freq,0.1,0.2);},i*150);});}catch(e){}}
 
-async function speakLine(text) {
+function speakLine(text) {
   var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu,'').replace(/[^\u0000-\u024F\u0900-\u097F .,!?]/g,'').trim();
-  if (!clean) return;
-  stopAllSpeech();
-  try {
-    var res = await fetch('https://api.genesysadditive3dcreation.com/tts/stream', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: clean, voice: 'Magpie-Multilingual.HI-IN.Aria' })
-    });
+  if (!clean) return Promise.resolve();
+  return fetch('https://api.genesysadditive3dcreation.com/tts/stream', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text: clean, voice: 'Magpie-Multilingual.HI-IN.Aria' })
+  }).then(function(res){
     if (!res.ok) throw new Error('TTS ' + res.status);
-    var blob = await res.blob();
-    var url = URL.createObjectURL(blob);
-    _elAudio = new Audio(url);
-    _elAudio.volume = 0.85;
-    _elAudio.onended = function() { URL.revokeObjectURL(url); _elAudio = null; };
-    _elAudio.play();
-  } catch(e) {
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    var utt = new SpeechSynthesisUtterance(clean); utt.lang='hi-IN'; utt.rate=1.1; utt.pitch=1.3; utt.volume=0.9;
-    window.speechSynthesis.speak(utt);
-  }
+    return res.arrayBuffer();
+  }).then(function(buf){
+    var ctx = getAudioCtx();
+    if(ctx.state === 'suspended') ctx.resume();
+    return ctx.decodeAudioData(buf);
+  }).then(function(decoded){
+    return new Promise(function(resolve){
+      var ctx = getAudioCtx();
+      var src = ctx.createBufferSource();
+      src.buffer = decoded;
+      src.connect(ctx.destination);
+      src.onended = function(){ resolve(); };
+      src.start(0);
+    });
+  }).catch(function(){
+    return new Promise(function(resolve){
+      if (!window.speechSynthesis){ resolve(); return; }
+      var utt = new SpeechSynthesisUtterance(clean);
+      utt.lang='hi-IN'; utt.rate=1.1; utt.pitch=1.3; utt.volume=0.9;
+      utt.onend = function(){ resolve(); };
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utt);
+    });
+  });
 }
 
 var funnyLines=["🤖 Ek second... main aapki photo ko 3D mein badal raha hoon!","😅 Itni sundar photo thi... ab 3D mein aur bhi sundar lagoge!","🔬 Har pixel ko personally check kar raha hoon... patience!","🎨 Rang bharenge, chehra banayenge... Mimaki printer ke liye taiyaar!","🏗️ Ek ek layer build ho rahi hai... jaise Pali mein ghar banta hai!","🧠 GAIOS™ soch raha hai... aur woh bahut tez sochta hai!","☕ Thoda chai peeyein... model ban raha hai!","🌟 India ka pehla full-colour 3D hub — Pali, Rajasthan se namaste!","🎯 Accuracy: 99.9%... baaki 0.1% Gopal ji ke liye chhod diya!","🖨️ Mimaki 3DUJ-553 printer taiyaar ho rahi hai Pali mein!","🚀 Hunyuan AI ka jaadu dekho... Chinese technology, Indian innovation!","💫 DPIIT number hai, Patent hai — guarantee hai quality ki!","🎪 3D model almost ready... thoda aur wait karo mere dost!","🤩 Jab model aayega, tum dekhte reh jaoge!","🏆 RIPS 2024 MoU signed, Government ka bharosa — quality assured!"];
