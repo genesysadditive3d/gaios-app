@@ -337,6 +337,7 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
   </div>
   <div class="sec-badge" id="step3badge" style="display:none;">🚀 STEP 3 — 3D Model Generate Karo</div>
   <button class="btn" id="gen3d-btn" style="width:100%;padding:13px;font-size:13px;margin-bottom:4px;" onclick="generate3D()">🚀 3D Model Generate Karo</button>
+  <button class="btn" id="cancel-btn" style="width:100%;padding:13px;font-size:13px;margin-bottom:4px;background:#e74c3c;display:none;" onclick="cancelGeneration()">❌ Generation Roklo</button>
   <div style="font-size:9px;color:var(--gray);text-align:center;margin-bottom:8px;">Processing time: ~3-6 minutes | Auto photo compression</div>
   <div class="progress-section" id="progressSection">
     <div id="animStage" style="background:linear-gradient(135deg,#040A14,#0A1628,#040A14);border:1px solid rgba(201,168,76,0.3);border-radius:16px;padding:20px 16px;margin-bottom:12px;text-align:center;position:relative;overflow:hidden;min-height:280px;">
@@ -938,17 +939,17 @@ async function generate3D(){
       var fd=new FormData();fd.append('file',file);fd.append('phone',phone||'916350132497');fd.append('vertical','figurine');
       var res=await fetch(DGX_API+'/generate3d/async',{method:'POST',body:fd});
       var data=await res.json();
-      if(!data.success){stopProg();showStat('Err','❌ '+(data.error||'Start failed'));btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';return;}
-      var predId=data.order_id;var secs=0;
-      showStat('Proc','⏳ 3D Model ban raha hai... 0s');setStep(3);
-      var pollInterval=setInterval(async function(){
+      if(!data.success){stopProg();showStat('Err','❌ '+(data.error||'Start failed'));btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';document.getElementById('cancel-btn').style.display='none';return;}
+      var predId=data.order_id;var secs=0;window.currentPollInterval=null;
+      showStat('Proc','⏳ 3D Model ban raha hai... 0s');setStep(3);document.getElementById('cancel-btn').style.display='block';
+      window.currentPollInterval=setInterval(async function(){
         secs+=5;
         showStat('Proc','⏳ 3D Model ban raha hai... '+secs+'s');
         try{
           var sr=await fetch(DGX_API+'/order/'+predId);
           var sd=await sr.json();
           if(sd.status==='ready'){
-            clearInterval(pollInterval);
+            clearInterval(window.currentPollInterval);
             var glbUrl=DGX_API+'/outputs/'+predId+'.glb';
             document.getElementById('modelViewer').setAttribute('src',glbUrl);
             document.getElementById('viewerSection').style.display='block';
@@ -958,15 +959,23 @@ async function generate3D(){
             doneProg();setStep(4);
             showStat('Ok','✅ 3D Model Ready! '+secs+'s mein bana!');
             toast('🎉 Model taiyar!',4000);
-            btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';
+            btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';document.getElementById('cancel-btn').style.display='none';
           }
         }catch(e){console.log('Poll error:',e);}
-        if(secs>900){clearInterval(pollInterval);stopProg();showStat('Err','⏳ Timeout.');btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';}
+        if(secs>900){clearInterval(window.currentPollInterval);stopProg();showStat('Err','⏳ Timeout.');btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';document.getElementById('cancel-btn').style.display='none';}
       },5000);
-    }catch(err){stopProg();showStat('Err','❌ '+err.message);btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';}
+    }catch(err){stopProg();showStat('Err','❌ '+err.message);btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';document.getElementById('cancel-btn').style.display='none';}
   });
 }
 
+function cancelGeneration(){
+  if(window.currentPollInterval){clearInterval(window.currentPollInterval);window.currentPollInterval=null;}
+  document.getElementById('cancel-btn').style.display='none';
+  var btn=document.getElementById('gen3d-btn');
+  btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';document.getElementById('cancel-btn').style.display='none';
+  stopProg();showStat('Info','⛔ Generation rok di gayi.');
+  toast('Generation rok di gayi!',3000);
+}
 function approveModel(){
   document.getElementById('approvalStatus').style.display='block';
   document.getElementById('approvalStatus').textContent='✅ Model Approved!';
