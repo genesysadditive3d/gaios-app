@@ -607,6 +607,10 @@ function goToAccount(e) {
 // ══ ROBOT SPEAK — GLOBAL SCOPE ══
 
 var speechInt = null;
+function speakLine(t){ return Promise.resolve(); }
+function robotSpeak(t){ return Promise.resolve(); }
+function robotSpeakBrowser(t){}
+
 var ANIMALS = ['🐘','🦁','🐕','🐈','🦚','🐯','🐦','🐄','🐒','🦊'];
 var LINES = [
   'Haathi bolta hai... model ban raha hai!',
@@ -623,7 +627,7 @@ var LINES = [
 var _animalIdx = 0;
 
 function stopAllSpeech(){ if(speechInt){clearInterval(speechInt);speechInt=null;} }
-function speakLine(t){ return Promise.resolve(); }
+function  }
 function robotSpeak(t){ return Promise.resolve(); }
 function robotSpeakBrowser(t){}
 
@@ -810,30 +814,7 @@ function playSuccessSound(){
 
 function playErrorSound(){try{var ctx=getAudioCtx();[400,300,200].forEach(function(freq,i){setTimeout(function(){playBeep(ctx,freq,0.1,0.2);},i*150);});}catch(e){}}
 
-async function speakLine(text) {
-  var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu,'').replace(/[^\u0000-\u024F\u0900-\u097F .,!?]/g,'').trim();
-  if (!clean) return;
-  stopAllSpeech();
-  try {
-    var res = await fetch('https://api.genesysadditive3dcreation.com/tts/stream', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: clean, voice: 'Magpie-Multilingual.HI-IN.Aria' })
-    });
-    if (!res.ok) throw new Error('TTS ' + res.status);
-    var blob = await res.blob();
-    var url = URL.createObjectURL(blob);
-    _elAudio = new Audio(url);
-    _elAudio.volume = 0.85;
-    _elAudio.onended = function() { URL.revokeObjectURL(url); _elAudio = null; };
-    _elAudio.play();
-  } catch(e) {
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    var utt = new SpeechSynthesisUtterance(clean); utt.lang='hi-IN'; utt.rate=1.1; utt.pitch=1.3; utt.volume=0.9;
-    window.speechSynthesis.speak(utt);
-  }
-}
+
 
 var funnyLines=["🤖 Ek second... main aapki photo ko 3D mein badal raha hoon!","😅 Itni sundar photo thi... ab 3D mein aur bhi sundar lagoge!","🔬 Har pixel ko personally check kar raha hoon... patience!","🎨 Rang bharenge, chehra banayenge... Mimaki printer ke liye taiyaar!","🏗️ Ek ek layer build ho rahi hai... jaise Pali mein ghar banta hai!","🧠 GAIOS™ soch raha hai... aur woh bahut tez sochta hai!","☕ Thoda chai peeyein... model ban raha hai!","🌟 India ka pehla full-colour 3D hub — Pali, Rajasthan se namaste!","🎯 Accuracy: 99.9%... baaki 0.1% Gopal ji ke liye chhod diya!","🖨️ Mimaki 3DUJ-553 printer taiyaar ho rahi hai Pali mein!","🚀 Hunyuan AI ka jaadu dekho... Chinese technology, Indian innovation!","💫 DPIIT number hai, Patent hai — guarantee hai quality ki!","🎪 3D model almost ready... thoda aur wait karo mere dost!","🤩 Jab model aayega, tum dekhte reh jaoge!","🏆 RIPS 2024 MoU signed, Government ka bharosa — quality assured!"];
 var lineIdx=0,speechInt=null,particleAnim=null;
@@ -849,8 +830,7 @@ function startSpeechBubbles(){
       setTimeout(function(){
         st.textContent=funnyLines[lineIdx];
         sb.style.opacity='1';
-        speakLine(funnyLines[lineIdx]).then(function(){
-          lineIdx=(lineIdx+1)%funnyLines.length;
+        
           if(speechInt) showNextLine();
         });
       },300);
@@ -859,7 +839,7 @@ function startSpeechBubbles(){
   showNextLine();
 }
 
-function stopSpeechBubbles(){speechInt=null;if(window.speechSynthesis)window.speechSynthesis.cancel();}
+function stopSpeechBubbles(){speechInt=null;if(window.speechSynthesis)}
 
 function initParticles(){
   var canvas=document.getElementById('particleCanvas');if(!canvas)return;
@@ -888,7 +868,7 @@ function doneProg(){
   clearInterval(progInt);stopSpeechBubbles();stopBgMusic();stopParticles();playSuccessSound();
   document.getElementById('progressBar').style.width='100%';updatePct(100);
   var st=document.getElementById('speechText');if(st)st.textContent='🎉 Ho gaya! Aapka 3D model ready hai!';
-  speakLine('Ho gaya! Aapka teen dee model ready hai!');
+  
   setTimeout(function(){document.getElementById('progressSection').style.display='none';},1800);
 }
 function stopProg(){clearInterval(progInt);stopSpeechBubbles();stopBgMusic();stopParticles();playErrorSound();document.getElementById('progressSection').style.display='none';}
