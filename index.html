@@ -655,7 +655,6 @@ function stopAllSpeech(){
 function speakLine(text){
   var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu,'').replace(/[^\u0000-\u024F\u0900-\u097F .,!?]/g,'').trim();
   if(!clean) return Promise.resolve();
-  if(_elAudio){try{_elAudio.pause();_elAudio.src='';}catch(e){}; _elAudio=null;}
   return new Promise(function(resolve){
     fetch('https://api.genesysadditive3dcreation.com/tts/stream',{
       method:'POST',
