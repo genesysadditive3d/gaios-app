@@ -717,7 +717,7 @@ async function sendMsg(){
     var data=await res.json(); remLoad();
     var rep=(data.content&&data.content[0]&&data.content[0].text)?data.content[0].text:'Kuch issue aaya. Dobara try karein.';
     addMsg(rep,false);
-    robotSpeak(rep);
+    // robotSpeak disabled
   } catch(e){remLoad();addMsg('Network error.',false);}
   isLoad=false;
 }
