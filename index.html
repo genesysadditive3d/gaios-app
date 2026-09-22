@@ -686,24 +686,25 @@ function startSpeechBubbles(){
   _animalIdx = 0;
   _lineIdx = 0;
   showAnimal(0);
-  function nextLine(){
-    if(!_animalRunning) return;
+  var animal = ANIMALS[0];
+  var st = document.getElementById('speechText');
+  if(st) st.textContent = animal.emoji + ' ' + animal.lines[0];
+  speakLine(animal.lines[0]);
+  speechInt = setInterval(function(){
+    if(!_animalRunning){clearInterval(speechInt);return;}
+    _lineIdx++;
     var animal = ANIMALS[_animalIdx % ANIMALS.length];
-    var line = animal.lines[_lineIdx % animal.lines.length];
+    if(_lineIdx >= animal.lines.length){
+      _lineIdx = 0;
+      _animalIdx++;
+      showAnimal(_animalIdx);
+      animal = ANIMALS[_animalIdx % ANIMALS.length];
+    }
+    var line = animal.lines[_lineIdx];
     var st = document.getElementById('speechText');
     if(st) st.textContent = animal.emoji + ' ' + line;
-    speakLine(line).then(function(){
-      if(!_animalRunning) return;
-      _lineIdx++;
-      if(_lineIdx >= animal.lines.length){
-        _lineIdx = 0;
-        _animalIdx++;
-        showAnimal(_animalIdx);
-      }
-      setTimeout(nextLine, 500);
-    });
-  }
-  nextLine();
+    speakLine(line);
+  }, 5000);
 }
 
 function stopSpeechBubbles(){
