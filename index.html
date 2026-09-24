@@ -656,7 +656,7 @@ function speakLine(text){
   var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu,'').replace(/[^\u0000-\u024F\u0900-\u097F .,!?]/g,'').trim();
   if(!clean) return Promise.resolve();
   return new Promise(function(resolve){
-    fetch('http://localhost:8001/tts/stream',{
+    fetch('https://api.genesysadditive3dcreation.com/tts/stream',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({text:clean,voice:'af_shubh'})
@@ -860,7 +860,7 @@ function playErrorSound(){try{var ctx=getAudioCtx();[400,300,200].forEach(functi
 function speakLine(text) {
   var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu,'').replace(/[^\u0000-\u024F\u0900-\u097F .,!?]/g,'').trim();
   if (!clean) return Promise.resolve();
-  return fetch('http://localhost:8001/tts/stream', {
+  return fetch('https://api.genesysadditive3dcreation.com/tts/stream', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ text: clean, voice: 'af_shubh' })
