@@ -214,7 +214,24 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
 .bnav-btn.active{color:var(--gold);}
 .bnav-btn:hover{color:var(--gold-light);background:rgba(201,168,76,0.06);}
 </style>
-</head>
+
+<style id="fun-chars-css">
+@keyframes floatUp{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+@keyframes peacockFan{0%,100%{transform:rotate(-8deg);}50%{transform:rotate(8deg);}}
+@keyframes tigerBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+@keyframes sciWave{0%,100%{transform:rotate(-3deg);}50%{transform:rotate(3deg);}}
+@keyframes sparkle2{0%,100%{opacity:0;transform:scale(0);}50%{opacity:1;transform:scale(1);}}
+@keyframes robotFloat{0%,100%{transform:translateY(0) rotate(-2deg);}50%{transform:translateY(-12px) rotate(2deg);}}
+.fun-stage{position:fixed;bottom:0;left:0;width:100%;height:110px;pointer-events:none;z-index:9999;display:none;}
+.fun-stage.show{display:block;}
+.fc{position:absolute;bottom:5px;}
+.fc1{left:3%;animation:floatUp 3s ease-in-out infinite;}
+.fc2{left:22%;animation:floatUp 2.5s ease-in-out infinite 0.5s;}
+.fc3{left:42%;animation:tigerBounce 2s ease-in-out infinite 0.3s;}
+.fc4{left:62%;animation:sciWave 2.8s ease-in-out infinite 0.8s;}
+.fc5{left:80%;animation:robotFloat 2.2s ease-in-out infinite 0.2s;}
+.sp2{position:absolute;animation:sparkle2 2s ease-in-out infinite;font-size:18px;}
+</style></head>
 <body>
 <div class="toast" id="toast"></div>
 <div class="header" style="position:relative;">
@@ -337,7 +354,7 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
   </div>
   <div class="sec-badge" id="step3badge" style="display:none;">🚀 STEP 3 — 3D Model Generate Karo</div>
   <button class="btn" id="gen3d-btn" style="width:100%;padding:13px;font-size:13px;margin-bottom:4px;" onclick="generate3D()">🚀 3D Model Generate Karo</button>
-  <button class="btn" id="cancel-btn" style="width:100%;padding:13px;font-size:13px;margin-bottom:4px;background:#e74c3c;display:none;" onclick="cancelGeneration()">❌ Generation Roklo</button>
+  <button id="cancel-btn" style="display:none;width:100%;padding:10px;font-size:12px;margin-bottom:4px;background:rgba(180,30,30,0.85);color:#fff;border:1.5px solid #e05555;border-radius:10px;cursor:pointer;font-weight:700;" onclick="cancelGenerate()">⛔ Generation Rok Do (Cancel)</button>
   <div style="font-size:9px;color:var(--gray);text-align:center;margin-bottom:8px;">Processing time: ~3-6 minutes | Auto photo compression</div>
   <div class="progress-section" id="progressSection">
     <div id="animStage" style="background:linear-gradient(135deg,#040A14,#0A1628,#040A14);border:1px solid rgba(201,168,76,0.3);border-radius:16px;padding:20px 16px;margin-bottom:12px;text-align:center;position:relative;overflow:hidden;min-height:280px;">
@@ -643,50 +660,35 @@ function stopAllSpeech() {
   if (window.speechSynthesis) { window.speechSynthesis.cancel(); }
 }
 
-var _elAudio = null;
-var _speaking = false;
-
-function stopAllSpeech(){
-  _speaking = false;
-  if(_elAudio){try{_elAudio.pause();_elAudio.src='';}catch(e){}; _elAudio=null;}
-  if(window.speechSynthesis) window.speechSynthesis.cancel();
-}
-
-function speakLine(text){
-  var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu,'').replace(/[^\u0000-\u024F\u0900-\u097F .,!?]/g,'').trim();
-  if(!clean) return Promise.resolve();
-  return new Promise(function(resolve){
-    fetch('https://api.genesysadditive3dcreation.com/tts/stream',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({text:clean,voice:'af_bella'})
-    }).then(function(r){return r.blob();}).then(function(blob){
-      var url=URL.createObjectURL(blob);
-      var a=new Audio(url);
-      a.volume=0.95;
-      a.onended=function(){URL.revokeObjectURL(url);_elAudio=null;resolve();};
-      a.onerror=function(){_elAudio=null;resolve();};
-      _elAudio=a;
-      a.play().catch(function(){resolve();});
-    }).catch(function(){
-      if(window.speechSynthesis){
-        var u=new SpeechSynthesisUtterance(clean);
-        u.lang='hi-IN';u.rate=1.1;u.pitch=1.3;u.volume=0.9;
-        u.onend=function(){resolve();};
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(u);
-      }else{resolve();}
+var _ttsLock = false;
+async function robotSpeak(text) {
+  if(_cancelRequested) return;
+  if(_ttsLock) { _ttsQueue = text; return; }
+  _ttsLock = true;
+  _ttsQueue = null;
+  var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu, '').replace(/[^\u0000-\u024F\u0900-\u097F .,!?]/g, '').trim();
+  if (!clean) return;
+  stopAllSpeech();
+  try {
+    var cleanText = text.replace(/[🤖✅❌🎉]/g, '').trim();
+    if(!cleanText) { _ttsLock=false; return; }
+    var res = await fetch('/tts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: clean, voice: 'hf_alpha' })
     });
-  });
-}
-
-function robotSpeak(text){return speakLine(text);}
-function robotSpeakBrowser(text){
-  if(!window.speechSynthesis)return;
-  var u=new SpeechSynthesisUtterance(text);
-  u.lang='hi-IN';u.rate=1.1;u.pitch=1.3;u.volume=0.9;
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(u);
+    if (!res.ok) throw new Error('TTS ' + res.status);
+    var blob = await res.blob();
+    var url = URL.createObjectURL(blob);
+    _elAudio = new Audio(url);
+    _elAudio.volume = 0.95;
+    _elAudio.onended = function() { URL.revokeObjectURL(url); _elAudio = null; };
+    _elAudio.play();
+  } catch(e) {
+    robotSpeakBrowser(clean);
+  } finally {
+    _ttsLock = false;
+  }
 }
 
 // ══ CHAT ══
@@ -717,7 +719,7 @@ async function sendMsg(){
     var data=await res.json(); remLoad();
     var rep=(data.content&&data.content[0]&&data.content[0].text)?data.content[0].text:'Kuch issue aaya. Dobara try karein.';
     addMsg(rep,false);
-    // robotSpeak disabled
+    robotSpeak(rep);
   } catch(e){remLoad();addMsg('Network error.',false);}
   isLoad=false;
 }
@@ -857,66 +859,41 @@ function playSuccessSound(){
 
 function playErrorSound(){try{var ctx=getAudioCtx();[400,300,200].forEach(function(freq,i){setTimeout(function(){playBeep(ctx,freq,0.1,0.2);},i*150);});}catch(e){}}
 
-function speakLine(text) {
-  var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu,'').replace(/[^\u0000-\u024F\u0900-\u097F .,!?]/g,'').trim();
-  if (!clean) return Promise.resolve();
-  return fetch('https://api.genesysadditive3dcreation.com/tts/stream', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text: clean, voice: 'af_bella' })
-  }).then(function(res){
-    if (!res.ok) throw new Error('TTS ' + res.status);
-    return res.arrayBuffer();
-  }).then(function(buf){
-    var ctx = getAudioCtx();
-    if(ctx.state === 'suspended') ctx.resume();
-    return ctx.decodeAudioData(buf);
-  }).then(function(decoded){
-    return new Promise(function(resolve){
-      var ctx = getAudioCtx();
-      var src = ctx.createBufferSource();
-      src.buffer = decoded;
-      src.connect(ctx.destination);
-      src.onended = function(){ resolve(); };
-      src.start(0);
-    });
-  }).catch(function(){
-    return new Promise(function(resolve){
-      if (!window.speechSynthesis){ resolve(); return; }
-      var utt = new SpeechSynthesisUtterance(clean);
-      utt.lang='hi-IN'; utt.rate=1.1; utt.pitch=1.3; utt.volume=0.9;
-      utt.onend = function(){ resolve(); };
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(utt);
-    });
-  });
+async function speakLine(text) {
+  var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu,'').replace(/[🤖😅🔬🎨🏗️🧠☕🌟🎯🖨️🚀💫🎪🤩🏆⏳✅❌🎉]/g,'').trim();
+  if(!clean || _cancelRequested) return;
+  try {
+    var res = await fetch('/tts', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({text:clean,voice:'hf_alpha'})});
+    if(res.ok && !_cancelRequested){
+      var blob = await res.blob();
+      if(window._gaiosAudio){ try{window._gaiosAudio.pause();window._gaiosAudio.src='';}catch(e){} }
+      window._gaiosAudio = new Audio(URL.createObjectURL(blob));
+      window._gaiosAudio.play().catch(function(){});
+      return;
+    }
+  } catch(e){}
+  if(_cancelRequested) return;
+  if(window.speechSynthesis){
+    window.speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(clean);
+    u.lang='hi-IN'; u.rate=0.9;
+    window.speechSynthesis.speak(u);
+  }
 }
 
 var funnyLines=["🤖 Ek second... main aapki photo ko 3D mein badal raha hoon!","😅 Itni sundar photo thi... ab 3D mein aur bhi sundar lagoge!","🔬 Har pixel ko personally check kar raha hoon... patience!","🎨 Rang bharenge, chehra banayenge... Mimaki printer ke liye taiyaar!","🏗️ Ek ek layer build ho rahi hai... jaise Pali mein ghar banta hai!","🧠 GAIOS™ soch raha hai... aur woh bahut tez sochta hai!","☕ Thoda chai peeyein... model ban raha hai!","🌟 India ka pehla full-colour 3D hub — Pali, Rajasthan se namaste!","🎯 Accuracy: 99.9%... baaki 0.1% Gopal ji ke liye chhod diya!","🖨️ Mimaki 3DUJ-553 printer taiyaar ho rahi hai Pali mein!","🚀 Hunyuan AI ka jaadu dekho... Chinese technology, Indian innovation!","💫 DPIIT number hai, Patent hai — guarantee hai quality ki!","🎪 3D model almost ready... thoda aur wait karo mere dost!","🤩 Jab model aayega, tum dekhte reh jaoge!","🏆 RIPS 2024 MoU signed, Government ka bharosa — quality assured!"];
 var lineIdx=0,speechInt=null,particleAnim=null;
 
 function startSpeechBubbles(){
-  lineIdx=0;
-  speechInt=true;
-  var sb=document.getElementById('speechBubble'),st=document.getElementById('speechText');
-  function showNextLine(){
-    if(!speechInt) return;
-    if(sb&&st){
-      sb.style.opacity='0';
-      setTimeout(function(){
-        st.textContent=funnyLines[lineIdx];
-        sb.style.opacity='1';
-        speakLine(funnyLines[lineIdx]).then(function(){
-          lineIdx=(lineIdx+1)%funnyLines.length;
-          if(speechInt) showNextLine();
-        });
-      },300);
-    }
-  }
-  showNextLine();
+  lineIdx=0;speakLine(funnyLines[0]);
+  speechInt=setInterval(function(){
+    lineIdx=(lineIdx+1)%funnyLines.length;
+    var sb=document.getElementById('speechBubble'),st=document.getElementById('speechText');
+    if(sb&&st){sb.style.opacity='0';setTimeout(function(){st.textContent=funnyLines[lineIdx];sb.style.opacity='1';speakLine(funnyLines[lineIdx]);},300);}
+  },5000);
 }
 
-function stopSpeechBubbles(){speechInt=null;if(window.speechSynthesis)window.speechSynthesis.cancel();}
+function stopSpeechBubbles(){if(speechInt)clearInterval(speechInt);if(window.speechSynthesis)window.speechSynthesis.cancel();}
 
 function initParticles(){
   var canvas=document.getElementById('particleCanvas');if(!canvas)return;
@@ -935,7 +912,7 @@ function stopParticles(){if(particleAnim)cancelAnimationFrame(particleAnim);}
 function updatePct(val){var el=document.getElementById('progressPct');if(el)el.textContent=Math.round(val)+'%';}
 
 var progInt=null,progVal=5;
-function startProg(){
+function startProg(){ showFunChars();
   progVal=5;document.getElementById('progressSection').style.display='block';
   document.getElementById('progressBar').style.width='5%';updatePct(5);
   startSpeechBubbles();startBgMusic();setTimeout(initParticles,100);
@@ -948,13 +925,40 @@ function doneProg(){
   speakLine('Ho gaya! Aapka teen dee model ready hai!');
   setTimeout(function(){document.getElementById('progressSection').style.display='none';},1800);
 }
-function stopProg(){clearInterval(progInt);stopSpeechBubbles();stopBgMusic();stopParticles();playErrorSound();document.getElementById('progressSection').style.display='none';}
+function stopProg(){ hideFunChars();clearInterval(progInt);stopSpeechBubbles();stopBgMusic();stopParticles();playErrorSound();document.getElementById('progressSection').style.display='none';}
 
 function setStep(n){for(var i=1;i<=4;i++){var c=document.getElementById('sc'+i);if(i<n){c.classList.remove('active');c.classList.add('done');c.textContent='✓';}else if(i===n){c.classList.add('active');c.classList.remove('done');}else{c.classList.remove('active','done');c.textContent=i;}}}
 function showStat(type,msg){['sProc','sOk','sErr'].forEach(function(id){document.getElementById(id).style.display='none';});if(type&&msg){document.getElementById('s'+type).textContent=msg;document.getElementById('s'+type).style.display='block';}}
 
 // ══ GENERATE 3D — FIXED ══
+
+var _cancelRequested = false;
+var _pollInterval = null;
+var _currentPredId = null;
+function cancelGenerate() {
+  _cancelRequested = true;
+  _ttsLock = false;
+  _ttsQueue = null;
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+  if(window._gaiosAudio){ try{window._gaiosAudio.pause();window._gaiosAudio.currentTime=0;window._gaiosAudio.src='';}catch(e){} window._gaiosAudio=null; }
+  if(speechInt){ clearInterval(speechInt); speechInt=null; }
+  if(_pollInterval){ clearInterval(_pollInterval); _pollInterval=null; hideFunChars(); }
+  stopProg(); stopSpeechBubbles(); stopBgMusic(); stopParticles(); hideFunChars();
+  // Hide cancel, show generate
+  document.getElementById('cancel-btn').style.display = 'none';
+  document.getElementById('gen3d-btn').style.display = '';
+  document.getElementById('gen3d-btn').disabled = false;
+  document.getElementById('gen3d-btn').textContent = '🚀 3D Model Generate Karo';
+  // Reset UI
+  var lb = document.getElementById('loadingBox');
+  if(lb) lb.style.display = 'none';
+  robotSpeak('Generation rok diya gaya.');
+}
+
 async function generate3D(){
+  _cancelRequested = false;
+  document.getElementById('cancel-btn').style.display = '';
+  document.getElementById('gen3d-btn').style.display = 'none';
   if(selFiles.length===0){alert('Pehle photo(s) select karo!');return;}
   var btn=document.getElementById('gen3d-btn');
   btn.disabled=true;btn.textContent='⏳ Generating...';
@@ -980,17 +984,18 @@ async function generate3D(){
       var fd=new FormData();fd.append('file',file);fd.append('phone',phone||'916350132497');fd.append('vertical','figurine');
       var res=await fetch(DGX_API+'/generate3d/async',{method:'POST',body:fd});
       var data=await res.json();
-      if(!data.success){stopProg();showStat('Err','❌ '+(data.error||'Start failed'));btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';document.getElementById('cancel-btn').style.display='none';return;}
-      var predId=data.order_id;var secs=0;window.currentPollInterval=null;
-      showStat('Proc','⏳ 3D Model ban raha hai... 0s');setStep(3);document.getElementById('cancel-btn').style.display='block';
-      window.currentPollInterval=setInterval(async function(){
+      if(!data.success){stopProg();showStat('Err','❌ '+(data.error||'Start failed'));btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';return;}
+      var predId=data.order_id;var secs=0;
+      showStat('Proc','⏳ 3D Model ban raha hai... 0s');setStep(3);
+      _pollInterval=setInterval(async function(){
         secs+=5;
         showStat('Proc','⏳ 3D Model ban raha hai... '+secs+'s');
         try{
+          if(_cancelRequested) { console.log("Cancelled!"); return; }
           var sr=await fetch(DGX_API+'/order/'+predId);
           var sd=await sr.json();
           if(sd.status==='ready'){
-            clearInterval(window.currentPollInterval);
+            clearInterval(_pollInterval); _pollInterval=null;
             var glbUrl=DGX_API+'/outputs/'+predId+'.glb';
             document.getElementById('modelViewer').setAttribute('src',glbUrl);
             document.getElementById('viewerSection').style.display='block';
@@ -1000,23 +1005,15 @@ async function generate3D(){
             doneProg();setStep(4);
             showStat('Ok','✅ 3D Model Ready! '+secs+'s mein bana!');
             toast('🎉 Model taiyar!',4000);
-            btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';document.getElementById('cancel-btn').style.display='none';
+            btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';
           }
         }catch(e){console.log('Poll error:',e);}
-        if(secs>900){clearInterval(window.currentPollInterval);stopProg();showStat('Err','⏳ Timeout.');btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';document.getElementById('cancel-btn').style.display='none';}
+        if(secs>900){clearInterval(_pollInterval); _pollInterval=null;stopProg();showStat('Err','⏳ Timeout.');btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';}
       },5000);
-    }catch(err){stopProg();showStat('Err','❌ '+err.message);btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';document.getElementById('cancel-btn').style.display='none';}
+    }catch(err){stopProg();showStat('Err','❌ '+err.message);btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';}
   });
 }
 
-function cancelGeneration(){
-  if(window.currentPollInterval){clearInterval(window.currentPollInterval);window.currentPollInterval=null;}
-  document.getElementById('cancel-btn').style.display='none';
-  var btn=document.getElementById('gen3d-btn');
-  btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';document.getElementById('cancel-btn').style.display='none';
-  stopProg();showStat('Info','⛔ Generation rok di gayi.');
-  toast('Generation rok di gayi!',3000);
-}
 function approveModel(){
   document.getElementById('approvalStatus').style.display='block';
   document.getElementById('approvalStatus').textContent='✅ Model Approved!';
@@ -1109,7 +1106,7 @@ function showBforeverModal(key){
 }
 </script>
 <script>
-const DGX_API = "https://api.genesysadditive3dcreation.com";
+const DGX_API = "http://127.0.0.1:8001";
 
 async function uploadToDGX(file, phone, vertical="figurine") {
   const formData = new FormData();
@@ -1131,5 +1128,21 @@ async function checkOrderStatus(orderId) {
   return await res.json();
 }
 </script>
-</body>
+
+<div class="fun-stage" id="funStage">
+<div class="fc fc1"><svg width="75" height="65" viewBox="0 0 75 65"><ellipse cx="40" cy="45" rx="22" ry="11" fill="#C9982A"/><ellipse cx="28" cy="32" rx="10" ry="8" fill="#C9982A"/><ellipse cx="46" cy="30" rx="9" ry="7" fill="#C9982A"/><rect x="14" y="30" width="8" height="18" rx="4" fill="#C9982A"/><ellipse cx="12" cy="26" rx="8" ry="6" fill="#C9982A"/><circle cx="9" cy="24" r="2" fill="#0A1628"/><circle cx="8.5" cy="23.5" r="0.8" fill="white"/><ellipse cx="6" cy="27" rx="2" ry="1.5" fill="#B8860B"/><rect x="18" y="54" width="5" height="11" rx="2" fill="#B8860B"/><rect x="26" y="54" width="5" height="11" rx="2" fill="#B8860B"/><rect x="40" y="54" width="5" height="11" rx="2" fill="#B8860B"/><rect x="48" y="54" width="5" height="11" rx="2" fill="#B8860B"/><path d="M 61 44 Q 70 38 66 28" stroke="#B8860B" stroke-width="3" fill="none" stroke-linecap="round"/><text x="8" y="10" font-size="10" fill="#C9982A" font-weight="bold" font-family="Arial">🐪 Pali</text></svg></div>
+<div class="fc fc2"><svg width="68" height="80" viewBox="0 0 68 80"><g style="animation:peacockFan 2s ease-in-out infinite;transform-origin:34px 48px"><ellipse cx="34" cy="22" rx="30" ry="20" fill="none" stroke="#0D7A5E" stroke-width="2.5"/><ellipse cx="34" cy="22" rx="22" ry="14" fill="rgba(13,122,94,0.25)"/><circle cx="10" cy="12" r="5" fill="#C9982A"/><circle cx="10" cy="12" r="2.5" fill="#0A1628"/><circle cx="58" cy="12" r="5" fill="#C9982A"/><circle cx="58" cy="12" r="2.5" fill="#0A1628"/><circle cx="34" cy="5" r="5" fill="#C9982A"/><circle cx="34" cy="5" r="2.5" fill="#0A1628"/><circle cx="18" cy="7" r="3.5" fill="#1B3A6B"/><circle cx="50" cy="7" r="3.5" fill="#1B3A6B"/></g><ellipse cx="34" cy="56" rx="10" ry="14" fill="#0D7A5E"/><rect x="29" y="40" width="9" height="18" rx="4" fill="#1B6B8A"/><circle cx="34" cy="37" r="8" fill="#1B6B8A"/><circle cx="29" cy="30" r="2.5" fill="#C9982A"/><circle cx="34" cy="28" r="2.5" fill="#C9982A"/><circle cx="39" cy="30" r="2.5" fill="#C9982A"/><circle cx="31" cy="36" r="2.5" fill="#0A1628"/><circle cx="30.5" cy="35.5" r="0.8" fill="white"/><path d="M 27 39 L 24 41 L 27 40" fill="#C9982A"/><rect x="28" y="68" width="4" height="11" rx="2" fill="#0D5C2E"/><rect x="36" y="68" width="4" height="11" rx="2" fill="#0D5C2E"/><text x="4" y="80" font-size="9" fill="#0D7A5E" font-weight="bold" font-family="Arial">🦚 Rajasthan</text></svg></div>
+<div class="fc fc3"><svg width="78" height="68" viewBox="0 0 78 68"><ellipse cx="44" cy="44" rx="25" ry="14" fill="#E87C1E"/><line x1="32" y1="32" x2="30" y2="57" stroke="#0A1628" stroke-width="2.5" opacity="0.5"/><line x1="42" y1="31" x2="40" y2="58" stroke="#0A1628" stroke-width="2.5" opacity="0.5"/><line x1="52" y1="32" x2="50" y2="57" stroke="#0A1628" stroke-width="2.5" opacity="0.5"/><circle cx="18" cy="34" r="15" fill="#E87C1E"/><line x1="10" y1="22" x2="8" y2="33" stroke="#0A1628" stroke-width="2" opacity="0.6"/><line x1="18" y1="20" x2="16" y2="31" stroke="#0A1628" stroke-width="2" opacity="0.6"/><line x1="26" y1="22" x2="24" y2="33" stroke="#0A1628" stroke-width="2" opacity="0.6"/><ellipse cx="18" cy="39" rx="10" ry="6" fill="#FFF5E0"/><circle cx="12" cy="30" r="4" fill="#FFF5E0"/><circle cx="12" cy="30" r="2.5" fill="#1B6B8A"/><circle cx="11.5" cy="29.5" r="0.8" fill="white"/><circle cx="24" cy="30" r="4" fill="#FFF5E0"/><circle cx="24" cy="30" r="2.5" fill="#1B6B8A"/><circle cx="23.5" cy="29.5" r="0.8" fill="white"/><path d="M 15 37 L 18 39 L 21 37 L 18 35 Z" fill="#C94040"/><line x1="3" y1="38" x2="11" y2="39" stroke="#0A1628" stroke-width="1.2"/><line x1="3" y1="41" x2="11" y2="41" stroke="#0A1628" stroke-width="1.2"/><line x1="25" y1="39" x2="33" y2="38" stroke="#0A1628" stroke-width="1.2"/><line x1="25" y1="41" x2="33" y2="41" stroke="#0A1628" stroke-width="1.2"/><polygon points="8,20 14,27 18,18" fill="#E87C1E"/><polygon points="28,20 22,27 18,18" fill="#E87C1E"/><polygon points="10,21 14,26 16,20" fill="#C94040" opacity="0.6"/><polygon points="26,21 22,26 20,20" fill="#C94040" opacity="0.6"/><rect x="26" y="55" width="6" height="12" rx="3" fill="#E87C1E"/><rect x="36" y="55" width="6" height="12" rx="3" fill="#E87C1E"/><rect x="50" y="55" width="6" height="12" rx="3" fill="#E87C1E"/><rect x="60" y="55" width="6" height="12" rx="3" fill="#E87C1E"/><path d="M 68 43 Q 78 36 73 26" stroke="#E87C1E" stroke-width="4.5" fill="none" stroke-linecap="round"/><circle cx="73" cy="25" r="5" fill="#0A1628"/><text x="5" y="10" font-size="9" fill="#E87C1E" font-weight="bold" font-family="Arial">🐯 Sherni</text></svg></div>
+<div class="fc fc4"><svg width="62" height="82" viewBox="0 0 62 82"><rect x="12" y="36" width="38" height="36" rx="8" fill="white" stroke="#1B3A6B" stroke-width="1.5"/><rect x="18" y="36" width="26" height="16" rx="4" fill="#C9982A"/><circle cx="31" cy="22" r="17" fill="#FFDAAA"/><path d="M 14 16 Q 31 4 48 16" fill="#C9982A"/><rect x="13" y="14" width="5" height="8" rx="2" fill="#C9982A"/><rect x="44" y="14" width="5" height="8" rx="2" fill="#C9982A"/><circle cx="24" cy="21" r="5.5" fill="none" stroke="#0A1628" stroke-width="1.5"/><circle cx="38" cy="21" r="5.5" fill="none" stroke="#0A1628" stroke-width="1.5"/><line x1="29.5" y1="21" x2="32.5" y2="21" stroke="#0A1628" stroke-width="1.5"/><line x1="13" y1="21" x2="18.5" y2="21" stroke="#0A1628" stroke-width="1.5"/><line x1="43.5" y1="21" x2="49" y2="21" stroke="#0A1628" stroke-width="1.5"/><circle cx="24" cy="21" r="3" fill="#1B3A6B"/><circle cx="23.5" cy="20.5" r="1" fill="white"/><circle cx="38" cy="21" r="3" fill="#1B3A6B"/><circle cx="37.5" cy="20.5" r="1" fill="white"/><path d="M 25 29 Q 31 34 37 29" stroke="#C94040" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="1" y="39" width="13" height="6" rx="3" fill="white" stroke="#1B3A6B" stroke-width="1"/><rect x="48" y="39" width="13" height="6" rx="3" fill="white" stroke="#1B3A6B" stroke-width="1"/><path d="M 51 45 L 49 60 Q 51 64 55 60 L 53 45 Z" fill="rgba(0,196,180,0.6)" stroke="#0D7A5E" stroke-width="1"/><rect x="50" y="43" width="4" height="4" rx="1" fill="#aaa"/><rect x="16" y="53" width="12" height="9" rx="2" fill="none" stroke="#1B3A6B" stroke-width="1"/><rect x="28" y="38" width="18" height="9" rx="2" fill="#C9982A"/><text x="30" y="46" font-size="5.5" fill="#0A1628" font-weight="bold" font-family="Arial">GAIOS</text><rect x="18" y="70" width="9" height="12" rx="3" fill="#1B3A6B"/><rect x="35" y="70" width="9" height="12" rx="3" fill="#1B3A6B"/><ellipse cx="22" cy="82" rx="8" ry="3" fill="#0A1628"/><ellipse cx="39" cy="82" rx="8" ry="3" fill="#0A1628"/><text x="2" y="12" font-size="8" fill="#1B3A6B" font-weight="bold" font-family="Arial">GAIOS</text></svg></div>
+<div class="fc fc5"><svg width="60" height="72" viewBox="0 0 60 72"><rect x="8" y="24" width="44" height="36" rx="7" fill="#1B3A6B" stroke="#C9982A" stroke-width="1.5"/><rect x="13" y="29" width="34" height="20" rx="4" fill="#0D1628"/><polygon points="30,32 22,38 38,38" fill="#C9982A" opacity="0.9"/><polygon points="22,38 30,43 30,32" fill="#E8C97A" opacity="0.7"/><polygon points="38,38 30,43 30,32" fill="#B8860B" opacity="0.8"/><rect x="18" y="52" width="24" height="6" rx="3" fill="#C9982A"/><line x1="30" y1="58" x2="30" y2="64" stroke="#00C4B4" stroke-width="2.5" opacity="0.9"/><line x1="29" y1="24" x2="29" y2="10" stroke="#C9982A" stroke-width="2.5"/><circle cx="29" cy="8" r="5" fill="#C9982A"/><circle cx="29" cy="8" r="2.5" fill="#0A1628"/><circle cx="42" cy="32" r="3" fill="#C94040"/><circle cx="42" cy="40" r="3" fill="#0D7A5E"/><circle cx="42" cy="48" r="3" fill="#C9982A"/><circle cx="15" cy="64" r="5.5" fill="#0A1628" stroke="#C9982A" stroke-width="1.5"/><circle cx="45" cy="64" r="5.5" fill="#0A1628" stroke="#C9982A" stroke-width="1.5"/><circle cx="15" cy="64" r="2.5" fill="#C9982A"/><circle cx="45" cy="64" r="2.5" fill="#C9982A"/><text x="4" y="10" font-size="8" fill="#C9982A" font-weight="bold" font-family="Arial">Mimaki</text></svg></div>
+<span class="sp2" style="left:15%;bottom:85px;animation-delay:0s">✨</span>
+<span class="sp2" style="left:35%;bottom:92px;animation-delay:0.6s">⭐</span>
+<span class="sp2" style="left:56%;bottom:88px;animation-delay:1.1s">✨</span>
+<span class="sp2" style="left:74%;bottom:90px;animation-delay:1.7s">⭐</span>
+<span class="sp2" style="left:91%;bottom:85px;animation-delay:0.9s">✨</span>
+</div>
+<script>
+function showFunChars(){ var s=document.getElementById('funStage'); if(s) s.classList.add('show'); }
+function hideFunChars(){ var s=document.getElementById('funStage'); if(s) s.classList.remove('show'); }
+</script></body>
 </html>
