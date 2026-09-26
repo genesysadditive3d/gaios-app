@@ -677,7 +677,7 @@ async function robotSpeak(text) {
     var res = await fetch(DGX_API+'/tts/stream', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: clean, voice: 'af_bella' })
+      body: JSON.stringify({ text: clean, voice: 'hf_alpha' })
     });
     if (!res.ok) throw new Error('TTS ' + res.status);
     var blob = await res.blob();
@@ -866,7 +866,7 @@ async function speakLine(text) {
   var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu,'').replace(/[🤖😅🔬🎨🏗️🧠☕🌟🎯🖨️🚀💫🎪🤩🏆⏳✅❌🎉]/g,'').trim();
   if(!clean || _cancelRequested) return;
   try {
-    var res = await fetch(DGX_API+'/tts/stream', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({text:clean,voice:'af_bella'})});
+    var res = await fetch(DGX_API+'/tts/stream', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({text:clean,voice:'hf_alpha'})});
     if(res.ok && !_cancelRequested){
       var blob = await res.blob();
       if(window._gaiosAudio){ try{window._gaiosAudio.pause();window._gaiosAudio.src='';}catch(e){} }
