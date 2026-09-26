@@ -661,7 +661,9 @@ function stopAllSpeech() {
 }
 
 var _ttsLock = false;
+var serverTtsFailed = false;
 async function robotSpeak(text) {
+  if(serverTtsFailed) { robotSpeakBrowser(text); return; }
   if(_cancelRequested) return;
   if(_ttsLock) { _ttsQueue = text; return; }
   _ttsLock = true;
@@ -672,10 +674,10 @@ async function robotSpeak(text) {
   try {
     var cleanText = text.replace(/[🤖✅❌🎉]/g, '').trim();
     if(!cleanText) { _ttsLock=false; return; }
-    var res = await fetch('/tts', {
+    var res = await fetch(DGX_API+'/tts/stream', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: clean, voice: 'hf_alpha' })
+      body: JSON.stringify({ text: clean, voice: 'af_bella' })
     });
     if (!res.ok) throw new Error('TTS ' + res.status);
     var blob = await res.blob();
@@ -685,6 +687,7 @@ async function robotSpeak(text) {
     _elAudio.onended = function() { URL.revokeObjectURL(url); _elAudio = null; };
     _elAudio.play();
   } catch(e) {
+    serverTtsFailed = true;
     robotSpeakBrowser(clean);
   } finally {
     _ttsLock = false;
@@ -863,7 +866,7 @@ async function speakLine(text) {
   var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu,'').replace(/[🤖😅🔬🎨🏗️🧠☕🌟🎯🖨️🚀💫🎪🤩🏆⏳✅❌🎉]/g,'').trim();
   if(!clean || _cancelRequested) return;
   try {
-    var res = await fetch('/tts', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({text:clean,voice:'hf_alpha'})});
+    var res = await fetch(DGX_API+'/tts/stream', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({text:clean,voice:'af_bella'})});
     if(res.ok && !_cancelRequested){
       var blob = await res.blob();
       if(window._gaiosAudio){ try{window._gaiosAudio.pause();window._gaiosAudio.src='';}catch(e){} }
@@ -1106,7 +1109,7 @@ function showBforeverModal(key){
 }
 </script>
 <script>
-const DGX_API = "http://127.0.0.1:8001";
+const DGX_API = "https://api.genesysadditive3dcreation.com";
 
 async function uploadToDGX(file, phone, vertical="figurine") {
   const formData = new FormData();
