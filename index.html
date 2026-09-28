@@ -1217,11 +1217,43 @@ function gaiosWatchUpgrade(id,v0){
       }
       if(d.quality_done){
         clearInterval(window._gaiosUpg);window._gaiosUpg=null;
-        gaiosUpgStat('✅ Final model taiyaar'+(d.final_score?' (chehra milan '+Math.round(d.final_score*100)+'%)':''));
+        gaiosUpgStat('✅ Final model taiyaar'+(d.final_score?' (chehra milan '+Math.round(d.final_score*100)+'%)':''));if(d.versions&&d.versions.length>1)gaiosVersions(id,d.versions,d.final_score);
       }
     }catch(e){}
     if(t>1800){clearInterval(window._gaiosUpg);window._gaiosUpg=null;}
   },15000);
+}
+</script>
+
+<!-- ============ GAIOS UX v4: customer khud version chune ============ -->
+<style>
+.gp-ver{margin:10px 0 4px;text-align:center}
+.gp-vt{font-size:12px;color:var(--gold,#C9A84C);margin-bottom:6px}
+.gp-vb{margin:3px;padding:7px 12px;border-radius:18px;border:1px solid var(--gold-border,#C9A84C66);background:transparent;color:inherit;font-size:12px;cursor:pointer}
+.gp-vb.on{background:var(--gold,#C9A84C);color:#0A1628;font-weight:700}
+.gp-ok{margin:6px 3px 0;padding:8px 16px;border-radius:18px;border:none;background:#00D68F;color:#04121f;font-weight:700;font-size:12px;cursor:pointer}
+</style>
+<script>
+function gaiosVersions(id,vs,fs){
+  var el=document.getElementById('gaiosVer');
+  if(!el){el=document.createElement('div');el.id='gaiosVer';el.className='gp-ver';var sec=document.getElementById('viewerSection');if(!sec)return;sec.appendChild(el);}
+  var cur=vs[0].id,best=1e9;
+  vs.forEach(function(v){var d=Math.abs((v.score||0)-(fs||0));if(d<best){best=d;cur=v.id;}});
+  function draw(){
+    el.innerHTML='<div class="gp-vt">Aapko kaunsa chehra sabse zyada milta-julta lagta hai?</div>'+
+      vs.map(function(v,i){return '<button class="gp-vb'+(v.id===cur?' on':'')+'" data-i="'+i+'">Version '+(i+1)+'</button>';}).join('')+
+      '<br><button class="gp-ok">✅ Ye wala final karo</button>';
+    el.querySelectorAll('.gp-vb').forEach(function(b){b.onclick=function(){var v=vs[+b.dataset.i];cur=v.id;
+      document.getElementById('modelViewer').setAttribute('src',DGX_API+v.url+'?t='+Date.now());draw();};});
+    el.querySelector('.gp-ok').onclick=async function(){
+      var fd=new FormData();fd.append('version',cur);
+      try{var r=await (await fetch(DGX_API+'/order/'+id+'/choose',{method:'POST',body:fd})).json();
+        if(r.ok){if(typeof toast==='function')toast('✅ Aapka chuna hua model final ho gaya',4000);try{curModelUrl=DGX_API+'/outputs/'+id+'.glb?c='+Date.now();}catch(e){}}
+        else if(typeof toast==='function')toast('⚠ '+(r.error||'Nahi ho paya'),4000);
+      }catch(e){}
+    };
+  }
+  draw();
 }
 </script>
 </body>
