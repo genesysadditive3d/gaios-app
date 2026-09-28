@@ -984,7 +984,7 @@ async function generate3D(){
     startProg();setStep(2);showStat('Proc','⏳ GAIOS™ AI 3D model shuru kar raha hai...');
     try{
       var phone=prompt('Apna WhatsApp number daalo (91XXXXXXXXXX):','916350132497');
-      var fd=new FormData();fd.append('file',file);fd.append('phone',phone||'916350132497');fd.append('vertical','figurine');
+      var fd=new FormData();fd.append('file',file);fd.append('phone',phone||'916350132497');fd.append('vertical','figurine');if(window._gaiosPrep&&window._gaiosPrep.prep_id){fd.append('prep_id',window._gaiosPrep.prep_id);}
       var res=await fetch(DGX_API+'/generate3d/async',{method:'POST',body:fd});
       var data=await res.json();
       if(!data.success){stopProg();showStat('Err','❌ '+(data.error||'Start failed'));btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';return;}
@@ -999,12 +999,12 @@ async function generate3D(){
           var sd=await sr.json();
           if(sd.status==='ready'){
             clearInterval(_pollInterval); _pollInterval=null;
-            var glbUrl=DGX_API+'/outputs/'+predId+'.glb';
+            var glbUrl=DGX_API+'/outputs/'+predId+'.glb?v='+(sd.updated||Date.now());
             document.getElementById('modelViewer').setAttribute('src',glbUrl);
             document.getElementById('viewerSection').style.display='block';
             document.getElementById('approvalBox').style.display='block';
             document.getElementById('trackingBox').style.display='block';
-            curModelUrl=glbUrl;
+            curModelUrl=glbUrl;gaiosWatchUpgrade(predId,sd.updated||0);
             doneProg();setStep(4);
             showStat('Ok','✅ 3D Model Ready! '+secs+'s mein bana!');
             toast('🎉 Model taiyar!',4000);
@@ -1147,5 +1147,82 @@ async function checkOrderStatus(orderId) {
 <script>
 function showFunChars(){ var s=document.getElementById('funStage'); if(s) s.classList.add('show'); }
 function hideFunChars(){ var s=document.getElementById('funStage'); if(s) s.classList.remove('show'); }
-</script></body>
+</script>
+<!-- ============ GAIOS UX v1: photo preview + behtar model auto-update ============ -->
+<style>
+#gaiosPrepBox{display:none;border:1px solid var(--gold-border,#C9A84C55);border-radius:12px;padding:10px;margin:0 0 10px;background:rgba(201,168,76,0.04)}
+.gp-wait{color:var(--gold,#C9A84C);font-size:12px;padding:6px}
+.gp-row{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.gp-img{width:140px;min-height:140px;border-radius:10px;overflow:hidden;background:repeating-conic-gradient(#1a2a44 0% 25%,#223455 0% 50%) 50%/16px 16px;display:flex;align-items:center;justify-content:center}
+.gp-img img{max-width:100%;max-height:220px;display:block}
+.gp-info{flex:1;min-width:170px;font-size:12px}
+.gp-q{font-weight:700;font-size:13px;margin-bottom:4px;color:var(--gold,#C9A84C)}
+.gp-kind{color:var(--gray,#9aa);margin-bottom:6px}
+.gp-c{margin:2px 0}.gp-c.ok{color:#00D68F}.gp-c.no{color:#FFB547}
+.gp-note{margin-top:6px;color:var(--gray,#9aa);font-size:11px}
+.gp-warn{color:#FFB547;font-size:12px}
+.gp-upg{font-size:12px;color:var(--gold,#C9A84C);margin:4px 0 8px;text-align:center}
+</style>
+<script>
+function gaiosPrepBox(){
+  var b=document.getElementById('gaiosPrepBox');
+  if(!b){b=document.createElement('div');b.id='gaiosPrepBox';var up=document.getElementById('uploadArea');
+    if(up&&up.parentNode){up.parentNode.insertBefore(b,up.nextSibling);}else{document.body.appendChild(b);}}
+  return b;
+}
+async function gaiosPrep(file){
+  var box=gaiosPrepBox();window._gaiosPrep=null;box.style.display='block';
+  box.innerHTML='<div class="gp-wait">✂️ Background hata rahe hain aur photo jaanch rahe hain...</div>';
+  try{
+    var fd=new FormData();fd.append('file',file);
+    var r=await fetch(DGX_API+'/preprocess',{method:'POST',body:fd});var d=await r.json();
+    if(!d.prep_id){box.innerHTML='<div class="gp-warn">⚠ '+((d.checks&&d.checks[0]&&d.checks[0].text)||'Preview nahi ban paya')+'</div>';return;}
+    window._gaiosPrep=d;
+    var q={achhi:['✅','Photo achhi hai'],theek:['🟡','Photo theek hai'],kamzor:['⚠️','Photo kamzor hai. Behtar photo se behtar model banega']}[d.quality]||['',''];
+    var cs=(d.checks||[]).map(function(c){return '<div class="gp-c '+(c.ok?'ok':'no')+'">'+(c.ok?'✓ ':'⚠ ')+c.text+'</div>';}).join('');
+    box.innerHTML='<div class="gp-row"><div class="gp-img"><img src="'+DGX_API+d.preview_url+'" alt="preview"></div><div class="gp-info"><div class="gp-q">'+q[0]+' '+q[1]+'</div><div class="gp-kind">'+(d.kind||'')+'</div>'+cs+'<div class="gp-note">Yahi hissa 3D banega. Theek lage to "3D Model Generate Karo" dabaiye, warna doosri photo chuniye.</div></div></div>';
+  }catch(e){console.log('GAIOS prep error',e);box.style.display='none';}
+}
+(function(){
+  try{
+    if(typeof handleFiles!=='function')return;
+    var _orig=handleFiles;
+    handleFiles=function(files){
+      _orig(files);
+      try{
+        var f=(typeof selFiles!=='undefined'&&selFiles&&selFiles.length)?(selFiles[(typeof selIdx!=='undefined'?selIdx:0)]||selFiles[0]):(files&&files[0]);
+        if(f)gaiosPrep(f);
+      }catch(e){console.log(e);}
+    };
+  }catch(e){console.log('GAIOS UX hook',e);}
+})();
+function gaiosUpgStat(txt){
+  var el=document.getElementById('gaiosUpg');
+  if(!el){el=document.createElement('div');el.id='gaiosUpg';el.className='gp-upg';var vs=document.getElementById('viewerSection');if(vs){vs.insertBefore(el,vs.firstChild);}else{return;}}
+  el.textContent=txt;
+}
+function gaiosWatchUpgrade(id,v0){
+  if(window._gaiosUpg)clearInterval(window._gaiosUpg);
+  var last=v0||0,t=0;
+  gaiosUpgStat('✨ Chehra aur behtar banaya ja raha hai... (thodi der mein model apne aap badlega)');
+  window._gaiosUpg=setInterval(async function(){
+    t+=15;
+    try{
+      var d=await (await fetch(DGX_API+'/order/'+id)).json();
+      if(d.updated&&d.updated!==last){
+        last=d.updated;var u=DGX_API+'/outputs/'+id+'.glb?v='+last;
+        document.getElementById('modelViewer').setAttribute('src',u);
+        try{curModelUrl=u;}catch(e){}
+        if(typeof toast==='function')toast('✨ Behtar chehra taiyaar! Model update ho gaya',4000);
+      }
+      if(d.quality_done){
+        clearInterval(window._gaiosUpg);window._gaiosUpg=null;
+        gaiosUpgStat('✅ Final model taiyaar'+(d.final_score?' (chehra milan '+Math.round(d.final_score*100)+'%)':''));
+      }
+    }catch(e){}
+    if(t>1800){clearInterval(window._gaiosUpg);window._gaiosUpg=null;}
+  },15000);
+}
+</script>
+</body>
 </html>
