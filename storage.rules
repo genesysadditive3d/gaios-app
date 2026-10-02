@@ -31,6 +31,11 @@ service firebase.storage {
       allow read: if isSignedIn() && (request.auth.uid == uid || isProdStaff());
       allow write: if isProdStaff();
     }
+    // GAIOS video (worker Admin SDK se likhta hai; customer sirf padhta hai)
+    match /customers/{uid}/orders/{orderId}/video/{file} {
+      allow read: if isSignedIn() && (request.auth.uid == uid || isProdStaff());
+      allow write: if isProdStaff();
+    }
 
     // Walk-in orders created by a Scan Point on behalf of a customer who
     // has no GAIOS account: scanpoints/{spUid}/orders/{orderId}/...
@@ -45,6 +50,10 @@ service firebase.storage {
       allow write: if isProdStaff();
     }
     match /scanpoints/{spUid}/orders/{orderId}/final/{file} {
+      allow read: if isSignedIn() && (request.auth.uid == spUid || isProdStaff());
+      allow write: if isProdStaff();
+    }
+    match /scanpoints/{spUid}/orders/{orderId}/video/{file} {
       allow read: if isSignedIn() && (request.auth.uid == spUid || isProdStaff());
       allow write: if isProdStaff();
     }

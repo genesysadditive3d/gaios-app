@@ -163,6 +163,59 @@ import {
   ref, uploadBytes, getDownloadURL, listAll
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
+// ── GAIOS video + 3D helpers (update: Oct 2026) ──
+const API_BASE = 'https://api.genesysadditive3dcreation.com';
+const urlCache = {};
+async function dlUrl(path){
+  if(!urlCache[path]) urlCache[path] = await getDownloadURL(ref(storage, path));
+  return urlCache[path];
+}
+const glbBlobCache = {};
+// GLB: pehle seedha, na chale to API ke proxy se (Firebase Storage CORS ke liye). Blob cache hota hai.
+async function loadGlb(el, url){
+  try {
+    if(!glbBlobCache[url]){
+      let r = null;
+      try { r = await fetch(url); if(!r.ok) r = null; } catch(e){ r = null; }
+      if(!r){ r = await fetch(API_BASE + '/api/proxy-download?url=' + encodeURIComponent(url)); if(!r.ok) throw new Error('proxy ' + r.status); }
+      glbBlobCache[url] = URL.createObjectURL(await r.blob());
+    }
+    el.src = glbBlobCache[url];
+  } catch(e){
+    el.insertAdjacentHTML('afterend', '<div style="padding:8px;font-size:12px;color:#ff9500;">3D preview abhi load nahi ho paaya. Page refresh karein.</div>');
+  }
+}
+async function videoHtml(order){
+  const vs = order.videoStatus;
+  const prev = Array.isArray(order.previewVideo) && order.previewVideo.length ? order.previewVideo[order.previewVideo.length - 1] : '';
+  const path = order.cinematicVideo || prev;
+  const has3d = order.preview3d && order.preview3d.length;
+  if(path){
+    try {
+      const url = await dlUrl(path);
+      const hd = !!order.cinematicVideo;
+      return `<div class="preview-box"><div style="font-size:11px;color:var(--gold);padding:7px 10px;letter-spacing:.5px;">🎬 ${hd ? 'CINEMATIC VIDEO (HD)' : '3D VIDEO — HD cinematic video kuch minute me aa rahi hai...'}</div>
+        <video src="${url}" controls playsinline loop preload="metadata" style="width:100%;max-height:320px;background:#000;"></video>
+        <div style="padding:7px 10px;"><a class="dl-link" href="${url}" target="_blank" download>⬇️ Video download karein</a></div></div>`;
+    } catch(e){ /* file abhi padhne layak nahi */ }
+  }
+  if(['requested','queued','processing'].includes(vs)){
+    return `<div class="preview-box"><div style="padding:12px;font-size:13px;color:var(--gold);">🎬 Aapki video ban rahi hai (3 se 8 minute)... Page apne aap update ho jayega.</div></div>`;
+  }
+  if(has3d && !path && (!vs || vs === 'failed')){
+    return `<div class="order-actions"><button class="btn btn-outline" onclick="requestVideo('${order.id}')">🎬 ${vs === 'failed' ? 'Video dobara banao' : 'Video banao'}</button></div>`;
+  }
+  return '';
+}
+window.requestVideo = async function(orderId){
+  try {
+    await updateDoc(doc(db, 'orders', orderId), { videoStatus: 'requested' });
+    toast('🎬 Video ki request bhej di gayi');
+  } catch(e){
+    alert('Video request nahi ho payi: ' + e.message);
+  }
+};
+
 let CURRENT_USER = null;
 let pricing = {};
 let paymentConfig = null;
@@ -465,13 +518,18 @@ async function orderCardHtml(order){
   let previewHtml = '';
   if(['customer_review','queued','printing','post_processing','ready','shipped','delivered'].includes(order.status) && order.preview3d && order.preview3d.length){
     try {
-      const url = await getDownloadURL(ref(storage, order.preview3d[0]));
+      const url = await dlUrl(order.preview3d[0]);
       if(/\.(glb|gltf)$/i.test(order.preview3d[0])){
-        previewHtml = `<div class="preview-box"><model-viewer src="/api/proxy-download?url=${encodeURIComponent(url)}" camera-controls auto-rotate exposure="1"></model-viewer></div>`;
+        previewHtml = `<div class="preview-box"><model-viewer data-glb="${url}" camera-controls auto-rotate exposure="1"></model-viewer></div>`;
       } else {
         previewHtml = `<div class="preview-box"><img src="${url}" style="width:100%;max-height:280px;object-fit:contain;"></div>`;
       }
     } catch(e){ /* file not readable yet */ }
+  }
+
+  let videoBlock = '';
+  if(['customer_review','queued','printing','post_processing','ready','shipped','delivered'].includes(order.status)){
+    videoBlock = await videoHtml(order);
   }
 
   let actionsHtml = '';
@@ -512,6 +570,7 @@ async function orderCardHtml(order){
       </div>
       <div class="timeline">${timelineHtml(order)}</div>
       ${previewHtml}
+      ${videoBlock}
       ${actionsHtml}
       ${ratingHtml}
       ${needsPayment ? `<div id="${payPanelId}"></div>` : ''}
@@ -527,6 +586,7 @@ async function renderOrders(){
   const sorted = [...myOrders].sort((a,b) => (b.createdAt||'').localeCompare(a.createdAt||''));
   const htmls = await Promise.all(sorted.map(orderCardHtml));
   list.innerHTML = htmls.join('');
+  list.querySelectorAll('model-viewer[data-glb]').forEach(el => loadGlb(el, el.dataset.glb));
   sorted.forEach(order => {
     if(order.status === 'payment_pending'){
       const panel = document.getElementById(`pay-${order.id}`);
@@ -543,7 +603,7 @@ async function renderDownloads(){
     const el = document.getElementById(`files-${order.id}`);
     if(!el) continue;
     let html = '';
-    for(const [folder, label] of [['source-photos','📸 Source Photos'],['3d-preview','🎯 3D Preview Files'],['final','📦 Final Files']]){
+    for(const [folder, label] of [['source-photos','📸 Source Photos'],['3d-preview','🎯 3D Preview Files'],['video','🎬 Videos'],['final','📦 Final Files']]){
       try {
         const folderRef = ref(storage, `customers/${CURRENT_USER.uid}/orders/${order.id}/${folder}`);
         const res = await listAll(folderRef);
