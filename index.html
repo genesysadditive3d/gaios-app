@@ -213,6 +213,20 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
 .bnav-btn .ico{font-size:18px;display:block;margin-bottom:2px;}
 .bnav-btn.active{color:var(--gold);}
 .bnav-btn:hover{color:var(--gold-light);background:rgba(201,168,76,0.06);}
+
+/* GAIOS update: photo prep + versions */
+#prepBox{display:none;margin:10px 0;padding:12px;border:1px solid var(--gold-border);border-radius:14px;background:rgba(201,168,76,0.05);}
+#prepBox .prep-row{display:flex;gap:12px;align-items:center;}
+#prepBox img{width:96px;height:96px;object-fit:contain;border-radius:12px;background:repeating-conic-gradient(#1b2a44 0% 25%,#13203a 0% 50%) 50%/16px 16px;border:1px solid var(--gold-border);}
+#prepBox .prep-q{font-size:12px;font-weight:700;color:var(--gold);margin-bottom:4px;}
+#prepBox .prep-c{font-size:11px;color:var(--gray);line-height:1.6;}
+#prepBox .prep-load{font-size:12px;color:var(--gold);}
+#versionBox{display:none;margin:12px 0;padding:12px;border:1px solid var(--gold-border);border-radius:14px;background:rgba(0,214,143,0.05);}
+#versionBox .v-title{font-size:12px;font-weight:700;color:var(--gold);margin-bottom:8px;}
+#versionBox .v-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+#versionBox .v-btn{flex:1;min-width:96px;padding:10px 8px;border-radius:12px;border:1px solid var(--gold-border);background:transparent;color:var(--off-white);font-size:12px;cursor:pointer;}
+#versionBox .v-btn.sel{border-color:var(--gold);background:rgba(201,168,76,0.18);color:var(--gold);}
+#versionBox .v-note{font-size:11px;color:var(--gray);margin-top:6px;}
 </style>
 </head>
 <body>
@@ -292,6 +306,7 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
     <div class="preview-label">📋 SELECTED PHOTOS — Tap to select primary</div>
     <div class="thumb-row" id="thumbRow"></div>
   </div>
+  <div id="prepBox"></div>
   <div class="quality-bar" id="qualityBar">
     <div class="quality-label">📊 Photo Quality Check</div>
     <div class="quality-indicator">
@@ -625,7 +640,38 @@ function goToAccount(e) {
 }
 
 // ══ ROBOT SPEAK — GLOBAL SCOPE ══
+// ══ GAIOS VOICE: natural Hindi awaaz (NVIDIA Magpie TTS, DGX par). Fail ho to browser awaaz. ══
 var _elAudio = null;
+var _speaking = false;
+function gaiosSpeak(text){
+  var clean = String(text||'').replace(/[\u{1F300}-\u{1FFFF}\u2600-\u27BF]/gu,'').replace(/[^\u0000-\u024F\u0900-\u097F .,!?।\-']/g,'').replace(/\s+/g,' ').trim();
+  if(!clean) return Promise.resolve();
+  if(clean.length>580) clean = clean.slice(0,580);
+  var lang = /[\u0900-\u097F]/.test(clean) ? 'hi-IN' : 'en-US';
+  var url = 'https://api.genesysadditive3dcreation.com/api/speak?lang='+lang+'&text='+encodeURIComponent(clean);
+  return fetch(url).then(function(res){
+    if(!res.ok) throw new Error('voice '+res.status);
+    return res.blob();
+  }).then(function(blob){
+    return new Promise(function(resolve){
+      var u = URL.createObjectURL(blob), a = new Audio(u);
+      a.volume = 0.95;
+      a.onended = function(){ URL.revokeObjectURL(u); if(_elAudio===a) _elAudio=null; resolve(); };
+      a.onerror = function(){ if(_elAudio===a) _elAudio=null; resolve(); };
+      _elAudio = a;
+      a.play().catch(function(){ resolve(); });
+    });
+  }).catch(function(){
+    return new Promise(function(resolve){
+      if(!window.speechSynthesis){ resolve(); return; }
+      var utt = new SpeechSynthesisUtterance(clean);
+      utt.lang = lang; utt.rate = 0.95; utt.volume = 0.9;
+      utt.onend = function(){ resolve(); };
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utt);
+    });
+  });
+}
 
 function robotSpeakBrowser(text) {
   var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu, '').replace(/[^\u0000-\u024F\u0900-\u097F ]/g, '').trim();
@@ -652,33 +698,7 @@ function stopAllSpeech(){
   if(window.speechSynthesis) window.speechSynthesis.cancel();
 }
 
-function speakLine(text){
-  var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu,'').replace(/[^\u0000-\u024F\u0900-\u097F .,!?]/g,'').trim();
-  if(!clean) return Promise.resolve();
-  return new Promise(function(resolve){
-    fetch('https://api.genesysadditive3dcreation.com/tts/stream',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({text:clean,voice:'af_bella'})
-    }).then(function(r){return r.blob();}).then(function(blob){
-      var url=URL.createObjectURL(blob);
-      var a=new Audio(url);
-      a.volume=0.95;
-      a.onended=function(){URL.revokeObjectURL(url);_elAudio=null;resolve();};
-      a.onerror=function(){_elAudio=null;resolve();};
-      _elAudio=a;
-      a.play().catch(function(){resolve();});
-    }).catch(function(){
-      if(window.speechSynthesis){
-        var u=new SpeechSynthesisUtterance(clean);
-        u.lang='hi-IN';u.rate=1.1;u.pitch=1.3;u.volume=0.9;
-        u.onend=function(){resolve();};
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(u);
-      }else{resolve();}
-    });
-  });
-}
+function speakLine(text){ return gaiosSpeak(text); }
 
 function robotSpeak(text){return speakLine(text);}
 function robotSpeakBrowser(text){
@@ -776,7 +796,7 @@ function handleFiles(files) {
         img.onload=function(){if(idx===0)checkQuality(img);};
         img.onclick=(function(ix,im){return function(){
           document.querySelectorAll('.thumb').forEach(function(t){t.classList.remove('selected');});
-          im.classList.add('selected');selIdx=ix;checkQuality(im);
+          im.classList.add('selected');selIdx=ix;checkQuality(im);prepPhoto(selFiles[ix]);
         };})(idx,img);
         var rem=document.createElement('div');rem.className='thumb-remove';rem.textContent='×';
         rem.onclick=(function(ix){return function(ev){ev.stopPropagation();selFiles.splice(ix,1);handleFiles(selFiles);};})(idx);
@@ -785,6 +805,7 @@ function handleFiles(files) {
       reader.readAsDataURL(f);
     })(files[i],i);
   }
+  if(count>0) prepPhoto(selFiles[selIdx]||selFiles[0]);
   document.getElementById('previewSection').style.display=count>0?'block':'none';
   document.getElementById('uploadText').textContent=count>0?(count+' Photo(s) Selected ✅'):'Photos Choose Karo';
   document.getElementById('uploadArea').classList.toggle('has-files',count>0);
@@ -793,6 +814,32 @@ function handleFiles(files) {
   document.getElementById('step2badge').style.display=count>0?'inline-block':'none';
   document.getElementById('bulkBox').style.display=count>0?'block':'none';
   document.getElementById('step3badge').style.display=count>0?'inline-block':'none';
+}
+
+
+// ══ GAIOS UX v1: photo jaanch + background hatana (gaios-prep service) ══
+var _prepId = '', _prepKey = '';
+async function prepPhoto(file){
+  if(!file) return;
+  var key = file.name+'|'+file.size;
+  if(key === _prepKey) return;
+  _prepKey = key; _prepId = '';
+  var box = document.getElementById('prepBox'); if(!box) return;
+  box.style.display = 'block';
+  box.innerHTML = '<div class="prep-load">🔍 Photo jaanch rahe hain aur background hata rahe hain...</div>';
+  try{
+    var fd = new FormData(); fd.append('file', file);
+    var r = await fetch(DGX_API+'/preprocess', {method:'POST', body:fd});
+    var d = await r.json();
+    if(!d || !d.prep_id){ box.style.display = 'none'; return; }
+    if(key !== _prepKey) return;
+    _prepId = d.prep_id;
+    var img = d.preview || d.preview_url || d.cutout || d.image || (DGX_API+'/outputs/prep/'+d.prep_id+'_in.png');
+    if(img.charAt(0) === '/') img = DGX_API + img;
+    var checks = (d.checks||[]).map(function(c){ return (c.ok?'✅ ':'⚠️ ')+c.text; }).join('<br>');
+    box.innerHTML = '<div class="prep-row"><img src="'+img+'?t='+Date.now()+'" alt="" onerror="this.style.display=\'none\'">'+
+      '<div><div class="prep-q">✨ Background hata diya'+(d.quality?' · Quality: '+d.quality:'')+'</div><div class="prep-c">'+checks+'</div></div></div>';
+  }catch(e){ box.style.display = 'none'; }
 }
 
 function adjustImage(){
@@ -857,42 +904,10 @@ function playSuccessSound(){
 
 function playErrorSound(){try{var ctx=getAudioCtx();[400,300,200].forEach(function(freq,i){setTimeout(function(){playBeep(ctx,freq,0.1,0.2);},i*150);});}catch(e){}}
 
-function speakLine(text) {
-  var clean = text.replace(/[\u{1F300}-\u{1FFFF}]/gu,'').replace(/[^\u0000-\u024F\u0900-\u097F .,!?]/g,'').trim();
-  if (!clean) return Promise.resolve();
-  return fetch('https://api.genesysadditive3dcreation.com/tts/stream', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text: clean, voice: 'af_bella' })
-  }).then(function(res){
-    if (!res.ok) throw new Error('TTS ' + res.status);
-    return res.arrayBuffer();
-  }).then(function(buf){
-    var ctx = getAudioCtx();
-    if(ctx.state === 'suspended') ctx.resume();
-    return ctx.decodeAudioData(buf);
-  }).then(function(decoded){
-    return new Promise(function(resolve){
-      var ctx = getAudioCtx();
-      var src = ctx.createBufferSource();
-      src.buffer = decoded;
-      src.connect(ctx.destination);
-      src.onended = function(){ resolve(); };
-      src.start(0);
-    });
-  }).catch(function(){
-    return new Promise(function(resolve){
-      if (!window.speechSynthesis){ resolve(); return; }
-      var utt = new SpeechSynthesisUtterance(clean);
-      utt.lang='hi-IN'; utt.rate=1.1; utt.pitch=1.3; utt.volume=0.9;
-      utt.onend = function(){ resolve(); };
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(utt);
-    });
-  });
-}
+function speakLine(text){ return gaiosSpeak(text); }
 
 var funnyLines=["🤖 Ek second... main aapki photo ko 3D mein badal raha hoon!","😅 Itni sundar photo thi... ab 3D mein aur bhi sundar lagoge!","🔬 Har pixel ko personally check kar raha hoon... patience!","🎨 Rang bharenge, chehra banayenge... Mimaki printer ke liye taiyaar!","🏗️ Ek ek layer build ho rahi hai... jaise Pali mein ghar banta hai!","🧠 GAIOS™ soch raha hai... aur woh bahut tez sochta hai!","☕ Thoda chai peeyein... model ban raha hai!","🌟 India ka pehla full-colour 3D hub — Pali, Rajasthan se namaste!","🎯 Accuracy: 99.9%... baaki 0.1% Gopal ji ke liye chhod diya!","🖨️ Mimaki 3DUJ-553 printer taiyaar ho rahi hai Pali mein!","🚀 Hunyuan AI ka jaadu dekho... Chinese technology, Indian innovation!","💫 DPIIT number hai, Patent hai — guarantee hai quality ki!","🎪 3D model almost ready... thoda aur wait karo mere dost!","🤩 Jab model aayega, tum dekhte reh jaoge!","🏆 RIPS 2024 MoU signed, Government ka bharosa — quality assured!"];
+var funnyLinesSpeak=["एक सेकंड... मैं आपकी फ़ोटो को थ्री-डी में बदल रहा हूँ!","इतनी सुंदर फ़ोटो थी... अब थ्री-डी में और भी सुंदर लगोगे!","हर पिक्सल को खुद जाँच रहा हूँ... ज़रा सब्र रखिए!","रंग भरेंगे, चेहरा बनाएँगे... मिमाकी प्रिंटर के लिए तैयार!","एक-एक परत बन रही है... जैसे पाली में घर बनता है!","गायोस सोच रहा है... और वो बहुत तेज़ सोचता है!","थोड़ी चाय पीजिए... मॉडल बन रहा है!","भारत का पहला फुल-कलर थ्री-डी हब... पाली, राजस्थान से नमस्ते!","सटीकता निन्यानवे दशमलव नौ प्रतिशत... बाकी शून्य दशमलव एक प्रतिशत गोपाल जी के लिए छोड़ दिया!","मिमाकी प्रिंटर पाली में तैयार हो रहा है!","हुनयुआन ए आई का जादू देखिए... चाइनीज़ टेक्नोलॉजी, इंडियन इनोवेशन!","डी पी आई आई टी नंबर है, पेटेंट है... क्वालिटी की गारंटी है!","थ्री-डी मॉडल लगभग तैयार है... थोड़ा और इंतज़ार कीजिए मेरे दोस्त!","जब मॉडल आएगा, आप देखते रह जाएँगे!","आर आई पी एस दो हज़ार चौबीस का एम ओ यू हुआ है... सरकार का भरोसा, क्वालिटी पक्की!"];
 var lineIdx=0,speechInt=null,particleAnim=null;
 
 function startSpeechBubbles(){
@@ -906,7 +921,7 @@ function startSpeechBubbles(){
       setTimeout(function(){
         st.textContent=funnyLines[lineIdx];
         sb.style.opacity='1';
-        speakLine(funnyLines[lineIdx]).then(function(){
+        speakLine(funnyLinesSpeak[lineIdx]||funnyLines[lineIdx]).then(function(){
           lineIdx=(lineIdx+1)%funnyLines.length;
           if(speechInt) showNextLine();
         });
@@ -916,7 +931,7 @@ function startSpeechBubbles(){
   showNextLine();
 }
 
-function stopSpeechBubbles(){speechInt=null;if(window.speechSynthesis)window.speechSynthesis.cancel();}
+function stopSpeechBubbles(){speechInt=null;if(_elAudio){try{_elAudio.pause();}catch(e){}_elAudio=null;}if(window.speechSynthesis)window.speechSynthesis.cancel();}
 
 function initParticles(){
   var canvas=document.getElementById('particleCanvas');if(!canvas)return;
@@ -945,13 +960,75 @@ function doneProg(){
   clearInterval(progInt);stopSpeechBubbles();stopBgMusic();stopParticles();playSuccessSound();
   document.getElementById('progressBar').style.width='100%';updatePct(100);
   var st=document.getElementById('speechText');if(st)st.textContent='🎉 Ho gaya! Aapka 3D model ready hai!';
-  speakLine('Ho gaya! Aapka teen dee model ready hai!');
+  speakLine('हो गया! आपका थ्री-डी मॉडल तैयार है!');
   setTimeout(function(){document.getElementById('progressSection').style.display='none';},1800);
 }
 function stopProg(){clearInterval(progInt);stopSpeechBubbles();stopBgMusic();stopParticles();playErrorSound();document.getElementById('progressSection').style.display='none';}
 
 function setStep(n){for(var i=1;i<=4;i++){var c=document.getElementById('sc'+i);if(i<n){c.classList.remove('active');c.classList.add('done');c.textContent='✓';}else if(i===n){c.classList.add('active');c.classList.remove('done');}else{c.classList.remove('active','done');c.textContent=i;}}}
 function showStat(type,msg){['sProc','sOk','sErr'].forEach(function(id){document.getElementById(id).style.display='none';});if(type&&msg){document.getElementById('s'+type).textContent=msg;document.getElementById('s'+type).style.display='block';}}
+
+
+// ══ GAIOS UX v4: best-of versions (teen model) me se customer chunta hai ══
+var _verPoll = null, _verUpdated = 0;
+function stopVersionPoll(){ if(_verPoll){ clearInterval(_verPoll); _verPoll = null; } }
+function startVersionPoll(orderId){
+  stopVersionPoll(); _verUpdated = 0;
+  var box = document.getElementById('versionBox');
+  if(!box){
+    box = document.createElement('div'); box.id = 'versionBox';
+    var vs = document.getElementById('viewerSection'); vs.appendChild(box);
+  }
+  box.style.display = 'block';
+  box.innerHTML = '<div class="v-title">🧪 Behtar versions ban rahe hain...</div><div class="v-note">Aap upar wala model dekh sakte hain. Kuch der me yahan 2-3 versions aayenge, jo pasand ho wo chuniye.</div>';
+  var tries = 0;
+  _verPoll = setInterval(async function(){
+    tries++;
+    if(tries > 70){ stopVersionPoll(); box.style.display = 'none'; return; }
+    try{
+      var r = await fetch(DGX_API+'/order/'+orderId); var d = await r.json();
+      if(d.updated && d.updated !== _verUpdated){
+        if(_verUpdated !== 0){ document.getElementById('modelViewer').setAttribute('src', DGX_API+'/outputs/'+orderId+'.glb?v='+d.updated); }
+        _verUpdated = d.updated;
+      }
+      if(d.quality_done){
+        stopVersionPoll();
+        renderVersions(orderId, d.versions||[], box);
+      }
+    }catch(e){}
+  }, 6000);
+}
+function renderVersions(orderId, versions, box){
+  if(!versions || versions.length < 2){ box.style.display = 'none'; return; }
+  var html = '<div class="v-title">🧪 '+versions.length+' versions taiyaar — jo pasand ho chuniye</div><div class="v-row">';
+  versions.forEach(function(v, i){
+    var label = 'Version '+String.fromCharCode(65+i)+(v.score!=null?' · ⭐'+Math.round(v.score):'');
+    html += '<button class="v-btn" data-i="'+i+'">'+label+'</button>';
+  });
+  html += '</div><button class="btn" id="pickVerBtn" style="width:100%;padding:10px;font-size:12px;display:none;">✅ Yeh version chuno</button><div class="v-note" id="verNote"></div>';
+  box.innerHTML = html;
+  var picked = -1;
+  box.querySelectorAll('.v-btn').forEach(function(b){
+    b.onclick = function(){
+      box.querySelectorAll('.v-btn').forEach(function(x){ x.classList.remove('sel'); });
+      b.classList.add('sel'); picked = +b.getAttribute('data-i');
+      document.getElementById('modelViewer').setAttribute('src', DGX_API+versions[picked].url+'?t='+Date.now());
+      document.getElementById('pickVerBtn').style.display = 'block';
+    };
+  });
+  document.getElementById('pickVerBtn').onclick = async function(){
+    if(picked < 0) return;
+    var fd = new FormData(); fd.append('version', versions[picked].id);
+    try{
+      var r = await fetch(DGX_API+'/order/'+orderId+'/choose', {method:'POST', body:fd}); var d = await r.json();
+      if(d.ok){
+        curModelUrl = DGX_API+'/outputs/'+orderId+'.glb';
+        document.getElementById('verNote').textContent = '✅ Aapka chuna hua version save ho gaya.';
+        toast('✅ Version chun liya gaya', 3500);
+      }else{ document.getElementById('verNote').textContent = '⚠️ Abhi save nahi hua, dobara koshish karein.'; }
+    }catch(e){ document.getElementById('verNote').textContent = '⚠️ Network dikkat, dobara koshish karein.'; }
+  };
+}
 
 // ══ GENERATE 3D — FIXED ══
 async function generate3D(){
@@ -977,7 +1054,7 @@ async function generate3D(){
     startProg();setStep(2);showStat('Proc','⏳ GAIOS™ AI 3D model shuru kar raha hai...');
     try{
       var phone=prompt('Apna WhatsApp number daalo (91XXXXXXXXXX):','916350132497');
-      var fd=new FormData();fd.append('file',file);fd.append('phone',phone||'916350132497');fd.append('vertical','figurine');
+      var fd=new FormData();fd.append('file',file);fd.append('phone',phone||'916350132497');fd.append('vertical','figurine');fd.append('prep_id',_prepId||'');
       var res=await fetch(DGX_API+'/generate3d/async',{method:'POST',body:fd});
       var data=await res.json();
       if(!data.success){stopProg();showStat('Err','❌ '+(data.error||'Start failed'));btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';document.getElementById('cancel-btn').style.display='none';return;}
@@ -997,7 +1074,7 @@ async function generate3D(){
             document.getElementById('approvalBox').style.display='block';
             document.getElementById('trackingBox').style.display='block';
             curModelUrl=glbUrl;
-            doneProg();setStep(4);
+            doneProg();setStep(4);startVersionPoll(predId);
             showStat('Ok','✅ 3D Model Ready! '+secs+'s mein bana!');
             toast('🎉 Model taiyar!',4000);
             btn.disabled=false;btn.textContent='🚀 3D Model Generate Karo';document.getElementById('cancel-btn').style.display='none';
