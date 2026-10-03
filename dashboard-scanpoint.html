@@ -100,14 +100,10 @@
         </div>
         <div class="form-group" style="background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:10px;padding:12px;font-size:12px;line-height:1.5;">
           <div style="font-weight:700;color:var(--gold);margin-bottom:4px;">Customer ki anumati</div>
-          <div style="color:var(--gray);margin-bottom:10px;">Scan Point partner ye checkbox <b>customer ki taraf se</b> tick karta hai — sirf tab, jab customer ne aapke saamne khud ye anumati di ho. Tick karne se pehle customer ko dono line padhkar sunayein.</div>
-          <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;margin-bottom:8px;">
-            <input type="checkbox" id="consentA" onchange="onConsentChange()" style="margin-top:3px;">
-            <span>Meri photo se 3D figurine banane ki maine anumati di hai. <b style="color:#FF4D6D;">*</b> <span style="color:var(--gray);">(zaroori)</span></span>
-          </label>
+          <div style="color:var(--gray);margin-bottom:10px;">Scan Point partner ye checkbox <b>customer ki taraf se</b> tick karta hai — sirf tab, jab customer ne aapke saamne khud ye anumati di ho. Tick karne se pehle customer ko ye line padhkar sunayein.</div>
           <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;">
-            <input type="checkbox" id="consentB" style="margin-top:3px;">
-            <span>Mere outputs GAIOS ke model sudharne ke liye use ho sakte hain. <span style="color:var(--gray);">(zaroori nahi)</span></span>
+            <input type="checkbox" id="consentA" onchange="onConsentChange()" style="margin-top:3px;">
+            <span>Meri photo se 3D figurine banane aur GAIOS ke AI model ko sudharne ke liye use karne ki maine anumati di hai. <span style="color:var(--gray);">(zaroori)</span></span>
           </label>
         </div>
         <button class="btn btn-gold" style="width:100%;padding:14px;" id="submitBtn" onclick="submitWalkInOrder()" disabled>🚀 Create Order</button>
@@ -183,7 +179,7 @@ function renderSizeGrid(){
 window.selectSize = function(key){ selectedSize = key; renderSizeGrid(); };
 
 // ── Consent (partner customer ki taraf se tick karta hai) ──
-const CONSENT_TEXT_VERSION = 'v1';
+const CONSENT_TEXT_VERSION = 'v2';
 function consentOk(){ return document.getElementById('consentA').checked; }
 window.onConsentChange = function(){
   document.getElementById('submitBtn').disabled = !consentOk();
@@ -192,7 +188,6 @@ window.onConsentChange = function(){
 window.submitWalkInOrder = async function(){
   const msg = document.getElementById('submitMsg');
   if(!consentOk()){ msg.textContent = '⚠️ Customer ki anumati wala checkbox tick karna zaroori hai.'; msg.style.color = '#FF4D6D'; return; }
-  const trainingConsent = document.getElementById('consentB').checked;
   const consentAt = new Date().toISOString();
   const name = document.getElementById('wName').value.trim();
   const phone = document.getElementById('wPhone').value.trim();
@@ -233,7 +228,7 @@ window.submitWalkInOrder = async function(){
       preview3d: [],
       finalFiles: [],
       consentGiven: true,
-      trainingConsent,
+      trainingConsent: true,
       consentAt,
       consentTextVersion: CONSENT_TEXT_VERSION,
       consentRecordedBy: 'scanpoint',
@@ -253,7 +248,6 @@ window.submitWalkInOrder = async function(){
     document.getElementById('wName').value = '';
     document.getElementById('wPhone').value = '';
     document.getElementById('consentA').checked = false;
-    document.getElementById('consentB').checked = false;
     setTimeout(() => { showSection('orders'); msg.textContent = ''; }, 1200);
   } catch(err){
     msg.style.color = '#FF4D6D';

@@ -354,13 +354,9 @@ model-viewer{width:100%;height:360px;background:radial-gradient(ellipse at cente
   </div>
   <div class="sec-badge" id="step3badge" style="display:none;">🚀 STEP 3 — 3D Model Generate Karo</div>
   <div id="consentBox" style="background:rgba(201,168,76,0.06);border:1px solid var(--gold-border);border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:11.5px;line-height:1.5;">
-    <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;margin-bottom:8px;">
-      <input type="checkbox" id="consentA" onchange="onConsentChange()" style="margin-top:3px;">
-      <span>Meri photo se 3D figurine banane ki maine anumati di hai. <b style="color:var(--red);">*</b> <span style="color:var(--gray);">(zaroori)</span></span>
-    </label>
     <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;">
-      <input type="checkbox" id="consentB" style="margin-top:3px;">
-      <span>Mere outputs GAIOS ke model sudharne ke liye use ho sakte hain. <span style="color:var(--gray);">(zaroori nahi)</span></span>
+      <input type="checkbox" id="consentA" onchange="onConsentChange()" style="margin-top:3px;">
+      <span>Meri photo se 3D figurine banane aur GAIOS ke AI model ko sudharne ke liye use karne ki maine anumati di hai. <span style="color:var(--gray);">(zaroori)</span></span>
     </label>
   </div>
   <button class="btn" id="gen3d-btn" style="width:100%;padding:13px;font-size:13px;margin-bottom:4px;" onclick="generate3D()" disabled>🚀 3D Model Generate Karo</button>
@@ -944,9 +940,8 @@ function setStep(n){for(var i=1;i<=4;i++){var c=document.getElementById('sc'+i);
 function showStat(type,msg){['sProc','sOk','sErr'].forEach(function(id){document.getElementById(id).style.display='none';});if(type&&msg){document.getElementById('s'+type).textContent=msg;document.getElementById('s'+type).style.display='block';}}
 
 // ══ CONSENT ══
-var CONSENT_TEXT_VERSION='v1';
+var CONSENT_TEXT_VERSION='v2';
 function gaiosConsentOk(){var a=document.getElementById('consentA');return !!(a&&a.checked);}
-function gaiosTrainingConsent(){var b=document.getElementById('consentB');return !!(b&&b.checked);}
 function onConsentChange(){document.getElementById('gen3d-btn').disabled=!gaiosConsentOk();}
 
 // ══ GENERATE 3D — FIXED ══
@@ -976,8 +971,7 @@ function cancelGenerate() {
 
 async function generate3D(){
   // Consent check — button disable ke alawa yahan bhi (console/DevTools se bypass na ho)
-  if(!gaiosConsentOk()){alert('Pehle anumati wala checkbox tick karein: "Meri photo se 3D figurine banane ki maine anumati di hai."');document.getElementById('gen3d-btn').disabled=true;return;}
-  var trainingConsent=gaiosTrainingConsent();
+  if(!gaiosConsentOk()){alert('Pehle anumati wala checkbox tick karein (zaroori).');document.getElementById('gen3d-btn').disabled=true;return;}
   var consentAt=new Date().toISOString();
   if(selFiles.length===0){alert('Pehle photo(s) select karo!');return;}
   _cancelRequested = false;
@@ -1004,7 +998,7 @@ async function generate3D(){
     startProg();setStep(2);showStat('Proc','⏳ GAIOS™ AI 3D model shuru kar raha hai...');
     try{
       var phone=prompt('Apna WhatsApp number daalo (91XXXXXXXXXX):','916350132497');
-      var fd=new FormData();fd.append('file',file);fd.append('phone',phone||'916350132497');fd.append('vertical','figurine');fd.append('consentGiven','true');fd.append('trainingConsent',trainingConsent?'true':'false');fd.append('consentAt',consentAt);fd.append('consentTextVersion',CONSENT_TEXT_VERSION);if(window._gaiosPrep&&window._gaiosPrep.prep_id){fd.append('prep_id',window._gaiosPrep.prep_id);}
+      var fd=new FormData();fd.append('file',file);fd.append('phone',phone||'916350132497');fd.append('vertical','figurine');fd.append('consentGiven','true');fd.append('trainingConsent','true');fd.append('consentAt',consentAt);fd.append('consentTextVersion',CONSENT_TEXT_VERSION);if(window._gaiosPrep&&window._gaiosPrep.prep_id){fd.append('prep_id',window._gaiosPrep.prep_id);}
       var res=await fetch(DGX_API+'/generate3d/async',{method:'POST',body:fd});
       var data=await res.json();
       if(!data.success){stopProg();showStat('Err','❌ '+(data.error||'Start failed'));btn.disabled=!gaiosConsentOk();btn.textContent='🚀 3D Model Generate Karo';return;}

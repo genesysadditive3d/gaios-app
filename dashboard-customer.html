@@ -129,13 +129,9 @@ model-viewer{width:100%;height:280px;background:var(--navy3);}
         </div>
 
         <div class="form-group" style="background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:10px;padding:12px;font-size:12px;line-height:1.5;">
-          <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;margin-bottom:8px;">
-            <input type="checkbox" id="consentA" onchange="onConsentChange()" style="margin-top:3px;">
-            <span>Meri photo se 3D figurine banane ki maine anumati di hai. <b style="color:#FF4D6D;">*</b> <span style="color:var(--gray);">(zaroori)</span></span>
-          </label>
           <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;">
-            <input type="checkbox" id="consentB" style="margin-top:3px;">
-            <span>Mere outputs GAIOS ke model sudharne ke liye use ho sakte hain. <span style="color:var(--gray);">(zaroori nahi)</span></span>
+            <input type="checkbox" id="consentA" onchange="onConsentChange()" style="margin-top:3px;">
+            <span>Meri photo se 3D figurine banane aur GAIOS ke AI model ko sudharne ke liye use karne ki maine anumati di hai. <span style="color:var(--gray);">(zaroori)</span></span>
           </label>
         </div>
 
@@ -239,7 +235,7 @@ window.selectSize = function(key){
 };
 
 // ── Consent ──
-const CONSENT_TEXT_VERSION = 'v1';
+const CONSENT_TEXT_VERSION = 'v2';
 function consentOk(){ return document.getElementById('consentA').checked; }
 window.onConsentChange = function(){
   document.getElementById('submitOrderBtn').disabled = !consentOk();
@@ -249,7 +245,6 @@ window.onConsentChange = function(){
 window.submitOrder = async function(){
   const msg = document.getElementById('orderSubmitMsg');
   if(!consentOk()){ msg.textContent = '⚠️ Order ke liye anumati wala checkbox tick karna zaroori hai.'; msg.style.color = '#FF4D6D'; return; }
-  const trainingConsent = document.getElementById('consentB').checked;
   const consentAt = new Date().toISOString();
   if(!selectedFiles.length){ msg.textContent = '⚠️ Kam se kam 1 photo choose karein.'; msg.style.color = '#FF4D6D'; return; }
   if(!selectedSize){ msg.textContent = '⚠️ Size select karein.'; msg.style.color = '#FF4D6D'; return; }
@@ -289,7 +284,7 @@ window.submitOrder = async function(){
       preview3d: [],
       finalFiles: [],
       consentGiven: true,
-      trainingConsent,
+      trainingConsent: true,
       consentAt,
       consentTextVersion: CONSENT_TEXT_VERSION,
       createdAt: now,
@@ -306,7 +301,6 @@ window.submitOrder = async function(){
     document.getElementById('photoPreviewGrid').innerHTML = '';
     document.getElementById('photoInput').value = '';
     document.getElementById('consentA').checked = false;
-    document.getElementById('consentB').checked = false;
     setTimeout(() => { showSection('orders'); msg.textContent = ''; }, 1200);
   } catch(err){
     msg.style.color = '#FF4D6D';
