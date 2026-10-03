@@ -36,7 +36,9 @@ service cloud.firestore {
       allow read: if isInternalStaff()
                   || (isSignedIn() && resource.data.customerId == request.auth.uid)
                   || (isSignedIn() && isScanpoint() && resource.data.createdByScanPoint == request.auth.uid);
+      // Customer consent (photo se 3D banane ki anumati) ke bina order nahi banega.
       allow create: if isSignedIn() &&
+                    request.resource.data.consentGiven == true &&
                     (request.resource.data.customerId == request.auth.uid ||
                      (isScanpoint() && request.resource.data.createdByScanPoint == request.auth.uid));
       // Customer may submit payment proof, and may approve/reject their own
