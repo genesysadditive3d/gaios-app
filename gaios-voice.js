@@ -21,37 +21,65 @@
   function clean(t){
     return String(t||'').replace(/[\u{1F300}-\u{1FFFF}\u2600-\u27BF]/gu,'').replace(/[^\u0000-\u024F\u0900-\u097F .,!?।\-']/g,'').replace(/\s+/g,' ').trim();
   }
+  var reqId = 0, audioDone = null;   // reqId: sirf sabse nayi line bajegi
+  // Chal rahi Magpie audio rokna (pause + src hatana)
+  function stopAudio(){
+    var a = audio, d = audioDone;
+    audio = null; audioDone = null;
+    if(a){ try{ a.pause(); a.removeAttribute('src'); a.load(); }catch(e){} }
+    if(d) d();
+  }
   function speak(text){
     var raw = String(text||'').trim();
     var c = clean(MAP[raw] || text);
     if(!c) return Promise.resolve();
     if(c.length > 580) c = c.slice(0,580);
     var lang = /[\u0900-\u097F]/.test(c) ? 'hi-IN' : 'en-US';
+    var id = ++reqId;
+    stopAudio();
+    if(window.speechSynthesis) window.speechSynthesis.cancel();
     return fetch(API+'/api/speak?lang='+lang+'&text='+encodeURIComponent(c)).then(function(r){
       if(!r.ok) throw new Error('voice '+r.status);
       return r.blob();
     }).then(function(b){
+      if(id !== reqId) return;   // nayi line aa chuki, purani mat bajao
       return new Promise(function(done){
         var u = URL.createObjectURL(b), a = new Audio(u); a.volume = 0.95;
-        a.onended = function(){ URL.revokeObjectURL(u); if(audio===a) audio=null; done(); };
-        a.onerror = function(){ if(audio===a) audio=null; done(); };
-        audio = a; a.play().catch(function(){ done(); });
+        function fin(){ URL.revokeObjectURL(u); if(audio===a){ audio=null; audioDone=null; } done(); }
+        a.onended = fin;
+        a.onerror = fin;
+        audio = a; audioDone = done;
+        a.play().catch(fin);   // play ruka (autoplay) to fallback nahi
       });
-    }).catch(function(){
+    }, function(){
+      // Sirf Magpie request sach me fail hui tab browser ki awaaz, aur tabhi jab ye abhi bhi nayi line ho
+      if(id !== reqId) return;
       return new Promise(function(done){
         if(!window.speechSynthesis){ done(); return; }
-        var s = new SpeechSynthesisUtterance(c); s.lang = lang; s.rate = 0.95; s.onend = function(){ done(); };
+        var s = new SpeechSynthesisUtterance(c); s.lang = lang; s.rate = 0.95;
+        s.onend = function(){ done(); }; s.onerror = function(){ done(); };
         window.speechSynthesis.cancel(); window.speechSynthesis.speak(s);
       });
     });
+  }
+  // Rokne par: bajti audio band + raaste me padi request bhi bekaar (reqId badha)
+  function stopVoice(){
+    reqId++;
+    stopAudio();
   }
   window.gaiosSpeak = speak;
   window.speakLine = function(t){ return speak(t); };
   window.robotSpeak = function(t){ return speak(t); };
   var oldStop = window.stopSpeechBubbles;
   window.stopSpeechBubbles = function(){
-    if(audio){ try{ audio.pause(); }catch(e){} audio = null; }
+    stopVoice();
     if(typeof oldStop === 'function') return oldStop.apply(this, arguments);
+    if(window.speechSynthesis) window.speechSynthesis.cancel();
+  };
+  var oldStopAll = window.stopAllSpeech;
+  window.stopAllSpeech = function(){
+    stopVoice();
+    if(typeof oldStopAll === 'function') return oldStopAll.apply(this, arguments);
     if(window.speechSynthesis) window.speechSynthesis.cancel();
   };
 })();
