@@ -102,6 +102,10 @@
     <span class="nav-icon">👥</span> Users
   </div>
 
+  <div class="nav-item" id="nav-network" onclick="gaiosNet()">
+    <span class="nav-icon">🖧</span> Network
+  </div>
+
   <div class="nav-section">Settings</div>
   <div class="nav-item" onclick="showSection('pricing')">
     <span class="nav-icon">🏷️</span> Pricing
@@ -540,6 +544,26 @@
   </div>
 
   <!-- ── SETTINGS ── -->
+  <div class="section" id="sec-network">
+    <style>
+      .nw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-top:12px}
+      .nw-card{background:var(--navy3);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:12px}
+      .nw-top{display:flex;align-items:center;gap:8px}
+      .nw-dot{width:9px;height:9px;border-radius:50%;background:#FF4D6D;box-shadow:0 0 8px #FF4D6D}
+      .nw-dot.up{background:#00D68F;box-shadow:0 0 8px #00D68F}
+      .nw-name{font-size:13px;font-weight:700;color:#fff}
+      .nw-meta{font-size:11px;color:var(--gray);margin-top:6px;line-height:1.6}
+      .nw-svc{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+      .nw-chip{font-size:11px;padding:4px 8px;border-radius:12px;border:1px solid rgba(255,255,255,.1)}
+      .nw-chip.ok{color:#00D68F}.nw-chip.bad{color:#FF4D6D}
+    </style>
+    <h2 style="font-size:16px;color:#fff">🖧 Network &amp; Machines</h2>
+    <div id="nw-sum" style="font-size:12px;color:var(--gray);margin-top:4px">Loading...</div>
+    <div class="nw-grid" id="nw-grid"></div>
+    <h3 style="font-size:13px;color:#fff;margin-top:18px">Services (DGX)</h3>
+    <div class="nw-svc" id="nw-svc"></div>
+  </div>
+
   <div class="section" id="sec-settings">
     <div class="page-header">
       <div><div class="page-title">⚙️ Settings</div><div class="page-sub">System configuration</div></div>
@@ -914,5 +938,25 @@ requireRole(['admin'], (userData) => {
 </script>
 
 <a href="print-ready.html" style="position:fixed;right:14px;bottom:14px;z-index:9999;background:#1b6fd6;color:#fff;padding:12px 16px;border-radius:12px;font:600 15px system-ui;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.4)">🛠 Print Ready</a>
+<script>
+const NET_API = localStorage.getItem('NET_API') || 'http://192.168.29.251:8790';
+function gaiosNet(){
+  document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+  document.getElementById('sec-network').classList.add('active');
+  document.getElementById('nav-network').classList.add('active');
+  netLoad();
+}
+async function netLoad(){
+  try{
+    const r=await fetch(NET_API+'/net/status'); const d=await r.json();
+    const up=d.devices.filter(x=>x.up).length;
+    document.getElementById('nw-sum').textContent=up+' / '+d.devices.length+' machines online | DGX disk free '+d.disk.free_gb+' GB | '+new Date().toLocaleTimeString();
+    document.getElementById('nw-grid').innerHTML=d.devices.map(x=>'<div class="nw-card"><div class="nw-top"><span class="nw-dot '+(x.up?'up':'')+'"></span><span class="nw-name">'+x.name+'</span></div><div class="nw-meta">'+x.ip+'<br>'+x.role+'<br>'+(x.up?x.ms+' ms':'offline')+'</div></div>').join('');
+    document.getElementById('nw-svc').innerHTML=Object.entries(d.services).map(([k,v])=>'<span class="nw-chip '+(v==='active'?'ok':'bad')+'">'+k+': '+v+'</span>').join('');
+  }catch(e){document.getElementById('nw-sum').textContent='Network API se connect nahi hua ('+NET_API+'). Dashboard ghar ke WiFi se http:// par kholiye.';}
+}
+setInterval(()=>{ if(document.getElementById('sec-network').classList.contains('active')) netLoad(); },15000);
+</script>
 </body>
 </html>
