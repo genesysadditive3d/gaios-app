@@ -1002,7 +1002,7 @@ async function generate3D(){
       var res=await fetch(DGX_API+'/generate3d/async',{method:'POST',body:fd});
       var data=await res.json();
       if(!data.success){stopProg();showStat('Err','❌ '+(data.error||'Start failed'));btn.disabled=!gaiosConsentOk();btn.textContent='🚀 3D Model Generate Karo';return;}
-      var predId=data.order_id;var secs=0;
+      var predId=data.order_id;var secs=0;try{localStorage.setItem('gaios_active_order',JSON.stringify({id:predId,t0:Date.now()}));}catch(e){}
       showStat('Proc','⏳ 3D Model ban raha hai... 0s');setStep(3);
       _pollInterval=setInterval(async function(){
         secs+=5;
@@ -1270,5 +1270,7 @@ function gaiosVersions(id,vs,fs){
   draw();
 }
 </script>
+<script src="gaios-resume.js?v=1"></script>
+<script src="gaios-voice.js"></script>
 </body>
 </html>

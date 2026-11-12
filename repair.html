@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Print Repair | GAIOS</title>
+<style>
+body{font-family:system-ui,'Noto Sans Devanagari',sans-serif;margin:0;background:#0f1424;color:#eef;padding:18px}
+.card{max-width:560px;margin:0 auto;background:#1a2038;border-radius:16px;padding:20px}
+h1{font-size:22px;margin:6px 0 4px}p.s{color:#9fb;margin:0 0 6px;font-size:14px}
+.who{font-size:12px;color:#89a;margin-bottom:8px}a.back{color:#9cf;font-size:14px;text-decoration:none}
+label{display:block;margin:14px 0 6px;font-size:14px;color:#cde}
+input[type=file],input[type=number]{width:100%;padding:12px;border-radius:10px;border:1px solid #345;background:#10162a;color:#fff;box-sizing:border-box;font-size:16px}
+button{width:100%;margin-top:18px;padding:15px;border:0;border-radius:12px;background:#1b6fd6;color:#fff;font-size:18px;font-weight:700}
+button:disabled{opacity:.5}#out{margin-top:18px;line-height:1.7;font-size:15px}
+.pass{color:#4ade80;font-weight:700;font-size:20px}.fail{color:#f87171;font-weight:700;font-size:20px}
+button.d{background:#243055;font-size:16px;font-weight:600;margin-top:8px;text-align:left;padding:13px}
+.row{display:flex;gap:10px}.row>div{flex:1}
+</style></head><body><div class="card">
+<a class="back" href="javascript:history.back()">&larr; Wapas</a>
+<a class="back" href="print-ready.html" style="float:right">Order se print-ready &rarr;</a>
+<h1>3D model ko print ke liye theek karo</h1>
+<p class="s">Scan ya AI se bana model daaliye. Chhed bhare jaayenge, patle hisse moti honge, size mm me set hoga.</p>
+<div class="who" id="who">Login check ho raha hai...</div>
+<label>Model file (.glb .obj .stl .ply)</label>
+<input type="file" id="f" accept=".glb,.gltf,.obj,.stl,.ply,.off">
+<div class="row"><div><label>Unchai (mm)</label><input type="number" id="h" value="100" min="20" max="400"></div>
+<div><label>Neeche aadhar (mm)</label><input type="number" id="b" value="4" min="0" max="20"></div></div>
+<button id="go" disabled>Theek karo</button>
+<div id="out"></div></div>
+<script type="module">
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { auth } from "./js/firebase-config.js";
+const API = "https://api.genesysadditive3dcreation.com";
+const $ = id => document.getElementById(id);
+const KEY = "gaios_repair_job";
+let user = null, timer = null, t0 = 0;
+function saveJob(job, t) { try { localStorage.setItem(KEY, JSON.stringify({ job: job, t0: t })); } catch (e) {} }
+function loadJob() { try { return JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { return null; } }
+function dropJob() { try { localStorage.removeItem(KEY); } catch (e) {} }
+onAuthStateChanged(auth, u => {
+  if (!u) { location.href = "auth.html"; return; }
+  user = u; $("who").textContent = u.email; $("go").disabled = false;
+  // page badalkar wapas aane par chalta hua ya pura hua kaam wahin se dikhao
+  const s = loadJob();
+  if (s && s.job && Date.now() - s.t0 < 6 * 3600 * 1000) {
+    t0 = s.t0; $("go").disabled = true; clearInterval(timer);
+    timer = setInterval(() => poll(s.job), 3000); poll(s.job);
+  }
+});
+async function hdr() { return { Authorization: "Bearer " + await user.getIdToken() }; }
+function msg(t, cls) { const o = $("out"); o.textContent = ""; const s = document.createElement("span"); if (cls) s.className = cls; s.textContent = t; o.appendChild(s); return o; }
+function line(o, t) { o.appendChild(document.createElement("br")); o.appendChild(document.createTextNode(t)); }
+async function dl(job, name) {
+  const r = await fetch(API + "/repair/files/" + job + "/" + name, { headers: await hdr() });
+  if (!r.ok) { alert("Download nahi hua"); return; }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(await r.blob()); a.download = name; a.click();
+}
+function show(job, st) {
+  const rp = st.report, a = rp.after, b = rp.before;
+  const o = msg(st.verdict, st.verdict === "PASS" ? "pass" : "fail");
+  line(o, "Pehle: band=" + (b.watertight ? "haan" : "nahi") + ", tukde=" + b.components);
+  line(o, "Baad me: band=" + (a.watertight ? "haan" : "nahi") + ", tukde=" + a.components);
+  line(o, "Size (mm): " + rp.size_mm.join(" x ") + " | Tairte tukde hate: " + rp.floating_pieces_removed);
+  [["result.stl", "Print file (.stl)"], ["result.glb", "Rang wali file (.glb)"], ["result_report.json", "Report"]].forEach(([n, t]) => {
+    const bt = document.createElement("button"); bt.className = "d"; bt.textContent = "\u2B07 " + t; bt.onclick = () => dl(job, n); o.appendChild(bt);
+  });
+}
+async function poll(job) {
+  try {
+    const r = await fetch(API + "/repair/status/" + job, { headers: await hdr() });
+    const st = await r.json();
+    if (!r.ok) { clearInterval(timer); dropJob(); msg("Gadbad: " + (st.detail || r.status), "fail"); $("go").disabled = false; return; }
+    if (st.state === "done") { clearInterval(timer); show(job, st); $("go").disabled = false; }
+    else if (st.state === "error") { clearInterval(timer); msg("Gadbad: " + st.error, "fail"); $("go").disabled = false; }
+    else { msg((st.state === "queued" ? "Line me hai... " : "Ho raha hai... ") + Math.round((Date.now() - t0) / 1000) + " sec (1-3 min lagte hain, aap dusre page par ja sakte hain, wapas aane par yahin dikhega)"); }
+  } catch (e) { /* network ek baar tootne par agli baar phir koshish */ }
+}
+$("go").onclick = async () => {
+  const f = $("f").files[0];
+  if (!f) { msg("Pehle file chuniye."); return; }
+  const fd = new FormData(); fd.append("file", f); fd.append("height_mm", $("h").value); fd.append("base_mm", $("b").value);
+  $("go").disabled = true; msg("File bhej rahe hain...");
+  try {
+    const r = await fetch(API + "/repair/run", { method: "POST", headers: await hdr(), body: fd });
+    const j = await r.json();
+    if (!r.ok) { msg("Gadbad: " + (j.detail || r.status), "fail"); $("go").disabled = false; return; }
+    t0 = Date.now(); saveJob(j.job, t0); clearInterval(timer); timer = setInterval(() => poll(j.job), 3000); poll(j.job);
+  } catch (e) { msg("Connection toota: " + e, "fail"); $("go").disabled = false; }
+};
+</script></body></html>

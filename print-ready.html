@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Print Ready | GAIOS</title>
+<style>
+body{font-family:system-ui,'Noto Sans Devanagari',sans-serif;margin:0;background:#0f1424;color:#eef;padding:18px}
+.wrap{max-width:640px;margin:0 auto}
+.card{background:#1a2038;border-radius:16px;padding:18px;margin-bottom:16px}
+h1{font-size:22px;margin:6px 0 4px}h2{font-size:16px;margin:0 0 10px;color:#cde}
+p.s{color:#9fb;margin:0 0 6px;font-size:14px}.who{font-size:12px;color:#89a;margin-bottom:8px}
+a.back{color:#9cf;font-size:14px;text-decoration:none}
+input[type=text],input[type=number]{padding:12px;border-radius:10px;border:1px solid #345;background:#10162a;color:#fff;box-sizing:border-box;font-size:16px;width:100%}
+button{padding:13px 16px;border:0;border-radius:12px;background:#1b6fd6;color:#fff;font-size:16px;font-weight:700}
+button.g{background:#243055;font-weight:600}button:disabled{opacity:.5}
+.row{display:flex;gap:10px;align-items:center}.row>*{flex:1}.row>button{flex:0 0 auto}
+.ord{display:flex;justify-content:space-between;align-items:center;padding:12px;margin:6px 0;background:#10162a;border-radius:10px;cursor:pointer}
+.ord small{color:#89a}
+.b{padding:3px 10px;border-radius:99px;font-size:13px;font-weight:700}
+.b.pass{background:#14532d;color:#86efac}.b.fail{background:#7f1d1d;color:#fca5a5}.b.run{background:#78350f;color:#fcd34d}.b.none{background:#2a3350;color:#9ab}
+.pass{color:#4ade80;font-weight:700;font-size:20px}.fail{color:#f87171;font-weight:700;font-size:20px}
+.warn{background:#3b2f0b;border-radius:10px;padding:10px;margin:10px 0;color:#fcd34d;font-size:14px}
+.small{font-size:13px;color:#9ab}#d{line-height:1.7;font-size:15px}
+</style></head><body><div class="wrap">
+<a class="back" href="javascript:history.back()">&larr; Wapas</a>
+<a class="back" href="repair.html" style="float:right">Alag file theek karo &rarr;</a>
+<h1>Order &rarr; Print Ready file</h1>
+<p class="s">Har order ka final model apne-aap theek hokar print-layak STL / GLB banta hai.</p>
+<div class="who" id="who">Login check ho raha hai...</div>
+
+<div class="card"><h2>Taaza orders</h2><div id="list" class="small">Load ho raha hai...</div></div>
+
+<div class="card"><h2>Order ID se dekhiye</h2>
+<div class="row"><input type="text" id="oid" maxlength="8" placeholder="jaise 72AB7884" autocapitalize="characters">
+<button id="open">Dekho</button></div></div>
+
+<div class="card" id="detail" style="display:none"><h2 id="dt"></h2><div id="d"></div></div>
+</div>
+<script type="module">
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { auth } from "./js/firebase-config.js";
+const API = "https://api.genesysadditive3dcreation.com";
+const $ = id => document.getElementById(id);
+let user = null, cur = null, timer = null;
+async function hdr() { return { Authorization: "Bearer " + await user.getIdToken() }; }
+async function api(path, opt) {
+  const r = await fetch(API + path, Object.assign({}, opt || {}, { headers: await hdr() }));
+  let j = null; try { j = await r.json(); } catch (e) {}
+  if (!r.ok) throw new Error((j && j.detail) || ("Error " + r.status));
+  return j;
+}
+function el(tag, cls, txt) { const e = document.createElement(tag); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; }
+function badge(v, running) {
+  if (running) return el("span", "b run", "ban raha hai");
+  if (v === "PASS") return el("span", "b pass", "PASS");
+  if (v === "FAIL") return el("span", "b fail", "FAIL");
+  if (v === "ERROR") return el("span", "b fail", "ERROR");
+  return el("span", "b none", "baaki");
+}
+onAuthStateChanged(auth, u => {
+  if (!u) { location.href = "auth.html"; return; }
+  user = u; $("who").textContent = u.email; loadRecent();
+  const q = new URLSearchParams(location.search).get("order"); if (q) openOrder(q.toUpperCase());
+});
+async function loadRecent() {
+  const box = $("list");
+  try {
+    const rows = await api("/print-ready/recent?limit=20");
+    box.textContent = "";
+    if (!rows.length) { box.textContent = "Abhi koi order nahi."; return; }
+    rows.forEach(r => {
+      const d = el("div", "ord"); const l = el("div");
+      l.appendChild(el("b", "", r.order));
+      l.appendChild(el("br"));
+      const when = new Date(r.time * 1000).toLocaleString("hi-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+      l.appendChild(el("small", "", when + (r.score != null ? " | score " + Number(r.score).toFixed(2) : "")));
+      d.appendChild(l); d.appendChild(badge(r.verdict, r.running));
+      d.onclick = () => openOrder(r.order); box.appendChild(d);
+    });
+  } catch (e) { box.textContent = "Gadbad: " + e.message; }
+}
+async function dl(kind) {
+  try {
+    const r = await fetch(API + "/order/" + cur + "/print-ready/file/" + kind, { headers: await hdr() });
+    if (!r.ok) throw new Error(r.status);
+    const a = document.createElement("a"); a.href = URL.createObjectURL(await r.blob());
+    a.download = cur + "_print." + kind; a.click();
+  } catch (e) { alert("Download nahi hua: " + e.message); }
+}
+async function openOrder(id) {
+  cur = id; $("oid").value = id; clearInterval(timer);
+  $("detail").style.display = "block"; $("dt").textContent = "Order " + id; $("d").textContent = "Load ho raha hai...";
+  await refresh(); timer = setInterval(refresh, 4000);
+}
+async function refresh() {
+  let s;
+  try { s = await api("/order/" + cur + "/print-ready"); }
+  catch (e) { clearInterval(timer); $("d").textContent = "Gadbad: " + e.message; return; }
+  render(s);
+  if (!["queued", "running"].includes(s.state)) { clearInterval(timer); loadRecent(); }
+}
+function render(s) {
+  const d = $("d"); d.textContent = "";
+  if (s.state === "queued" || s.state === "running") {
+    d.appendChild(el("span", "b run", s.state === "queued" ? "line me hai" : "ban raha hai"));
+    d.appendChild(el("div", "small", (s.note || "") + "  (1-6 min lagte hain, page khula rakhiye)"));
+    return;
+  }
+  if (s.verdict) {
+    d.appendChild(el("span", s.verdict === "PASS" ? "pass" : "fail", s.verdict));
+    if (s.verdict === "PASS") {
+      const why = { customer: "Grahak ka chuna hua version", "best-score": "Sabse ooncha score wala version", current: "Maujooda final model" }[s.reason] || s.reason;
+      d.appendChild(el("div", "", "Source: " + s.source));
+      d.appendChild(el("div", "", "Kyu: " + why));
+      if (s.fallback) d.appendChild(el("div", "warn", "Grahak ka chuna hua version print layak nahi tha, isliye agla best version use hua."));
+      const a = s.report.after, b = s.report.before;
+      d.appendChild(el("div", "", "Pehle: band=" + (b.watertight ? "haan" : "nahi") + ", tukde=" + b.components));
+      d.appendChild(el("div", "", "Baad me: band=" + (a.watertight ? "haan" : "nahi") + ", tukde=" + a.components));
+      d.appendChild(el("div", "", "Size (mm): " + s.report.size_mm.join(" x ") + " | Tairte tukde hate: " + s.report.floating_pieces_removed));
+      [["stl", "Print file (.stl)"], ["glb", "Rang wali file (.glb)"], ["json", "Report"]].forEach(([k, t]) => {
+        const bt = el("button", "g", "\u2B07 " + t); bt.style.cssText = "display:block;width:100%;text-align:left;margin-top:8px";
+        bt.onclick = () => dl(k); d.appendChild(bt);
+      });
+    } else {
+      d.appendChild(el("div", "warn", (s.reason || "") + ". Is order ko haath se jaanchiye."));
+    }
+    (s.tried || []).forEach(t => d.appendChild(el("div", "small", "\u2022 " + t.file + " -> " + t.verdict + " (" + t.why + ")")));
+  } else {
+    d.appendChild(el("div", "", "Abhi print-ready file nahi bani."));
+    if (s.state === "interrupted") d.appendChild(el("div", "warn", "Pichla kaam beech me ruk gaya tha. Dobara banaiye."));
+  }
+  d.appendChild(el("hr"));
+  const row = el("div", "row");
+  const h = el("input"); h.type = "number"; h.value = s.height_mm || 100; h.min = 20; h.max = 400; h.id = "hh";
+  const b2 = el("input"); b2.type = "number"; b2.value = s.base_mm != null ? s.base_mm : 4; b2.min = 0; b2.max = 20; b2.id = "bb";
+  row.appendChild(h); row.appendChild(b2); d.appendChild(row);
+  d.appendChild(el("div", "small", "Unchai (mm) | Aadhar (mm)"));
+  const go = el("button", "", s.verdict ? "Dobara banao" : "Print-ready banao"); go.style.cssText = "width:100%;margin-top:10px";
+  go.onclick = async () => {
+    go.disabled = true;
+    try { await api("/order/" + cur + "/print-ready?height_mm=" + h.value + "&base_mm=" + b2.value, { method: "POST" }); await refresh(); clearInterval(timer); timer = setInterval(refresh, 4000); }
+    catch (e) { alert("Gadbad: " + e.message); go.disabled = false; }
+  };
+  d.appendChild(go);
+}
+$("open").onclick = () => { const v = $("oid").value.trim().toUpperCase(); if (/^[A-Z0-9]{8}$/.test(v)) openOrder(v); else alert("Order ID 8 akshar ka hota hai"); };
+</script></body></html>
