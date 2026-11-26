@@ -3,6 +3,10 @@
    Page ke speakLine()/robotSpeak() ko override karta hai; fail hone par browser ki awaaz. */
 (function(){
   var API = 'https://api.genesysadditive3dcreation.com';
+  // Awaaz ka chunav: default 'magpie' (abhi jaisa). 'sarvam' = Sarvam (Hindi, English, anya Bharatiya bhashayein).
+  // Chalu karne ke liye page me ye likhiye: window.GAIOS_VOICE_PROVIDER='sarvam'; (aur chahein to window.GAIOS_VOICE_LANG='mr-IN')
+  var PROVIDER = window.GAIOS_VOICE_PROVIDER || 'sarvam';
+  var KEEP = PROVIDER === 'sarvam' ? /[^\u0000-\u024F\u0900-\u0D7F .,!?।\-']/g : /[^\u0000-\u024F\u0900-\u097F .,!?।\-']/g;
   var audio = null;
   // Page ki Latin-Hinglish lines -> Devanagari (natural Hindi uchcharan ke liye)
   var MAP = {
@@ -19,7 +23,7 @@
   };
   // Daave wali lines (pehla/99.9%/DPIIT/MoU): jaanbujh kar MAP me nahi. Aap sach hone par yahan jodiye.
   function clean(t){
-    return String(t||'').replace(/[\u{1F300}-\u{1FFFF}\u2600-\u27BF]/gu,'').replace(/[^\u0000-\u024F\u0900-\u097F .,!?।\-']/g,'').replace(/\s+/g,' ').trim();
+    return String(t||'').replace(/[\u{1F300}-\u{1FFFF}\u2600-\u27BF]/gu,'').replace(KEEP,'').replace(/\s+/g,' ').trim();
   }
   var reqId = 0, audioDone = null;   // reqId: sirf sabse nayi line bajegi
   // Chal rahi Magpie audio rokna (pause + src hatana)
@@ -34,11 +38,12 @@
     var c = clean(MAP[raw] || text);
     if(!c) return Promise.resolve();
     if(c.length > 580) c = c.slice(0,580);
-    var lang = /[\u0900-\u097F]/.test(c) ? 'hi-IN' : 'en-US';
+    var blang = /[\u0900-\u097F]/.test(c) ? 'hi-IN' : 'en-US';
+    var lang = PROVIDER === 'sarvam' ? (window.GAIOS_VOICE_LANG || 'auto') : blang;
     var id = ++reqId;
     stopAudio();
     if(window.speechSynthesis) window.speechSynthesis.cancel();
-    return fetch(API+'/api/speak?lang='+lang+'&text='+encodeURIComponent(c)).then(function(r){
+    return fetch(API+(PROVIDER === 'sarvam' ? '/api/speak_sarvam' : '/api/speak')+'?lang='+lang+'&text='+encodeURIComponent(c)).then(function(r){
       if(!r.ok) throw new Error('voice '+r.status);
       return r.blob();
     }).then(function(b){
@@ -56,7 +61,7 @@
       if(id !== reqId) return;
       return new Promise(function(done){
         if(!window.speechSynthesis){ done(); return; }
-        var s = new SpeechSynthesisUtterance(c); s.lang = lang; s.rate = 0.95;
+        var s = new SpeechSynthesisUtterance(c); s.lang = blang; s.rate = 0.95;
         s.onend = function(){ done(); }; s.onerror = function(){ done(); };
         window.speechSynthesis.cancel(); window.speechSynthesis.speak(s);
       });
