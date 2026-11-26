@@ -43,7 +43,7 @@
     var id = ++reqId;
     stopAudio();
     if(window.speechSynthesis) window.speechSynthesis.cancel();
-    return fetch(API+(PROVIDER === 'sarvam' ? '/api/speak_sarvam' : '/api/speak')+'?lang='+lang+'&text='+encodeURIComponent(c)).then(function(r){
+    return fetch(API+(PROVIDER === 'sarvam' ? '/api/speak_sarvam' : '/api/speak')+'?v=3&lang='+lang+'&text='+encodeURIComponent(c)).then(function(r){
       if(!r.ok) throw new Error('voice '+r.status);
       return r.blob();
     }).then(function(b){
