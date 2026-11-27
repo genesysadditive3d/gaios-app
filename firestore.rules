@@ -1,6 +1,7 @@
 // GAIOS v7.0 Firestore Security Rules
 // Paste this into Firebase Console → Firestore Database → Rules → Publish.
 // (Not deployed automatically — no Firebase CLI/login available in this environment.)
+// v7.0.1: user create restricted to role 'customer' (privilege-escalation fix).
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -23,7 +24,11 @@ service cloud.firestore {
     // ── users/{uid} ──────────────────────────────────────────────
     match /users/{uid} {
       allow read: if isSignedIn() && (request.auth.uid == uid || isInternalStaff());
-      allow create: if isSignedIn() && request.auth.uid == uid;
+      // SECURITY FIX (2026-11-27): a new user may only create their own doc
+      // as a plain 'customer'. Staff/partner roles are granted only by an admin.
+      allow create: if isSignedIn() && request.auth.uid == uid
+                    && request.resource.data.role == 'customer';
+      allow create: if isAdmin();
       // Self-update allowed, but a user can never change their own role.
       allow update: if isSignedIn() && request.auth.uid == uid
                     && request.resource.data.role == resource.data.role;
