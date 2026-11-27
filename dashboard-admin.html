@@ -786,7 +786,7 @@ function renderScanpoints(){
   if(!allScanpoints.length){ body.innerHTML = '<tr><td colspan="6" class="empty-state">No scan points added yet — click "+ Add Partner"</td></tr>'; return; }
   body.innerHTML = allScanpoints.map(sp => `
     <tr>
-      <td>${esc(sp.city||'—')}</td><td>${sp.partnerName||'—'}</td><td>${sp.contact||'—'}</td>
+      <td>${esc(sp.city||'—')}</td><td>${esc(sp.partnerName||'—')}</td><td>${esc(sp.contact||'—')}</td>
       <td>${orderCountByScanpoint[sp.id]||0}</td><td>${inr(sp.commissionEarned||0)}</td>
       <td><span class="badge ${sp.active ? 'badge-green' : 'badge-orange'}">${sp.active ? 'Active' : 'Pending'}</span></td>
     </tr>`).join('');
