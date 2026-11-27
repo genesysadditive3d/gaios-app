@@ -640,6 +640,8 @@
 </div>
 
 <script type="module">
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
 import { db } from "./js/firebase-config.js";
 import { requireRole } from "./js/auth-guard.js";
 import { getPricing, savePricing, getPaymentConfig, savePaymentConfig, statusMeta } from "./js/order-utils.js";
@@ -674,7 +676,7 @@ function renderRecentOrders(){
   body.innerHTML = recent.map(o => `
     <tr>
       <td>${o.id}</td>
-      <td>${o.customerName || '—'}</td>
+      <td>${esc(o.customerName || '—')}</td>
       <td>${o.vertical || 'Figurine'}</td>
       <td>${inr(o.price)}</td>
       <td>${badgeFor(o.status)}</td>
@@ -693,8 +695,8 @@ window.renderAllOrders = function(){
   body.innerHTML = list.map(o => `
     <tr>
       <td>${o.id}</td>
-      <td>${o.customerName || '—'}</td>
-      <td>${o.scanPointName || (o.createdByScanPoint ? 'Scan Point' : 'Direct')}</td>
+      <td>${esc(o.customerName || '—')}</td>
+      <td>${esc(o.scanPointName || (o.createdByScanPoint ? 'Scan Point' : 'Direct'))}</td>
       <td>${o.vertical || 'Figurine'}</td>
       <td>${o.size || '—'}</td>
       <td>${inr(o.price)}</td>
@@ -750,7 +752,7 @@ function renderProduction(){
     .sort((a,b) => (a.createdAt||'').localeCompare(b.createdAt||''));
   const body = document.getElementById('productionQueueBody');
   body.innerHTML = inQueue.length ? inQueue.map(o => `
-    <tr><td>${o.id}</td><td>${o.customerName||'—'}</td><td>${o.size||'—'}</td><td>${badgeFor(o.status)}</td>
+    <tr><td>${o.id}</td><td>${esc(o.customerName||'—')}</td><td>${o.size||'—'}</td><td>${badgeFor(o.status)}</td>
     <td>${o.updatedAt ? new Date(o.updatedAt).toLocaleString('en-IN') : '—'}</td></tr>`).join('')
     : '<tr><td colspan="5" class="empty-state">Nothing in the print queue right now</td></tr>';
 }
@@ -784,7 +786,7 @@ function renderScanpoints(){
   if(!allScanpoints.length){ body.innerHTML = '<tr><td colspan="6" class="empty-state">No scan points added yet — click "+ Add Partner"</td></tr>'; return; }
   body.innerHTML = allScanpoints.map(sp => `
     <tr>
-      <td>${sp.city||'—'}</td><td>${sp.partnerName||'—'}</td><td>${sp.contact||'—'}</td>
+      <td>${esc(sp.city||'—')}</td><td>${sp.partnerName||'—'}</td><td>${sp.contact||'—'}</td>
       <td>${orderCountByScanpoint[sp.id]||0}</td><td>${inr(sp.commissionEarned||0)}</td>
       <td><span class="badge ${sp.active ? 'badge-green' : 'badge-orange'}">${sp.active ? 'Active' : 'Pending'}</span></td>
     </tr>`).join('');
@@ -806,8 +808,8 @@ function renderUsers(){
   if(!allUsers.length){ body.innerHTML = '<tr><td colspan="4" class="empty-state">No users yet</td></tr>'; return; }
   body.innerHTML = allUsers.map(u => `
     <tr>
-      <td>${u.displayName || '—'}</td>
-      <td>${u.email || '—'}</td>
+      <td>${esc(u.displayName || '—')}</td>
+      <td>${esc(u.email || '—')}</td>
       <td>
         <select class="role-select" onchange="changeUserRole('${u.id}', this.value)">
           ${ROLE_OPTIONS.map(r => `<option value="${r}" ${r===u.role?'selected':''}>${r}</option>`).join('')}
@@ -885,8 +887,8 @@ function renderLearning(){
   const recent = [...allLearningEvents].sort((a,b) => (b.loggedAt||'').localeCompare(a.loggedAt||'')).slice(0, 30);
   if(!recent.length){ body.innerHTML = '<tr><td colspan="4" class="empty-state">No events logged yet</td></tr>'; return; }
   const detailFor = (e) => {
-    if(e.type === 'qc_feedback') return `${e.decision} · score ${e.qualityScore ?? '—'}${e.notes ? ' · ' + e.notes : ''}`;
-    if(e.type === 'print_outcome') return `${e.outcome}${e.stage ? ' @ ' + e.stage : ''}${e.notes ? ' · ' + e.notes : ''}`;
+    if(e.type === 'qc_feedback') return `${e.decision} · score ${e.qualityScore ?? '—'}${esc(e.notes ? ' · ' + e.notes : '')}`;
+    if(e.type === 'print_outcome') return `${e.outcome}${e.stage ? ' @ ' + e.stage : ''}${esc(e.notes ? ' · ' + e.notes : '')}`;
     if(e.type === 'customer_rating') return `${'⭐'.repeat(e.stars||0)}${e.comment ? ' · ' + e.comment : ''}`;
     if(e.type === 'order_snapshot') return `${(e.photos||[]).length} photos, ${(e.preview3d||[]).length} preview file(s)`;
     return '—';

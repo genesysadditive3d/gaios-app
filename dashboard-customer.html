@@ -6,7 +6,9 @@
 <title>GAIOS™ Customer Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/dashboard.css">
-<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+</script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -263,7 +265,7 @@ window.submitOrder = async function(){
     const photoPaths = [];
     for(let i = 0; i < selectedFiles.length; i++){
       const f = selectedFiles[i];
-      const path = `customers/${uid}/orders/${orderId}/source-photos/${Date.now()}_${i}_${f.name}`;
+      const path = `customers/${uid}/orders/${orderId}/source-photos/${Date.now()}_${i}_${esc(f.name)}`;
       await uploadBytes(ref(storage, path), f);
       photoPaths.push(path);
     }
@@ -464,7 +466,7 @@ window.downloadInvoice = function(orderId){
   pdf.setFontSize(10);
   pdf.text(`Order ID: ${order.id}`, 14, 60);
   pdf.text(`Date: ${order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-IN') : '—'}`, 14, 66);
-  pdf.text(`Customer: ${order.customerName || '—'}`, 14, 72);
+  pdf.text(`Customer: ${esc(order.customerName || '—')}`, 14, 72);
   pdf.text(`Phone: ${order.phone || '—'}`, 14, 78);
   pdf.line(14, 84, 196, 84);
   pdf.text('Description', 14, 92);
@@ -571,7 +573,7 @@ async function renderDownloads(){
         if(res.items.length){
           const links = await Promise.all(res.items.map(async item => {
             const url = await getDownloadURL(item);
-            return `<a class="dl-link" href="${url}" target="_blank">⬇️ ${item.name.replace(/^\d+_\d+_/, '')}</a>`;
+            return `<a class="dl-link" href="${url}" target="_blank">⬇️ ${esc(item.name.replace(/^\d+_\d+_/, ''))}</a>`;
           }));
           html += `<div class="dl-group"><div class="dl-group-title">${label}</div>${links.join('')}</div>`;
         }

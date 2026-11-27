@@ -73,6 +73,8 @@
 </div>
 
 <script type="module">
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
 import { db, storage } from "./js/firebase-config.js";
 import { requireRole } from "./js/auth-guard.js";
 import { statusMeta, logLearningEvent } from "./js/order-utils.js";
@@ -122,7 +124,7 @@ function renderQueue(){
     const nextLabel = NEXT_LABEL[o.status];
     const hasFinal = o.finalFiles && o.finalFiles.length;
     return `<tr>
-      <td>${o.id}</td><td>${o.customerName||'—'}</td><td>${o.size||'—'}</td>
+      <td>${o.id}</td><td>${esc(o.customerName||'—')}</td><td>${o.size||'—'}</td>
       <td><span class="badge" style="background:${m.color}22;color:${m.color};border:1px solid ${m.color}44;">${m.icon} ${m.label}</span></td>
       <td>
         ${hasFinal ? '<span class="badge badge-green">Uploaded</span>' : `
@@ -180,7 +182,7 @@ window.uploadFinalFile = async function(orderId, file){
   const basePath = order.customerId
     ? `customers/${order.customerId}/orders/${order.id}`
     : `scanpoints/${order.createdByScanPoint}/orders/${order.id}`;
-  const path = `${basePath}/final/${Date.now()}_${file.name}`;
+  const path = `${basePath}/final/${Date.now()}_${esc(file.name)}`;
   await uploadBytes(ref(storage, path), file);
   await updateDoc(doc(db, 'orders', orderId), {
     finalFiles: arrayUnion(path),

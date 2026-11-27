@@ -6,7 +6,9 @@
 <title>GAIOS™ QC Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/dashboard.css">
-<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+</script>
 <style>
 .qc-card{background:var(--navy2);border:1px solid var(--gold-border);border-radius:12px;padding:16px;margin-bottom:14px;}
 .qc-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
@@ -153,7 +155,7 @@ async function cardHtml(order){
   return `
     <div class="qc-card">
       <div class="qc-top">
-        <div><div class="qc-id">${order.id}</div><div class="qc-meta">${order.customerName||'—'} · ${order.size||''} · ${order.vertical||''}</div></div>
+        <div><div class="qc-id">${order.id}</div><div class="qc-meta">${esc(order.customerName||'—')} · ${order.size||''} · ${order.vertical||''}</div></div>
         <span class="badge" style="background:${m.color}22;color:${m.color};border:1px solid ${m.color}44;">${m.icon} ${m.label}</span>
       </div>
       ${photoHtml}
